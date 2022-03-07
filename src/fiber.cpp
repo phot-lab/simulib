@@ -150,6 +150,7 @@ tuple<double, double> first_step(VectorXcd field, Fiber fiber) {
 // NEXTSTEP step size setup for the SSFM algorithm DZ=NEXTSTEP(U,X,DZ_OLD)
 // evaluates the step size of the SSFM. U is the electric field,
 // DZ_OLD is the step used in the previous SSFM cycle.
+
 void next_step(VectorXcd field, Fiber fiber, double dz_old) {
 
 }

@@ -18,14 +18,10 @@ struct Test {
     double b;
 };
 
-std::tuple<double, char, std::string> get_student(int id) {
-    if (id == 0) return std::make_tuple(3.8, 'A', "Lisa Simpson");
-    if (id == 1) return std::make_tuple(2.9, 'C', "Milhouse Van Houten");
-    if (id == 2) return std::make_tuple(1.7, 'D', "Ralph Wiggum");
-    throw std::invalid_argument("id");
-}
-
 int main() {
-
+    VectorXd v= GenVector(1,1,10);
+    cout << v << endl;
+    cout << v << endl;
+    cout << nbThreads() << endl;
     return 0;
 }
