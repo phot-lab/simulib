@@ -8,7 +8,7 @@
 
 以下是该项目基本的目录结构：
 
-```cpp
+```
 SimuLib（项目root目录）
 ├── .clang-format（C++代码格式化配置文件）
 ├── CMakeLists.txt（项目总CMake配置文件）
