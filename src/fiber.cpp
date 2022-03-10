@@ -1,34 +1,33 @@
-#include "Dense"
-#include "common_types.h"
-#include "fiber_tools.h"
-#include "fiber_types.h"
-#include "globals.h"
-#include "tools.h"
+#include <simulib>
+#include <chrono>
 #include <cmath>
 #include <iostream>
 
 using namespace std;
 using namespace Eigen;
 
-void init_fiber(E e, Fiber &fiber, double &dgd);
+tuple<Linear *, double> InitFiber(const E &e, Fiber &fiber);
+tuple<double, double> FirstStep(VectorXcd field, Fiber fiber);
+double NextStep(const VectorXcd &field, const Fiber &fiber, double dz_old);
+tuple<RowVectorXd, RowVectorXd> CheckStep(double zprop, double dz, double len_corr);
+VectorXcd LinearStep(Linear *linear, VectorXd betat, RowVectorXd dzb, RowVectorXd nindex, VectorXcd field);
+VectorXcd NonlinearStep(VectorXcd field, Fiber fiber, double dz);
+tuple<double, unsigned long, E> SSFM(E e, Linear *linear, const VectorXd &betat, Fiber fiber);
 
-tuple<double, double> first_step(VectorXcd field, Fiber fiber);
+tuple<Out, E> FiberTransmit(E &e, Fiber fiber) {
 
-void fiber_transmit(E &e, Fiber fiber) {
+    unsigned Nsymb    = 1024;           // number of symbols
+    unsigned Nt       = 32;             // number of discrete points per symbol
+    unsigned symbrate = 10;             // symbol rate [Gbaud].
+    unsigned Nsamp    = Nsymb * Nt;     // overall number of samples
+    unsigned fs       = symbrate * Nt;  // sampling rate [GHz]
+    InitGstate(gstate, Nsamp, fs);      // initialize global variables: Nsamp and fs.
 
-    unsigned Nsymb    = 1024;  // number of symbols
-    unsigned Nt       = 32;    // number of discrete points per symbol
-    unsigned symbrate = 10;    // symbol rate [Gbaud].
+    chrono::steady_clock::time_point begin = chrono::steady_clock::now();  // Start time
 
-    unsigned Nsamp = Nsymb * Nt;     // overall number of samples
-    unsigned fs    = symbrate * Nt;  // sampling rate [GHz]
-    InitGstate(gstate, Nsamp, fs);   // initialize global variables: Nsamp and fs.
-
-    // timeini = tic; 开始计时
-
-    size_t Nfft = e.field.size();
     double dgd;
-    init_fiber(e, fiber, dgd);
+    Linear *linear;
+    tie(linear, dgd) = InitFiber(e, fiber);
 
     /************************ SET-UP PARAMETERS ************************/
 
@@ -67,7 +66,7 @@ void fiber_transmit(E &e, Fiber fiber) {
         }
     } else {                                   // Separate field
         double freq = LIGHT_SPEED / e.lambda;  // carrier frequencies [GHz]
-        // 两个偏振方向的这个还没有实现
+        // Separate field 情况还没有实现
     }
 
     /******* Nonlinear Parameters *******/
@@ -100,21 +99,86 @@ void fiber_transmit(E &e, Fiber fiber) {
     }
 
     /********** SSFM Propagation **********/
+
+    double first_dz;
+    unsigned long ncycle;
+    tie(first_dz, ncycle, e) = SSFM(e, linear, betat, fiber);
+
+    chrono::steady_clock::time_point end = chrono::steady_clock::now();  // End time
+
+    long long duration_ms = chrono::duration_cast<chrono::milliseconds>(end - begin).count();
+    double time           = (double) duration_ms / 1000;
+
+    Out out = {.time = time, .first_dz = first_dz, .ncycle = ncycle};
+    return make_tuple(out, e);
 }
 
-// function [firstdz,ncycle,E]=ssfm(E,lin,betat,x)
-void SSFM(E e, Linear *linear, VectorXd betat, Fiber fiber) {
+tuple<double, unsigned long, E> SSFM(E e, Linear *linear, const VectorXd &betat, Fiber fiber) {
     if (fiber.trace) {
         cout << "Stepupd      step #   z [m]" << endl;
     }
     fiber.chlambda       = e.lambda;
     unsigned long ncycle = 1;                             // number of steps
     double len_corr      = fiber.length / fiber.nplates;  // waveplate length [m]
-    double step, phimax;
-    tie(step, phimax) = first_step(e.field, fiber);
+    double dz, phimax, dzs;
+
+    tie(dz, phimax)   = FirstStep(e.field, fiber);
+    double half_alpha = 0.5 * fiber.alpha_lin;  // [1/m]
+    double first_dz   = dz;
+    double zprop      = dz;  // running distance [m]
+
+    RowVectorXd dzb, nindex;
+    if (fiber.is_sym) {  // first half LIN step outside the cycle
+        tie(dzb, nindex) = CheckStep(dz / 2, dz / 2, len_corr);
+        e.field          = LinearStep(linear, betat, dzb, nindex, e.field);  // Linear step
+    } else {
+        dzs = 0;  // symmetric step contribution.
+    }
+    while (zprop < fiber.length) {                    // all steps except the last
+        e.field = NonlinearStep(e.field, fiber, dz);  // Nonlinear step
+        e.field = e.field * exp(-half_alpha * dz);    // Linear step 1/2: attenuation (scalar)
+        double hlin;
+        if (fiber.is_sym) {
+            dzs = NextStep(e.field, fiber, dz);
+            if (zprop + dzs > fiber.length)
+                dzs = fiber.length - zprop;  // needed in case of last step
+            hlin = (dz + dzs) / 2;
+        } else {
+            hlin = dz;
+        }
+
+        // Linear step 2/2: GVD + birefringence
+        tie(dzb, nindex) = CheckStep(zprop + dzs / 2, hlin, len_corr);       // zprop+dzs/2: end of step
+        e.field          = LinearStep(linear, betat, dzb, nindex, e.field);  // Linear step
+        if (fiber.is_sym) {
+            swap(dz, dzs);  // exchange dz and dzs
+        } else {
+            dz = NextStep(e.field, fiber, dz);
+        }
+
+        zprop += dz;
+        ncycle++;
+    }
+
+    double last_step = fiber.length - zprop + dz;
+    zprop            = zprop - dz + last_step;
+    double hlin      = fiber.is_sym ? last_step / 2 : last_step;
+
+    // Last Nonlinear step
+    if (fiber.gam != 0)
+        e.field = NonlinearStep(e.field, fiber, last_step);
+
+    e.field = e.field * exp(-half_alpha * last_step);
+
+    // Last Linear step: GVD + birefringence
+    tie(dzb, nindex) = CheckStep(fiber.length, hlin, len_corr);
+    e.field          = LinearStep(linear, betat, dzb, nindex, e.field);
+
+    e.lambda = fiber.chlambda;
+    return make_tuple(first_dz, ncycle, e);
 }
 
-tuple<double, double> first_step(VectorXcd field, Fiber fiber) {
+tuple<double, double> FirstStep(VectorXcd field, Fiber fiber) {
     double step;
     double phimax;
     if (fiber.length == fiber.dzmax) {
@@ -139,8 +203,7 @@ tuple<double, double> first_step(VectorXcd field, Fiber fiber) {
                 phimax = fiber.dphi_max;
             }
         } else {  // nonlinear phase criterion
-            // 没有实现
-            //            step = nextstep(u,x,NaN);
+            step   = NextStep(field, fiber, NAN);
             phimax = fiber.dphi_max;
         }
     }
@@ -151,12 +214,105 @@ tuple<double, double> first_step(VectorXcd field, Fiber fiber) {
 // evaluates the step size of the SSFM. U is the electric field,
 // DZ_OLD is the step used in the previous SSFM cycle.
 
-void next_step(VectorXcd field, Fiber fiber, double dz_old) {
+double NextStep(const VectorXcd &field, const Fiber &fiber, double dz_old) {
+    double step;
+    if (fiber.is_cle) {  // constant local error (CLE)
+        double q = fiber.is_sym ? 3 : 2;
+        step     = dz_old * std::exp(fiber.alpha_lin / q * dz_old);  // [m]
 
+    } else {  // nonlinear phase criterion
+        double pmax;
+        if (fiber.is_dual) {  // max over time
+            // 存在偏振的情况，还未实现
+            // Pmax = max(abs(u(:,1:2:end)).^2 + abs(u(:,2:2:end)).^2);
+        } else {
+            pmax = field.cwiseAbs2().maxCoeff();
+        }
+        double invLnl = pmax * fiber.gam;         // max over channels
+        double leff   = fiber.dphi_max / invLnl;  // effective length [m] of the step
+        double dl     = fiber.alpha_lin * leff;   // ratio effective length/attenuation length
+        if (dl >= 1) {
+            step = fiber.dzmax;  // [m]
+        } else {
+            if (fiber.alpha_lin == 0) {
+                step = leff;
+            } else {
+                step = -1 / fiber.alpha_lin * std::log(1 - dl);
+            }
+        }
+    }
+    double dz;
+    if (step > fiber.dzmax)
+        dz = fiber.dzmax;
+    else
+        dz = step;
+    return dz;
+}
+
+tuple<RowVectorXd, RowVectorXd> CheckStep(double zprop, double dz, double len_corr) {
+    double zini = zprop - dz;  // starting coordinate of the step [m]
+    double zend = zprop;       // ending coordinate of the step [m]
+
+    // first waveplate index is 1
+    double nini      = floor(zini / len_corr) + 1;  // Waveplate of starting coordinate
+    double nend      = ceil(zend / len_corr);       // waveplate of ending coordinate
+    RowVectorXd nmid = GenVector(nini, nend);       // waveplate indexes
+
+    RowVectorXd dz_split;
+
+    if (nini == nend) {  // start/end of the step within a waveplate
+        dz_split.resize(1);
+        dz_split << dz;
+    } else {  // multi-waveplate step
+
+        // waveplate mid-coordinates
+        RowVectorXd zmid      = len_corr * nmid.block(0, 0, 1, nmid.size() - 1);
+        RowVectorXd diff_zmid = Diff(zmid.transpose());
+        dz_split.resize(2 + diff_zmid.size());
+        dz_split << zmid(0) - zini, diff_zmid, zend - zmid(zmid.size() - 1);
+    }
+    RowVectorXd dzb    = RemoveZero(dz_split, dz_split);  // remove zero-length steps
+    RowVectorXd nindex = RemoveZero(nmid, dz_split);      // remove zero-length steps
+    return make_tuple(dzb, nindex);
+}
+
+VectorXcd LinearStep(Linear *linear, VectorXd betat, RowVectorXd dzb, RowVectorXd nindex, VectorXcd field) {
+    field = FFT(field);
+
+    if (linear->is_scalar) {
+        auto *scalar_linear = (ScalarLinear *) linear;
+        VectorXd unit       = VectorXd ::Ones(betat.size());
+        for (Index i = 0; i < dzb.size(); ++i) {  // the step is made of multi-waveplates
+            field = field.cwiseProduct(FastExp((-(betat + unit)) * dzb[i]));
+        }
+    } else {
+        // Linear非标量的情况还未实现
+    }
+
+    return IFFT(field);
+}
+
+VectorXcd NonlinearStep(VectorXcd field, Fiber fiber, double dz) {
+    double leff;
+    if (fiber.alpha_lin == 0)
+        leff = dz;
+    else
+        leff = (1 - exp(-fiber.alpha_lin * dz)) / fiber.alpha_lin;  // effective length [m] of dz
+    double gamleff = fiber.gam * leff;                              // [1/mW]
+    if (fiber.is_unique) {                                          // UNIQUE FIELD
+        VectorXd phi       = field.cwiseAbs2() * gamleff;           // nl phase [rad].
+        VectorXcd expi_phi = FastExp(-phi);
+        field              = field.cwiseProduct(expi_phi);  // expiphi .* u
+
+        // dual-polarization未完成
+    } else {  // separate-field
+        // 未完成
+    }
+    return field;
 }
 
 
-void init_fiber(E e, Fiber &fiber, double &dgd) {
+tuple<Linear *, double> InitFiber(const E &e, Fiber &fiber) {
     const string DEF_STEP_UPDATE = "cle";  // Default step-updating rule
     const bool DEF_IS_SYMMETRIC  = false;  // Default step computation
     const double DEF_PHI_FWM_CLE = 20;     // Default X.dphimax [rad] for CLE stepupd rule
@@ -208,6 +364,7 @@ void init_fiber(E e, Fiber &fiber, double &dgd) {
     }
 
     Linear *linear;
+    double dgd;
 
     if (fiber.coupling == "pol") {                                                                   // X-Y coupling
         double corr_len = fiber.length / fiber.nplates;                                              // waveplate length [m] (aka correlation length)
@@ -284,4 +441,5 @@ void init_fiber(E e, Fiber &fiber, double &dgd) {
     } else {
         fiber.is_sym = DEF_IS_SYMMETRIC;
     }
+    return make_tuple(linear, dgd);
 }

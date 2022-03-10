@@ -12,8 +12,7 @@
 SimuLib（项目root目录）
 ├── .clang-format（C++代码格式化配置文件）
 ├── CMakeLists.txt（项目总CMake配置文件）
-├── Eigen（数学运算库）
-├── includes（自己写的头文件）
+├── includes（头文件目录）
 ├── lib（静态库和动态库）
 └── src（源代码文件）
 ```

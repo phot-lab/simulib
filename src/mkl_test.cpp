@@ -12,21 +12,30 @@
  */
 /**
  * Author: Chunyu Li
- * Created: 2022/3/1
+ * Created: 2022/3/10
  * Supported by: National Key Research and Development Program of China
  */
 
-#include "simulib"
-#include <vector>
+#define EIGEN_USE_MKL_ALL
+#include <simulib>
+#include <chrono>
+#include <iostream>
 
+using namespace Eigen;
 using namespace std;
 
-void InitGstate(Gstate &gstate, double Nsamp, double Fs) {
-    if (!IsInt(Nsamp))
-        ERROR("The number of samples must be an integer");
-    gstate.NSAMP     = (unsigned long) Nsamp;  // Number of samples
-    double stepf     = Fs / Nsamp;             // Minimum frequency [GHz]
-    VectorXd vec     = GenStepVector(-Fs / 2, stepf, Fs / 2 - stepf);
-    gstate.FN        = FFTShift(vec);  // Frequencies [GHz]
-    gstate.SAMP_FREQ = Fs;             // Sampling frequency [GHz]
+int main() {
+    chrono::steady_clock::time_point begin = chrono::steady_clock::now();
+
+    MatrixXd m1 = MatrixXd ::Random(1000, 1000);
+    MatrixXd m2 = MatrixXd ::Random(1000, 1000);
+    MatrixXd m3 = m1 * m2;
+
+    chrono::steady_clock::time_point end = chrono::steady_clock::now();
+
+    long long duration_ms = chrono::duration_cast<chrono::milliseconds>(end - begin).count();
+    double time           = (double) duration_ms / 1000;
+    cout << "测试通过：MKL可以运行" << endl;
+    cout << "运行时间: " << time << "s" << endl;
+    return 0;
 }

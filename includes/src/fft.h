@@ -12,21 +12,19 @@
  */
 /**
  * Author: Chunyu Li
- * Created: 2022/3/1
+ * Created: 2022/3/9
  * Supported by: National Key Research and Development Program of China
  */
+#ifndef SIMULIB_FFT_H
+#define SIMULIB_FFT_H
 
-#include "simulib"
-#include <vector>
+#include "Eigen/Core"
 
-using namespace std;
+using namespace Eigen;
 
-void InitGstate(Gstate &gstate, double Nsamp, double Fs) {
-    if (!IsInt(Nsamp))
-        ERROR("The number of samples must be an integer");
-    gstate.NSAMP     = (unsigned long) Nsamp;  // Number of samples
-    double stepf     = Fs / Nsamp;             // Minimum frequency [GHz]
-    VectorXd vec     = GenStepVector(-Fs / 2, stepf, Fs / 2 - stepf);
-    gstate.FN        = FFTShift(vec);  // Frequencies [GHz]
-    gstate.SAMP_FREQ = Fs;             // Sampling frequency [GHz]
-}
+VectorXd FFTShift(const VectorXd &in);
+VectorXd IFFTShift(const VectorXd &in);
+VectorXcd FFT(const VectorXcd &in);
+VectorXcd IFFT(const VectorXcd &in);
+
+#endif  // SIMULIB_FFT_H

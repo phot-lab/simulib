@@ -12,21 +12,17 @@
  */
 /**
  * Author: Chunyu Li
- * Created: 2022/3/1
+ * Created: 2022/3/10
  * Supported by: National Key Research and Development Program of China
  */
+#ifndef SIMULIB_SIMULIB_H
+#define SIMULIB_SIMULIB_H
 
-#include "simulib"
-#include <vector>
+#include "src/common_types.h"
+#include "src/fft.h"
+#include "src/fiber_tools.h"
+#include "src/fiber_types.h"
+#include "src/globals.h"
+#include "src/tools.h"
 
-using namespace std;
-
-void InitGstate(Gstate &gstate, double Nsamp, double Fs) {
-    if (!IsInt(Nsamp))
-        ERROR("The number of samples must be an integer");
-    gstate.NSAMP     = (unsigned long) Nsamp;  // Number of samples
-    double stepf     = Fs / Nsamp;             // Minimum frequency [GHz]
-    VectorXd vec     = GenStepVector(-Fs / 2, stepf, Fs / 2 - stepf);
-    gstate.FN        = FFTShift(vec);  // Frequencies [GHz]
-    gstate.SAMP_FREQ = Fs;             // Sampling frequency [GHz]
-}
+#endif  // SIMULIB_SIMULIB_H

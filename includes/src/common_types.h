@@ -12,15 +12,22 @@
 */
 /**
 * Author: Chunyu Li
-* Created: 2022/3/6
+* Created: 2022/3/1
 * Supported by: National Key Research and Development Program of China
 */
+#ifndef OPTICALAB_COMMON_TYPES_H
+#define OPTICALAB_COMMON_TYPES_H
 
-#include <simulib>
+#include <vector>
+#include "Eigen/Core"
 
-const double LIGHT_SPEED     = 299792458;        // Speed of light in vacuum [m/s]
-const double PLANK_CONST     = 6.62606896e-34;   // Planck's constant [J*s]
-const double ELE_CHARGE      = 1.602176487e-19;  // Electron's charge [C] (CODATA value, year 2006)
-const double BOLTZMANN_CONST = 1.3806504E-23;    // Boltzmann's constant [J/oK] (CODATA value)
+using namespace std;
+using namespace Eigen;
 
-Gstate gstate;
+struct Gstate {
+    unsigned long NSAMP;
+    VectorXd FN;
+    double SAMP_FREQ;
+};
+
+#endif //OPTICALAB_COMMON_TYPES_H
