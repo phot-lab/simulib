@@ -12,20 +12,14 @@
  */
 /**
  * Author: Chunyu Li
- * Created: 2022/3/1
+ * Created: 2022/3/11
  * Supported by: National Key Research and Development Program of China
  */
+#ifndef SIMULIB_FUNC_H
+#define SIMULIB_FUNC_H
 
-#include <simulib>
+#include "fiber_types.h"
 
-using namespace std;
+tuple<Out, E> FiberTransmit(E &e, Fiber fiber);
 
-void InitGstate(double Nsamp, double Fs) {
-    if (!IsInt(Nsamp))
-        ERROR("The number of samples must be an integer");
-    gstate.NSAMP     = (unsigned long) Nsamp;  // Number of samples
-    double stepf     = Fs / Nsamp;             // Minimum frequency [GHz]
-    VectorXd vec     = GenStepVector(-Fs / 2, stepf, Fs / 2 - stepf);
-    gstate.FN        = FFTShift(vec);  // Frequencies [GHz]
-    gstate.SAMP_FREQ = Fs;             // Sampling frequency [GHz]
-}
+#endif  // SIMULIB_FUNC_H

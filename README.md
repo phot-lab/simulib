@@ -17,3 +17,7 @@ SimuLib（项目root目录）
 └── src（源代码文件）
 ```
 
+### 构建本项目需要安装的内容
+
+* MKL（Intel提供的数学运算库）：[MKL下载地址](https://www.intel.com/content/www/us/en/developer/tools/oneapi/base-toolkit-download.html)
+

@@ -21,6 +21,6 @@
 
 #include "common_types.h"
 
-void InitGstate(Gstate &gstate, double Nsamp, double Fs);
+void InitGstate(double Nsamp, double Fs);
 
 #endif //OPTICALAB_FIBER_TOOLS_H

@@ -1,12 +1,31 @@
-#include <simulib>
+/**
+ * Copyright (c) 2022 Beijing Jiaotong University
+ * OpticaLab is licensed under [Open Source License].
+ * You can use this software according to the terms and conditions of the [Open Source License].
+ * You may obtain a copy of [Open Source License] at: [https://open.source.license/]
+ *
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+ * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+ * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ *
+ * See the [Open Source License] for more details.
+ */
+/**
+ * Author: Chunyu Li
+ * Created: 2022/3/11
+ * Supported by: National Key Research and Development Program of China
+ */
+
+
 #include <chrono>
 #include <cmath>
 #include <iostream>
+#include <simulib>
 
 using namespace std;
 using namespace Eigen;
 
-tuple<Linear *, double> InitFiber(const E &e, Fiber &fiber);
+tuple<Linear *, double> CheckFiber(const E &e, Fiber &fiber);
 tuple<double, double> FirstStep(VectorXcd field, Fiber fiber);
 double NextStep(const VectorXcd &field, const Fiber &fiber, double dz_old);
 tuple<RowVectorXd, RowVectorXd> CheckStep(double zprop, double dz, double len_corr);
@@ -21,13 +40,13 @@ tuple<Out, E> FiberTransmit(E &e, Fiber fiber) {
     unsigned symbrate = 10;             // symbol rate [Gbaud].
     unsigned Nsamp    = Nsymb * Nt;     // overall number of samples
     unsigned fs       = symbrate * Nt;  // sampling rate [GHz]
-    InitGstate(gstate, Nsamp, fs);      // initialize global variables: Nsamp and fs.
+    InitGstate(Nsamp, fs);              // initialize global variables: Nsamp and fs.
 
     chrono::steady_clock::time_point begin = chrono::steady_clock::now();  // Start time
 
     double dgd;
     Linear *linear;
-    tie(linear, dgd) = InitFiber(e, fiber);
+    tie(linear, dgd) = CheckFiber(e, fiber);
 
     /************************ SET-UP PARAMETERS ************************/
 
@@ -102,6 +121,7 @@ tuple<Out, E> FiberTransmit(E &e, Fiber fiber) {
 
     double first_dz;
     unsigned long ncycle;
+
     tie(first_dz, ncycle, e) = SSFM(e, linear, betat, fiber);
 
     chrono::steady_clock::time_point end = chrono::steady_clock::now();  // End time
@@ -172,8 +192,8 @@ tuple<double, unsigned long, E> SSFM(E e, Linear *linear, const VectorXd &betat,
 
     // Last Linear step: GVD + birefringence
     tie(dzb, nindex) = CheckStep(fiber.length, hlin, len_corr);
-    e.field          = LinearStep(linear, betat, dzb, nindex, e.field);
 
+    e.field  = LinearStep(linear, betat, dzb, nindex, e.field);
     e.lambda = fiber.chlambda;
     return make_tuple(first_dz, ncycle, e);
 }
@@ -281,14 +301,12 @@ VectorXcd LinearStep(Linear *linear, VectorXd betat, RowVectorXd dzb, RowVectorX
 
     if (linear->is_scalar) {
         auto *scalar_linear = (ScalarLinear *) linear;
-        VectorXd unit       = VectorXd ::Ones(betat.size());
         for (Index i = 0; i < dzb.size(); ++i) {  // the step is made of multi-waveplates
-            field = field.cwiseProduct(FastExp((-(betat + unit)) * dzb[i]));
+            field = field.cwiseProduct(FastExp((-betat) * dzb[i]));
         }
     } else {
         // Linear非标量的情况还未实现
     }
-
     return IFFT(field);
 }
 
@@ -312,7 +330,7 @@ VectorXcd NonlinearStep(VectorXcd field, Fiber fiber, double dz) {
 }
 
 
-tuple<Linear *, double> InitFiber(const E &e, Fiber &fiber) {
+tuple<Linear *, double> CheckFiber(const E &e, Fiber &fiber) {
     const string DEF_STEP_UPDATE = "cle";  // Default step-updating rule
     const bool DEF_IS_SYMMETRIC  = false;  // Default step computation
     const double DEF_PHI_FWM_CLE = 20;     // Default X.dphimax [rad] for CLE stepupd rule
@@ -416,14 +434,9 @@ tuple<Linear *, double> InitFiber(const E &e, Fiber &fiber) {
             } else {
                 fiber.dphi_max = DEF_PHI_FWM_NLP;  // NLP + PhiFWM in 1st step
             }
-            // 这里需要改改
-            /**
-            if ~isfield(x,'bandwidth')
-                x.dphimax = x.dphimax*(1.5)^2; % because in [Mus18] they used
-                % the signal bandwidth, x1.5 smaller than the simulation
-                % bandwidth.
-            end
-             */
+            if (fiber.bandwidth == 0) {
+                fiber.dphi_max = fiber.dphi_max * 2.25;  // because in [Mus18] they used the signal bandwidth, x1.5 smaller than the simulation bandwidth.
+            }
         } else {
             fiber.dphi_max = DEF_PHI_NLP;  // NLP
         }

@@ -24,5 +24,6 @@
 #include "src/fiber_types.h"
 #include "src/globals.h"
 #include "src/tools.h"
+#include "src/func.h"
 
 #endif  // SIMULIB_SIMULIB_H

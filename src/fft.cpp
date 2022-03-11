@@ -16,9 +16,9 @@
  * Supported by: National Key Research and Development Program of China
  */
 
-#include <simulib>
 #include <iostream>
 #include <mkl.h>
+#include <simulib>
 #include <vector>
 
 using namespace Eigen;
@@ -58,6 +58,7 @@ VectorXcd FFT(const VectorXcd &in) {
     VectorXcd out(in.size());
     DFTI_DESCRIPTOR_HANDLE descriptor;
     MKL_LONG status;
+    (void) status; // Suppress the warning about unused variables
 
     // Note after each operation status should be 0 on success
     status = DftiCreateDescriptor(&descriptor, DFTI_DOUBLE, DFTI_COMPLEX, 1, in.size());  // Specify size and precision
@@ -73,6 +74,7 @@ VectorXcd IFFT(const VectorXcd &in) {
 
     DFTI_DESCRIPTOR_HANDLE descriptor;
     MKL_LONG status;
+    (void) status; // Suppress the warning about unused variables
 
     status = DftiCreateDescriptor(&descriptor, DFTI_DOUBLE, DFTI_COMPLEX, 1, in.size());  // Specify size and precision
     status = DftiSetValue(descriptor, DFTI_PLACEMENT, DFTI_NOT_INPLACE);                  // Out of place FFT

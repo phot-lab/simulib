@@ -16,7 +16,7 @@
  * Supported by: National Key Research and Development Program of China
  */
 
-#define EIGEN_USE_MKL_ALL
+#define EIGEN_USE_MKL_ALL // Turn on this to use MKL for all Eigen operations
 #include <simulib>
 #include <chrono>
 #include <iostream>
@@ -25,17 +25,19 @@ using namespace Eigen;
 using namespace std;
 
 int main() {
+
     chrono::steady_clock::time_point begin = chrono::steady_clock::now();
 
-    MatrixXd m1 = MatrixXd ::Random(1000, 1000);
-    MatrixXd m2 = MatrixXd ::Random(1000, 1000);
-    MatrixXd m3 = m1 * m2;
+        MatrixXd m1 = MatrixXd ::Random(1000, 1000);
+        MatrixXd m2 = MatrixXd ::Random(1000, 1000);
+        MatrixXd m3 = m1 * m2;
 
     chrono::steady_clock::time_point end = chrono::steady_clock::now();
 
     long long duration_ms = chrono::duration_cast<chrono::milliseconds>(end - begin).count();
     double time           = (double) duration_ms / 1000;
-    cout << "测试通过：MKL可以运行" << endl;
+    cout << "测试通过，MKL可以运行" << endl;
+    cout << "使用的线程数：" << nbThreads() << endl;
     cout << "运行时间: " << time << "s" << endl;
     return 0;
 }

@@ -12,20 +12,40 @@
  */
 /**
  * Author: Chunyu Li
- * Created: 2022/3/1
+ * Created: 2022/3/11
  * Supported by: National Key Research and Development Program of China
  */
 
+#include <fstream>
+#include <iostream>
 #include <simulib>
 
 using namespace std;
 
-void InitGstate(double Nsamp, double Fs) {
-    if (!IsInt(Nsamp))
-        ERROR("The number of samples must be an integer");
-    gstate.NSAMP     = (unsigned long) Nsamp;  // Number of samples
-    double stepf     = Fs / Nsamp;             // Minimum frequency [GHz]
-    VectorXd vec     = GenStepVector(-Fs / 2, stepf, Fs / 2 - stepf);
-    gstate.FN        = FFTShift(vec);  // Frequencies [GHz]
-    gstate.SAMP_FREQ = Fs;             // Sampling frequency [GHz]
+VectorXcd ReadField() {
+
+    // Open file in read mode
+    ifstream infile;
+    infile.open("../field.txt");
+
+    VectorXcd vec(32768);
+    for (Index i = 0; i < vec.size(); ++i) {
+        infile >> vec[i];
+    }
+
+    // Close file
+    infile.close();
+    return vec;
+}
+
+int main() {
+
+    E e;
+    e.field = ReadField();
+    Fiber fiber;
+    Out out     = {};
+    tie(out, e) = FiberTransmit(e, fiber);
+    cout << e.field << endl;
+
+    return 0;
 }

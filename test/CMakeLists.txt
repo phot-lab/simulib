@@ -1,0 +1,24 @@
+add_executable(Test test.cpp)
+add_executable(MatlabTest matlab_test.cpp)
+add_executable(MKLTest mkl_test.cpp)
+add_executable(FiberTest fiber_test.cpp)
+
+find_library(LIBRARY Library ${PROJECT_SOURCE_DIR}/lib)
+
+if (LIBRARY)
+    target_link_libraries(Test ${LIBRARY} MKL::MKL)
+    target_link_libraries(MatlabTest ${LIBRARY} MKL::MKL)
+    target_link_libraries(MKLTest ${LIBRARY} MKL::MKL)
+    target_link_libraries(FiberTest ${LIBRARY} MKL::MKL)
+else ()
+    message(WARNING "Library not found")
+endif()
+
+# Find Matlab library on personal computer
+find_package(Matlab)
+if (Matlab_FOUND)
+    include_directories(${Matlab_INCLUDE_DIRS})
+    target_link_libraries(MatlabTest ${Matlab_ENGINE_LIBRARY} ${Matlab_DATAARRAY_LIBRARY})
+else ()
+    message(WARNING "Matlab libs not found")
+endif ()
