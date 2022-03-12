@@ -21,9 +21,9 @@ SimuLib（项目root目录）
 ### 构建本项目需要安装的内容
 
 * MKL（Intel提供的数学运算库）：[MKL下载地址](https://www.intel.com/content/www/us/en/developer/tools/oneapi/base-toolkit-download.html)
-* Eigen 3.* (Installing without using CMake)[https://eigen.tuxfamily.org/dox/GettingStarted.html]
+* Eigen 3.* ([Installing without using CMake](https://eigen.tuxfamily.org/dox/GettingStarted.html))
 
-#### MacOS 
+#### Prerequisites for MacOS (Big Sur or higher)
 1. Install the Intel® oneAPI Base Toolkit by [m_BaseKit_p_2022.1.0.92_offline.dmg](https://registrationcenter-download.intel.com/akdlm/irc_nas/18342/m_BaseKit_p_2022.1.0.92_offline.dmg
    ).
 
