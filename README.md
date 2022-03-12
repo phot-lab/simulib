@@ -44,3 +44,10 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 ```
 
 3. Configure `CLion > Preference > Build, Execution, Deployment > Toolchains`, add profile with C compiler (path: `/usr/local/Cellar/gcc@7/7.5.0_4/bin/gcc-7`) and C++ compiler (path: `/usr/local/Cellar/gcc@7/7.5.0_4/bin/g++-7`). Then move the new profile to the top as default.
+
+### Build instructions
+1. Firstly, build the 'Library'. Check the output file under ./lib/
+
+2. Then, build the test case one by one, such as 'MKLTest', 'FiberTest'.
+
+3. Run the test case.
