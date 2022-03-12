@@ -1,6 +1,9 @@
-/cmake-build-debug/
+# Project generates dirs
+*cmake-build-debug/
+*cmake-build-release/
 /lib/
 /bin/
+.idea/
 
 # Prerequisites
 *.d

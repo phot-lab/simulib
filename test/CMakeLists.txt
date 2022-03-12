@@ -1,9 +1,12 @@
+cmake_minimum_required(VERSION 3.21)
+project(SimuLib-test)
+
 add_executable(Test test.cpp)
 add_executable(MatlabTest matlab_test.cpp)
 add_executable(MKLTest mkl_test.cpp)
 add_executable(FiberTest fiber_test.cpp)
 
-find_library(LIBRARY Library ${PROJECT_SOURCE_DIR}/lib)
+find_library(LIBRARY Library ../lib)
 
 if (LIBRARY)
     target_link_libraries(Test ${LIBRARY} MKL::MKL)
