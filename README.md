@@ -75,13 +75,13 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 3. Install Intel® oneAPI Base Toolkit by following these [link1](https://www.intel.com/content/www/us/en/developer/tools/oneapi/base-toolkit-download.html?operatingsystem=linux&distributions=aptpackagemanager), [link2](https://www.intel.com/content/www/us/en/develop/documentation/installation-guide-for-intel-oneapi-toolkits-linux/top/installation/install-using-package-managers/apt.html#apt_apt-packages)
 
-> 1) Remove all Intel® oneAPI packages
+> (1) Remove all Intel® oneAPI packages
 
 ```
 $ sudo apt autoremove intel-basekit intel-hpckit intel-iotkit intel-dlfdkit intel-aikit intel-renderkit
 ```
 
-> 2) Set up the Intel® oneAPI repository:
+> (2) Set up the Intel® oneAPI repository:
 
 ```
 # create 'mkl-set-repo.sh' with following contents and execute
@@ -93,7 +93,7 @@ echo "deb [signed-by=/usr/share/keyrings/oneapi-archive-keyring.gpg] https://apt
 
 Notice: Change the 'Download from' option in 'Software and Updates > Ubuntu Software', choose a server in China, for example, mirrors.tuna.tsinghua.edu.cn
 
-> 3) Update the repository and install
+> (3) Update the repository and install
 
 ```
 $ sudo apt update
