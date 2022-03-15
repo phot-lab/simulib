@@ -30,8 +30,8 @@ struct Out {
 };
 
 struct E {
-    double lambda = 1550;
-    VectorXcd field;
+    double lambda = 1550; // lambda: wavelength [nm] of wave
+    VectorXcd field; // time samples of the electric field along rows
 };
 
 struct Fiber {

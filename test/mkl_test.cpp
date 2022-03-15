@@ -16,7 +16,7 @@
  * Supported by: National Key Research and Development Program of China
  */
 
-#define EIGEN_USE_MKL_ALL // Turn on this to use MKL for all Eigen operations
+//#define EIGEN_USE_MKL_ALL // Turn on this to use MKL for all Eigen operations
 #include <simulib>
 #include <chrono>
 #include <iostream>
