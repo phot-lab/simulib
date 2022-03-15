@@ -14,7 +14,7 @@
 #include "LU"
 #include <limits>
 
-#include "src/Eigen/src/Core/util/DisableStupidWarnings.h"
+#include "src/Core/util/DisableStupidWarnings.h"
 
 /** \defgroup Geometry_Module Geometry module
   *
@@ -33,27 +33,27 @@
   * \endcode
   */
 
-#include "src/Eigen/src/Geometry/OrthoMethods.h"
-#include "src/Eigen/src/Geometry/EulerAngles.h"
+#include "src/Geometry/OrthoMethods.h"
+#include "src/Geometry/EulerAngles.h"
 
-#include "src/Eigen/src/Geometry/Homogeneous.h"
-#include "src/Eigen/src/Geometry/RotationBase.h"
-#include "src/Eigen/src/Geometry/Rotation2D.h"
-#include "src/Eigen/src/Geometry/Quaternion.h"
-#include "src/Eigen/src/Geometry/AngleAxis.h"
-#include "src/Eigen/src/Geometry/Transform.h"
-#include "src/Eigen/src/Geometry/Translation.h"
-#include "src/Eigen/src/Geometry/Scaling.h"
-#include "src/Eigen/src/Geometry/Hyperplane.h"
-#include "src/Eigen/src/Geometry/ParametrizedLine.h"
-#include "src/Eigen/src/Geometry/AlignedBox.h"
-#include "src/Eigen/src/Geometry/Umeyama.h"
+#include "src/Geometry/Homogeneous.h"
+#include "src/Geometry/RotationBase.h"
+#include "src/Geometry/Rotation2D.h"
+#include "src/Geometry/Quaternion.h"
+#include "src/Geometry/AngleAxis.h"
+#include "src/Geometry/Transform.h"
+#include "src/Geometry/Translation.h"
+#include "src/Geometry/Scaling.h"
+#include "src/Geometry/Hyperplane.h"
+#include "src/Geometry/ParametrizedLine.h"
+#include "src/Geometry/AlignedBox.h"
+#include "src/Geometry/Umeyama.h"
 
 // Use the SSE optimized version whenever possible.
 #if (defined EIGEN_VECTORIZE_SSE) || (defined EIGEN_VECTORIZE_NEON)
-#include "src/Eigen/src/Geometry/arch/Geometry_SIMD.h"
+#include "src/Geometry/arch/Geometry_SIMD.h"
 #endif
 
-#include "src/Eigen/src/Core/util/ReenableStupidWarnings.h"
+#include "src/Core/util/ReenableStupidWarnings.h"
 
 #endif // EIGEN_GEOMETRY_MODULE_H

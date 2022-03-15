@@ -12,7 +12,7 @@
 #include "Householder"
 #include "Jacobi"
 
-#include "src/Eigen/src/Core/util/DisableStupidWarnings.h"
+#include "src/Core/util/DisableStupidWarnings.h"
 
 /** \defgroup SVD_Module SVD module
   *
@@ -31,11 +31,11 @@
   * \endcode
   */
 
-#include "src/Eigen/src/misc/RealSvd2x2.h"
-#include "src/Eigen/src/SVD/UpperBidiagonalization.h"
-#include "src/Eigen/src/SVD/SVDBase.h"
-#include "src/Eigen/src/SVD/JacobiSVD.h"
-#include "src/Eigen/src/SVD/BDCSVD.h"
+#include "src/misc/RealSvd2x2.h"
+#include "src/SVD/UpperBidiagonalization.h"
+#include "src/SVD/SVDBase.h"
+#include "src/SVD/JacobiSVD.h"
+#include "src/SVD/BDCSVD.h"
 #if defined(EIGEN_USE_LAPACKE) && !defined(EIGEN_USE_LAPACKE_STRICT)
 #ifdef EIGEN_USE_MKL
 #include "mkl_lapacke.h"
@@ -45,6 +45,6 @@
 #include "src/SVD/JacobiSVD_LAPACKE.h"
 #endif
 
-#include "src/Eigen/src/Core/util/ReenableStupidWarnings.h"
+#include "src/Core/util/ReenableStupidWarnings.h"
 
 #endif // EIGEN_SVD_MODULE_H

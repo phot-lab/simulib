@@ -655,10 +655,10 @@ template<typename Derived> class DenseBase
 #define EIGEN_DOC_BLOCK_ADDONS_NOT_INNER_PANEL
 #define EIGEN_DOC_BLOCK_ADDONS_INNER_PANEL_IF(COND)
 #define EIGEN_DOC_UNARY_ADDONS(X,Y)
-#   include "src/Eigen/src/plugins/CommonCwiseUnaryOps.h"
-#   include "src/Eigen/src/plugins/BlockMethods.h"
-#   include "src/Eigen/src/plugins/IndexedViewMethods.h"
-#   include "src/Eigen/src/plugins/ReshapedMethods.h"
+#   include "../plugins/CommonCwiseUnaryOps.h"
+#   include "../plugins/BlockMethods.h"
+#   include "../plugins/IndexedViewMethods.h"
+#   include "../plugins/ReshapedMethods.h"
 #   ifdef EIGEN_DENSEBASE_PLUGIN
 #     include EIGEN_DENSEBASE_PLUGIN
 #   endif

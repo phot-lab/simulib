@@ -16,7 +16,7 @@
 #include "LU"
 #include "Geometry"
 
-#include "src/Eigen/src/Core/util/DisableStupidWarnings.h"
+#include "src/Core/util/DisableStupidWarnings.h"
 
 /** \defgroup Eigenvalues_Module Eigenvalues module
   *
@@ -32,18 +32,18 @@
   * \endcode
   */
 
-#include "src/Eigen/src/misc/RealSvd2x2.h"
-#include "src/Eigen/src/Eigenvalues/Tridiagonalization.h"
-#include "src/Eigen/src/Eigenvalues/RealSchur.h"
-#include "src/Eigen/src/Eigenvalues/EigenSolver.h"
-#include "src/Eigen/src/Eigenvalues/SelfAdjointEigenSolver.h"
-#include "src/Eigen/src/Eigenvalues/GeneralizedSelfAdjointEigenSolver.h"
-#include "src/Eigen/src/Eigenvalues/HessenbergDecomposition.h"
-#include "src/Eigen/src/Eigenvalues/ComplexSchur.h"
-#include "src/Eigen/src/Eigenvalues/ComplexEigenSolver.h"
-#include "src/Eigen/src/Eigenvalues/RealQZ.h"
-#include "src/Eigen/src/Eigenvalues/GeneralizedEigenSolver.h"
-#include "src/Eigen/src/Eigenvalues/MatrixBaseEigenvalues.h"
+#include "src/misc/RealSvd2x2.h"
+#include "src/Eigenvalues/Tridiagonalization.h"
+#include "src/Eigenvalues/RealSchur.h"
+#include "src/Eigenvalues/EigenSolver.h"
+#include "src/Eigenvalues/SelfAdjointEigenSolver.h"
+#include "src/Eigenvalues/GeneralizedSelfAdjointEigenSolver.h"
+#include "src/Eigenvalues/HessenbergDecomposition.h"
+#include "src/Eigenvalues/ComplexSchur.h"
+#include "src/Eigenvalues/ComplexEigenSolver.h"
+#include "src/Eigenvalues/RealQZ.h"
+#include "src/Eigenvalues/GeneralizedEigenSolver.h"
+#include "src/Eigenvalues/MatrixBaseEigenvalues.h"
 #ifdef EIGEN_USE_LAPACKE
 #ifdef EIGEN_USE_MKL
 #include "mkl_lapacke.h"
@@ -55,6 +55,6 @@
 #include "src/Eigenvalues/SelfAdjointEigenSolver_LAPACKE.h"
 #endif
 
-#include "src/Eigen/src/Core/util/ReenableStupidWarnings.h"
+#include "src/Core/util/ReenableStupidWarnings.h"
 
 #endif // EIGEN_EIGENVALUES_MODULE_H

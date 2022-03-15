@@ -12,6 +12,7 @@ include_directories(includes) # directories that include header files
 add_compile_options("-fopenmp") # Enable OpenMP features
 add_compile_options("-Wall") # Turns on lots of compiler warning flags
 add_compile_options("-Wno-unused-variable") # Suppress unused variable warnings
+add_compile_options("-Wno-unused-but-set-variable")
 add_compile_options("-finline-functions") # Attempt to Inline All Functions, even if they are not annotated with inlining. Note: inlining trades speed for increasing of code size.
 
 # Find MKL library on personal computer

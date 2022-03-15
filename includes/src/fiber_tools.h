@@ -20,7 +20,11 @@
 #define OPTICALAB_FIBER_TOOLS_H
 
 #include "common_types.h"
+#include "fiber_types.h"
 
 void InitGstate(double Nsamp, double Fs);
+FormatInfo ModFormatInfo(const string &mod_format);
+tuple<VectorXi, MatrixXi> pattern(unsigned nsymb, const string &ptype, string format, ...);
+MatrixXi Pat2Samp(const MatrixXi& pat_bin, const string& mod_format);
 
 #endif //OPTICALAB_FIBER_TOOLS_H

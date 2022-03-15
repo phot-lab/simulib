@@ -10,7 +10,7 @@
 
 #include "SparseCore"
 
-#include "src/Eigen/src/Core/util/DisableStupidWarnings.h"
+#include "src/Core/util/DisableStupidWarnings.h"
 
 extern "C" {
 #include <metis.h>
@@ -28,8 +28,8 @@ extern "C" {
   */
 
 
-#include "src/Eigen/src/MetisSupport/MetisSupport.h"
+#include "src/MetisSupport/MetisSupport.h"
 
-#include "src/Eigen/src/Core/util/ReenableStupidWarnings.h"
+#include "src/Core/util/ReenableStupidWarnings.h"
 
 #endif // EIGEN_METISSUPPORT_MODULE_H

@@ -40,6 +40,13 @@ VectorXcd ReadField() {
 
 int main() {
 
+    unsigned Nsymb    = 1024;           // number of symbols
+    unsigned Nt       = 32;             // number of discrete points per symbol
+    unsigned symbrate = 10;             // symbol rate [Gbaud].
+    unsigned Nsamp    = Nsymb * Nt;     // overall number of samples
+    unsigned fs       = symbrate * Nt;  // sampling rate [GHz]
+    InitGstate(Nsamp, fs);              // initialize global variables: Nsamp and fs.
+
     E e;
     e.field = ReadField();
     Fiber fiber;

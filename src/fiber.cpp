@@ -35,13 +35,6 @@ tuple<double, unsigned long, E> SSFM(E e, Linear *linear, const VectorXd &betat,
 
 tuple<Out, E> FiberTransmit(E &e, Fiber fiber) {
 
-    unsigned Nsymb    = 1024;           // number of symbols
-    unsigned Nt       = 32;             // number of discrete points per symbol
-    unsigned symbrate = 10;             // symbol rate [Gbaud].
-    unsigned Nsamp    = Nsymb * Nt;     // overall number of samples
-    unsigned fs       = symbrate * Nt;  // sampling rate [GHz]
-    InitGstate(Nsamp, fs);              // initialize global variables: Nsamp and fs.
-
     chrono::steady_clock::time_point begin = chrono::steady_clock::now();  // Start time
 
     double dgd;

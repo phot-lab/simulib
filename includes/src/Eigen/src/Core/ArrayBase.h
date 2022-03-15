@@ -89,11 +89,11 @@ template<typename Derived> class ArrayBase
 
 #define EIGEN_CURRENT_STORAGE_BASE_CLASS Eigen::ArrayBase
 #define EIGEN_DOC_UNARY_ADDONS(X,Y)
-#   include "src/Eigen/src/plugins/MatrixCwiseUnaryOps.h"
-#   include "src/Eigen/src/plugins/ArrayCwiseUnaryOps.h"
-#   include "src/Eigen/src/plugins/CommonCwiseBinaryOps.h"
-#   include "src/Eigen/src/plugins/MatrixCwiseBinaryOps.h"
-#   include "src/Eigen/src/plugins/ArrayCwiseBinaryOps.h"
+#   include "../plugins/MatrixCwiseUnaryOps.h"
+#   include "../plugins/ArrayCwiseUnaryOps.h"
+#   include "../plugins/CommonCwiseBinaryOps.h"
+#   include "../plugins/MatrixCwiseBinaryOps.h"
+#   include "../plugins/ArrayCwiseBinaryOps.h"
 #   ifdef EIGEN_ARRAYBASE_PLUGIN
 #     include EIGEN_ARRAYBASE_PLUGIN
 #   endif

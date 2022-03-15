@@ -1,1 +1,1 @@
-add_library(Library STATIC tools.cpp init_gstate.cpp globals.cpp fft.cpp fiber.cpp)
+add_library(Library STATIC tools.cpp init_gstate.cpp globals.cpp fft.cpp fiber.cpp digital_mod.cpp pattern.cpp pat2samp.cpp)

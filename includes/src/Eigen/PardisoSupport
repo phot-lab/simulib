@@ -10,7 +10,7 @@
 
 #include "SparseCore"
 
-#include "src/Eigen/src/Core/util/DisableStupidWarnings.h"
+#include "src/Core/util/DisableStupidWarnings.h"
 
 #include <mkl_pardiso.h>
 
@@ -28,8 +28,8 @@
   * 
   */
 
-#include "src/Eigen/src/PardisoSupport/PardisoSupport.h"
+#include "src/PardisoSupport/PardisoSupport.h"
 
-#include "src/Eigen/src/Core/util/ReenableStupidWarnings.h"
+#include "src/Core/util/ReenableStupidWarnings.h"
 
 #endif // EIGEN_PARDISOSUPPORT_MODULE_H

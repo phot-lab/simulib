@@ -10,7 +10,7 @@
 
 #include "Core"
 
-#include "src/Eigen/src/Core/util/DisableStupidWarnings.h"
+#include "src/Core/util/DisableStupidWarnings.h"
 
 /** \defgroup Householder_Module Householder module
   * This module provides Householder transformations.
@@ -20,10 +20,10 @@
   * \endcode
   */
 
-#include "src/Eigen/src/Householder/Householder.h"
-#include "src/Eigen/src/Householder/HouseholderSequence.h"
-#include "src/Eigen/src/Householder/BlockHouseholder.h"
+#include "src/Householder/Householder.h"
+#include "src/Householder/HouseholderSequence.h"
+#include "src/Householder/BlockHouseholder.h"
 
-#include "src/Eigen/src/Core/util/ReenableStupidWarnings.h"
+#include "src/Core/util/ReenableStupidWarnings.h"
 
 #endif // EIGEN_HOUSEHOLDER_MODULE_H

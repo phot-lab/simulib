@@ -123,9 +123,9 @@ template<typename Derived> class MatrixBase
 
 #define EIGEN_CURRENT_STORAGE_BASE_CLASS Eigen::MatrixBase
 #define EIGEN_DOC_UNARY_ADDONS(X,Y)
-#   include "src/Eigen/src/plugins/CommonCwiseBinaryOps.h"
-#   include "src/Eigen/src/plugins/MatrixCwiseUnaryOps.h"
-#   include "src/Eigen/src/plugins/MatrixCwiseBinaryOps.h"
+#   include "../plugins/CommonCwiseBinaryOps.h"
+#   include "../plugins/MatrixCwiseUnaryOps.h"
+#   include "../plugins/MatrixCwiseBinaryOps.h"
 #   ifdef EIGEN_MATRIXBASE_PLUGIN
 #     include EIGEN_MATRIXBASE_PLUGIN
 #   endif

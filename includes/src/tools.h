@@ -46,11 +46,23 @@ vector<T> EigenToSTL(const Matrix<T, Dynamic, 1> &v) {
     return vec;
 }
 
+template<typename T>
+MatrixXi GetUnit(Matrix<T, Dynamic, Dynamic> m) {
+    return MatrixXi::Ones(m.rows(), m.cols());
+}
+
 VectorXd Diff(const VectorXd &v);
 VectorXd RemoveZero(const VectorXd &a, const VectorXd &b);
 VectorXd GenStepVector(const double &start, const double &step, const double &end);
 VectorXd GenVector(const double &start, const double &end);
-MatrixXcd FastExp(const MatrixXcd& m);
+MatrixXcd FastExp(const MatrixXcd &m);
+tuple<int, int> continued_fraction_approximation(double f);
+string find_alpha(const string &s);
+string find_digit(const string &s);
+double StrToDigit(const string &s);
+string DigitToStr(double digit);
+double UniformRng();
+RowVectorXi DecToBin(unsigned long dec, int n_bit);
 
 
 #endif  // OPTICALAB_TOOLS_H
