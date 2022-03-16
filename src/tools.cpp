@@ -89,3 +89,14 @@ VectorXd RemoveZero(const VectorXd &a, const VectorXd &b) {
 MatrixXcd FastExp(const MatrixXcd& m) {
     return (m * 1i).array().exp();
 }
+
+MatrixXd GetLambda(const double lamc, const double spac, const int Nch){
+    double freq = LIGHT_SPEED / lamc; // [GHz]
+    double DF = pow(spac / lamc,2) * LIGHT_SPEED;
+    MatrixXd lambda(1,Nch);
+    for(int i = 0; i < Nch; i++){
+        double freqt = freq + DF*(i - (Nch+1) / 2);
+        lambda(1,Nch-i-1) = LIGHT_SPEED / freqt;
+    }
+    return lambda;
+}

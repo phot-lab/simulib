@@ -28,7 +28,6 @@ struct Gstate {
     unsigned long NSAMP;
     VectorXd FN;
     double SAMP_FREQ;
-    VectorXd FSAMPLING;
 };
 
 #endif //OPTICALAB_COMMON_TYPES_H

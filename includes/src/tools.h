@@ -51,6 +51,7 @@ VectorXd RemoveZero(const VectorXd &a, const VectorXd &b);
 VectorXd GenStepVector(const double &start, const double &step, const double &end);
 VectorXd GenVector(const double &start, const double &end);
 MatrixXcd FastExp(const MatrixXcd& m);
+MatrixXd GetLambda(const double lamc, const double spac, const int Nch);
 
 
 #endif  // OPTICALAB_TOOLS_H
