@@ -22,9 +22,46 @@
 
 using namespace Eigen;
 
-VectorXd FFTShift(const VectorXd &in);
-VectorXd IFFTShift(const VectorXd &in);
+// The implementation of FFTShift referred to this website
+// https://kerpanic.wordpress.com/2016/04/08/more-efficient-ifftshift-fftshift-in-c/
+template<typename T>
+Matrix<T, Dynamic, 1> FFTShift(const Matrix<T, Dynamic, 1> &in) {
+    Index size = in.rows();
+    Matrix<T, Dynamic, 1> out(size, 1);
+
+    unsigned pivot = (size % 2 == 0) ? (size / 2) : ((size + 1) / 2);
+    unsigned rightHalf = size - pivot;
+    unsigned leftHalf = pivot;
+
+    memcpy(out.data(), in.data() + pivot, sizeof(double) * rightHalf);
+    memcpy(out.data() + rightHalf, in.data(), sizeof(double) * leftHalf);
+    return out;
+}
+
+template<typename T>
+Matrix<T, Dynamic, 1> IFFTShift(const Matrix<T, Dynamic, 1> &in) {
+    Index size = in.rows();
+    Matrix<T, Dynamic, 1> out(size, 1);
+
+    unsigned pivot = (size % 2 == 0) ? (size / 2) : ((size - 1) / 2);
+    unsigned rightHalf = size - pivot;
+    unsigned leftHalf = pivot;
+
+    memcpy(out.data(), in.data() + pivot, sizeof(double) * rightHalf);
+    memcpy(out.data() + rightHalf, in.data(), sizeof(double) * leftHalf);
+    return out;
+}
+
 VectorXcd FFT(const VectorXcd &in);
+
 VectorXcd IFFT(const VectorXcd &in);
+
+MatrixXcd FFT2D(const MatrixXcd &in);
+
+MatrixXcd IFFT2D(const MatrixXcd &in);
+
+MatrixXcd FFTCol(const MatrixXcd &in);
+
+MatrixXcd IFFTCol(const MatrixXcd &in);
 
 #endif  // SIMULIB_FFT_H

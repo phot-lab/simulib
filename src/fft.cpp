@@ -24,34 +24,6 @@
 using namespace Eigen;
 using namespace std;
 
-// The implementation of FFTShift referred to this website
-// https://kerpanic.wordpress.com/2016/04/08/more-efficient-ifftshift-fftshift-in-c/
-VectorXd FFTShift(const VectorXd &in) {
-    Index size = in.size();
-    VectorXd out(size);
-
-    unsigned pivot     = (size % 2 == 0) ? (size / 2) : ((size + 1) / 2);
-    unsigned rightHalf = size - pivot;
-    unsigned leftHalf  = pivot;
-
-    memcpy(out.data(), in.data() + pivot, sizeof(double) * rightHalf);
-    memcpy(out.data() + rightHalf, in.data(), sizeof(double) * leftHalf);
-    return out;
-}
-
-VectorXd IFFTShift(const VectorXd &in) {
-    Index size = in.size();
-    VectorXd out(size);
-
-    unsigned pivot     = (size % 2 == 0) ? (size / 2) : ((size - 1) / 2);
-    unsigned rightHalf = size - pivot;
-    unsigned leftHalf  = pivot;
-
-    memcpy(out.data(), in.data() + pivot, sizeof(double) * rightHalf);
-    memcpy(out.data() + rightHalf, in.data(), sizeof(double) * leftHalf);
-    return out;
-}
-
 // The implementation of FFT referred to this website
 // https://stackoverflow.com/questions/29805767/is-there-any-simple-c-example-on-how-to-use-intel-mkl-fft
 VectorXcd FFT(const VectorXcd &in) {
@@ -81,5 +53,41 @@ VectorXcd IFFT(const VectorXcd &in) {
     status = DftiComputeBackward(descriptor, (void *) in.data(), out.data());             // Compute the Forward FFT
     status = DftiFreeDescriptor(&descriptor);                                             // Free the descriptor
 
+    return out;
+}
+
+MatrixXcd FFT2D(const MatrixXcd &in) {
+    MatrixXcd out(in.rows(), in.cols());
+    DFTI_DESCRIPTOR_HANDLE descriptor;
+    MKL_LONG status;
+    MKL_LONG dim_sizes[2] = {in.rows(), in.cols()};
+
+    // Note after each operation status should be 0 on success
+    status = DftiCreateDescriptor(&descriptor, DFTI_DOUBLE, DFTI_COMPLEX, 2, dim_sizes);  // Specify size and precision
+    status = DftiSetValue(descriptor, DFTI_PLACEMENT, DFTI_NOT_INPLACE);                  // Out of place FFT
+    status = DftiCommitDescriptor(descriptor);                                            // Finalize the descriptor
+    status = DftiComputeForward(descriptor, (void *) in.data(), out.data());              // Compute the Forward FFT
+    status = DftiFreeDescriptor(&descriptor);                                             // Free the descriptor
+
+    return out;
+}
+
+MatrixXcd IFFT2D(const MatrixXcd &in) {
+    return FFT2D(in) / in.size();
+}
+
+MatrixXcd FFTCol(const MatrixXcd &in) {
+    MatrixXcd out(in.rows(), in.cols());
+    for (Index i = 0; i < in.cols(); ++i) {
+        out.col(i) = FFT(in.col(i));
+    }
+    return out;
+}
+
+MatrixXcd IFFTCol(const MatrixXcd &in) {
+    MatrixXcd out(in.rows(), in.cols());
+    for (Index i = 0; i < in.cols(); ++i) {
+        out.col(i) = IFFT(in.col(i));
+    }
     return out;
 }

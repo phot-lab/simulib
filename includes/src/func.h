@@ -22,4 +22,6 @@
 
 tuple<Out, E> FiberTransmit(E &e, Fiber fiber);
 
+tuple<MatrixXcd, double> DigitalMod(MatrixXi pat_bin, double symbrate, Par par, string mod_format, string ptype);
+
 #endif  // SIMULIB_FUNC_H

@@ -55,13 +55,13 @@ VectorXd Diff(const VectorXd &v) {
     return v.block(1, 0, block_size, 1) - v.block(0, 0, block_size, 1);
 }
 
-VectorXd GenVector(const double &start, const double &end) {
+RowVectorXd GenVector(const double &start, const double &end) {
     if (start > end) {
-        VectorXd vec(0);
+        RowVectorXd vec(0);
         return vec;
     }
     auto size = (unsigned long) ((end - start) + 1);
-    VectorXd res(size);
+    RowVectorXd res(size);
     double cur = start;
     for (unsigned i = 0; i < size; ++i) {
         res(i) = cur++;
@@ -69,9 +69,9 @@ VectorXd GenVector(const double &start, const double &end) {
     return res;
 }
 
-VectorXd GenStepVector(const double &start, const double &step, const double &end) {
+RowVectorXd GenStepVector(const double &start, const double &step, const double &end) {
     auto size = (unsigned long) ((end - start) / step + 1);
-    VectorXd res(size);
+    RowVectorXd res(size);
     double cur = start;
     for (unsigned i = 0; i < size; ++i) {
         res(i) = cur;
@@ -99,10 +99,10 @@ tuple<int, int> continued_fraction_approximation(double f) {
         return make_tuple(0, 1);
     bool flag = false;
     if (f <= 0) {
-        f    = -f;
+        f = -f;
         flag = true;
     }
-    double tol   = 1.e-6 * f;
+    double tol = 1.e-6 * f;
     int Aprev[2] = {1, 0};
     int Bprev[2] = {0, 1};
 
@@ -112,16 +112,13 @@ tuple<int, int> continued_fraction_approximation(double f) {
         x -= n;
         x = 1 / x;
 
-        // B = numerator
-        // A = denominator
-
         int denominator = Aprev[0] + n * Aprev[1];
-        Aprev[0]        = Aprev[1];
-        Aprev[1]        = denominator;
+        Aprev[0] = Aprev[1];
+        Aprev[1] = denominator;
 
         int numerator = Bprev[0] + n * Bprev[1];
-        Bprev[0]      = Bprev[1];
-        Bprev[1]      = numerator;
+        Bprev[0] = Bprev[1];
+        Bprev[1] = numerator;
 
         double approx = (double) numerator / (double) denominator;
         if (fabs(approx - f) < tol) {
@@ -184,11 +181,29 @@ double UniformRng() {
 }
 
 RowVectorXi DecToBin(unsigned long dec, int n_bit) {
-    auto binary      = std::bitset<64>(dec).to_string();  // to binary
+    auto binary = std::bitset<64>(dec).to_string();  // to binary
     size_t bin_index = binary.size() - 1;
     RowVectorXi res(n_bit);
     for (Index i = res.size() - 1; i >= 0; --i) {
         res[i] = binary[bin_index--] - '0';
     }
     return res;
+}
+
+unsigned long HashStr(const string &s) {
+    hash<string> hash;
+    return hash(s);
+}
+
+void SetValueIndices(VectorXd &vec, const VectorXd &indices, double value) {
+    for (const auto &item: indices) {
+        vec((Index) (item - 1)) = value;
+    }
+}
+
+void ReplaceVector(VectorXd &vec, VectorXd indices, VectorXd replace) {
+    assert(indices.size() == replace.size());
+    for (Index i = 0; i < indices.size(); ++i) {
+        vec((Index) indices(i)) = replace(i);
+    }
 }

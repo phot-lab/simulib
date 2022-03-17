@@ -25,5 +25,6 @@
 #include "src/globals.h"
 #include "src/tools.h"
 #include "src/func.h"
+#include "src/dsp_tools.h"
 
 #endif  // SIMULIB_SIMULIB_H

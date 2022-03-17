@@ -23,6 +23,7 @@
 #include <cstring>
 #include <string>
 #include <vector>
+#include <iostream>
 
 #define ERROR(...) error(__FILE__, __LINE__, __func__, __VA_ARGS__)
 #define WARNING(...) warning(__FILE__, __LINE__, __func__, __VA_ARGS__)
@@ -31,6 +32,7 @@ using namespace std;
 using namespace Eigen;
 
 void error(const string &filename, const int &line, const string &func_name, const string &s);
+
 void warning(const string &filename, const int &line, const string &func_name, const string &s);
 
 bool IsInt(const double &n);
@@ -51,18 +53,68 @@ MatrixXi GetUnit(Matrix<T, Dynamic, Dynamic> m) {
     return MatrixXi::Ones(m.rows(), m.cols());
 }
 
+template<typename T>
+void Print2DArray(T *array, size_t rows, size_t cols) {
+    for (size_t i = 0; i < rows; ++i) {
+        for (size_t j = 0; j < cols; ++j) {
+            cout << array[i][j] << " ";
+        }
+        cout << endl;
+    }
+}
+
+template<typename T>
+void PrintArray(T *array, size_t length) {
+    for (size_t i = 0; i < length; ++i) {
+        cout << array[i] << " ";
+    }
+    cout << endl;
+}
+
 VectorXd Diff(const VectorXd &v);
+
 VectorXd RemoveZero(const VectorXd &a, const VectorXd &b);
-VectorXd GenStepVector(const double &start, const double &step, const double &end);
-VectorXd GenVector(const double &start, const double &end);
+
+RowVectorXd GenStepVector(const double &start, const double &step, const double &end);
+
+RowVectorXd GenVector(const double &start, const double &end);
+
 MatrixXcd FastExp(const MatrixXcd &m);
+
 tuple<int, int> continued_fraction_approximation(double f);
+
 string find_alpha(const string &s);
+
 string find_digit(const string &s);
+
 double StrToDigit(const string &s);
+
 string DigitToStr(double digit);
+
 double UniformRng();
+
 RowVectorXi DecToBin(unsigned long dec, int n_bit);
+
+unsigned long HashStr(const string &s);
+
+void SetValueIndices(VectorXd &vec, const VectorXd &indices, double value);
+
+void ReplaceVector(VectorXd &vec, VectorXd indices, VectorXd replace);
+
+template<typename T>
+Matrix<T, Dynamic, 1> MatrixToVector(Matrix<T, Dynamic, Dynamic> m) {
+    return Map<Matrix<T, Dynamic, 1>>(m.data(), m.cols() * m.rows());
+}
+
+template<typename T>
+Matrix<T, Dynamic, 1> TruncateVector(Matrix<T, Dynamic, 1> &vec, VectorXd indices) {
+    assert(vec.size() >= indices.size());
+    Matrix<T, Dynamic, 1> truncate(indices.size());
+    for (Index i = 0; i < indices.size(); ++i) {
+        truncate[i] = vec((Index) indices[i]);
+    }
+    return truncate;
+}
 
 
 #endif  // OPTICALAB_TOOLS_H

@@ -16,7 +16,6 @@
  * Supported by: National Key Research and Development Program of China
  */
 
-#include "engine.h"
 #include <bitset>
 #include <cmath>
 #include <complex>
@@ -24,10 +23,19 @@
 #include <fstream>
 #include <iostream>
 #include <random>
+#include <mkl.h>
 #include <regex>
+#include <string>
 #include <simulib>
+#include <functional>
 
 using namespace std;
 
+
 int main() {
+    VectorXcd v(7);
+    v << 1, 2, 3, 4, 5, 6, 7;
+//    v=v.array().asin();
+    v = v.array().asin();
+    cout << v.conjugate() << endl;
 }
