@@ -8,8 +8,6 @@
 using namespace std;
 using namespace Eigen;
 
-// Linear * linear=new ScalarLinear();
-
 struct Linear {
     bool is_scalar;
     bool is_unique;

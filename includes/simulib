@@ -27,5 +27,6 @@
 #include "src/func.h"
 #include "src/dsp_tools.h"
 #include "src/matrix_tools.h"
+#include "src/laser_source.h"
 
 #endif  // SIMULIB_SIMULIB_H

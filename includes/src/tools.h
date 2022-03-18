@@ -71,5 +71,7 @@ RowVectorXi DecToBin(unsigned long dec, int n_bit);
 
 unsigned long HashStr(const string &s);
 
+MatrixXd GetLambda(const double lamc, const double spac, const int Nch);
+
 
 #endif  // OPTICALAB_TOOLS_H
