@@ -25,5 +25,6 @@
 #include "src/globals.h"
 #include "src/tools.h"
 #include "src/func.h"
+#include "src/laser_source.h"
 
 #endif  // SIMULIB_SIMULIB_H

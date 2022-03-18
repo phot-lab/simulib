@@ -16,33 +16,9 @@
 * Supported by: National Key Research and Development Program of China
 */
 #include <simulib>
-#include <float.h>
-#include <iostream>
-#include <random>
-#include <ctime>
 using namespace Eigen;
 using namespace std;
 
-
-/**
- * @brief laser source simulation option
- * @param pol: polarization schema. 'single' only the x-polarization is created,otherwise even
- *             the y-polarization is created and set equal to zero in absence of noise.
- * @param linewidth: It can be a scalar or a vector of the same length of the wavelengths. A Wiener
- *                   phase noise with such a linewidth is added to the phase of  E.
- * @param n0: the one-sided spectral density [dB/GHz] of a Gaussian complex noise added to the laser field.
- */
-struct Option{
-    int pol = dual; // single or dual
-    RowVectorXd linewidth; // [GHz]
-    double n0; // [dB/GHz]
-    enum{dual=2 , single=1};
-};
-
-struct EMultimode{
-    MatrixXd lambda;
-    MatrixXcd field;
-};
 
 /**
  * @brief It is a ideal laser source module with single channel in dual-polarization. It would compute x-polarizations
@@ -52,7 +28,7 @@ struct EMultimode{
  *             while the even columns the y-polarizations samples. [nm]
  * @return E_multimode: a struct of wave, details in fiber_types.h.
  */
-EMultimode lasersource (RowVectorXd ptx, RowVectorXd lam)
+EMultimode laser_source (RowVectorXd ptx, RowVectorXd lam)
 {
     unsigned long Nsamp = gstate.NSAMP;     // Sampling frequency
     int Npow = ptx.size();                  // Number of the power of transmit channel
@@ -76,7 +52,8 @@ EMultimode lasersource (RowVectorXd ptx, RowVectorXd lam)
 
     // Compute every light wavelength and its time samples of the electric field
     light.lambda = lam;
-    light.field = MatrixXd::Zero(Nsamp,Nch*Npol);
+    light.field = MatrixXcd(Nsamp,Nch*Npol);
+    light.field.setZero();
     for (int i = 0; i < Nch; i++)
         light.field.col(i*Npol) = VectorXd(Nsamp).setConstant(sqrt(power(i)));
 
@@ -93,7 +70,7 @@ EMultimode lasersource (RowVectorXd ptx, RowVectorXd lam)
  * @param option: compute option. Details in laser_source.h
  * @return E_multimode: a struct of wave, details in fiber_types.h
  */
-EMultimode lasersource(RowVectorXd ptx, RowVectorXd lam, Option options){
+EMultimode laser_source(RowVectorXd ptx, RowVectorXd lam, Option options){
     EMultimode light;                               // transmit light
     unsigned long Nsamp = gstate.NSAMP;     // Sampling frequency
     int Npow = ptx.size();                  // Number of the power of transmit channel
@@ -176,7 +153,7 @@ EMultimode lasersource(RowVectorXd ptx, RowVectorXd lam, Option options){
  * @param NLAMBDA: number of carriers.
  * @return E_multimode: a struct of wave, details in fiber_types.h
  */
-EMultimode lasersource(RowVectorXd ptx, double lam, double spac, int NLAMBDA){
+EMultimode laser_source(RowVectorXd ptx, double lam, double spac, int NLAMBDA){
     EMultimode light;                               // transmit light
     unsigned long Nsamp = gstate.NSAMP;     // Sampling frequency
     int Npow = ptx.size();                  // Number of the power of transmit channel
@@ -214,7 +191,7 @@ EMultimode lasersource(RowVectorXd ptx, double lam, double spac, int NLAMBDA){
  * @param option: compute option. Details in laser_source.h.
  * @return E: a struct of wave, details in fiber_types.h
  */
-EMultimode lasersource(RowVectorXd ptx, double lam, double spac, int NLAMBDA, Option options){
+EMultimode laser_source(RowVectorXd ptx, RowVectorXd lam, double spac, int NLAMBDA, Option options){
     EMultimode light;                               // transmit light
     unsigned long Nsamp = gstate.NSAMP;                // Sampling frequency
     int Npow = ptx.size();                  // Number of the power of transmit channel
@@ -243,7 +220,7 @@ EMultimode lasersource(RowVectorXd ptx, double lam, double spac, int NLAMBDA, Op
     else
         power = ptx;
 
-    light.lambda = GetLambda(lam,spac,Nch);
+    light.lambda = GetLambda(lam(0),spac,Nch);
     light.field = MatrixXd::Zero(Nsamp,Nch*Npol);
     for (int i = 0; i < Nch; i++)
         light.field.col(i*Npol) = VectorXd(Nsamp).setConstant(sqrt(power(i)));
@@ -288,77 +265,102 @@ EMultimode lasersource(RowVectorXd ptx, double lam, double spac, int NLAMBDA, Op
     return light;
 }
 
-int main(){
-//    MatrixXd x(5,5);
-//    x.setConstant(1);
-//    std::cout<<x<<endl;
-//    MatrixXd y = MatrixXd::Constant(5,5,2);
-//    std::cout<<y<<endl;
-//    x.col(0) = y;
-//    x.col(1) = VectorXd(5).setConstant(1);
-//    std::cout<<x<<endl;
-//    std::cout<<x.cwiseProduct(y)<<endl;
-//    x(0,0) = 0;
-//    std::cout<<x<<endl;
+int Sum (double n, ...)
+{
+    int n2,n3;
+    va_list vl;
+    std::cout<<"step 1"<<endl;
+    va_start(vl,n);
+    n2 = va_arg(vl,int);
+    n3 = va_arg(vl,int);
+    float n4 = 0;
+//    n4 = va_arg(vl,float );
 
-//    std::cout<<x.setRandom()<<endl;
-//    x.setZero();
-//    std::cout<<x<<endl;
-//    std::cout<<x.setRandom()<<endl<<endl;
-//
-//
-//    static default_random_engine engine(time(0));
-//    static normal_distribution<double> n(0,1);
-//    MatrixXd y = MatrixXd::Zero(5,5).unaryExpr([](double dummy){return n(engine);});
-//    std::cout<<"Normal distribution matrix:"<<endl<<y<<endl;
-//    std::cout<<"Mean:"<<y.mean()<<endl;
-
-//    x = y;
-//    for(int i = 0; i < x.rows()-1; i++){
-//        x.row(i+1) += x.row(i);
-//    }
-//    std::cout<<"Cumsum = "<<endl<<x<<endl;
-//    std::cout<<y(0)<<endl;
-
-//    VectorXd c(10);
-//    c.setLinSpaced(0,9);
-//    cout<< std::complex<double>( 2 + 1i) * c<<endl<<endl;
-
-//    MatrixXcd d(3,3);
-//    d.setOnes();
-//    d = FastExp(d);
-//    cout<<d<<endl;
-
-//    MatrixXd e(3,3);
-//    e.setOnes();
-//    RowVectorXd f(3);
-//    f.setOnes();
-//    std::cout<<f*e<<endl;
-
-//    MatrixXd randMatrix1 = MatrixXd::Zero(3,3).unaryExpr([](double dummy){return n(engine);});
-//    MatrixXd randMatrix2 = MatrixXd::Zero(3,3).unaryExpr([](double dummy){return n(engine);});
-//    MatrixXcd randComplexMatrix(3,3);
-//    randComplexMatrix.real()<<randMatrix1;
-//    randComplexMatrix.imag()<<randMatrix2;
-//    std::cout<<randComplexMatrix<<endl;
-//    RowVectorXd sigma(3);
-//    sigma.setConstant(2);
-//    std::cout<<sigma * randComplexMatrix<<endl;
-    gstate.SAMP_FREQ = 3;
-    gstate.NSAMP = 2;
-    RowVectorXd xx(3);
-    RowVectorXd yy(3);
-    xx << 1,2,3;
-    yy << 1,2,3;
-    std::cout<<xx<<endl;
-    std::cout<<yy<<endl;
-
-    Option option;
-    option.pol = 2;
-    option.linewidth = xx;
-    option.n0 = 0.5;
-    EMultimode light = lasersource(xx,yy, option);
-    std::cout<<"lambda = "<<light.lambda<<endl;
-    std::cout<<"field = "<<light.field<<endl;
-
+    std::cout<<n+n2+n3<<endl;
+    std::cout<<n4<<endl;
+    va_end(vl);
+    return n+n2+n3;
 }
+
+//int main(){
+////    MatrixXd x(5,5);
+////    x.setConstant(1);
+////    std::cout<<x<<endl;
+////    MatrixXd y = MatrixXd::Constant(5,5,2);
+////    std::cout<<y<<endl;
+////    x.col(0) = y;
+////    x.col(1) = VectorXd(5).setConstant(1);
+////    std::cout<<x<<endl;
+////    std::cout<<x.cwiseProduct(y)<<endl;
+////    x(0,0) = 0;
+////    std::cout<<x<<endl;
+//
+////    std::cout<<x.setRandom()<<endl;
+////    x.setZero();
+////    std::cout<<x<<endl;
+////    std::cout<<x.setRandom()<<endl<<endl;
+////
+////
+////    static default_random_engine engine(time(0));
+////    static normal_distribution<double> n(0,1);
+////    MatrixXd y = MatrixXd::Zero(5,5).unaryExpr([](double dummy){return n(engine);});
+////    std::cout<<"Normal distribution matrix:"<<endl<<y<<endl;
+////    std::cout<<"Mean:"<<y.mean()<<endl;
+//
+////    x = y;
+////    for(int i = 0; i < x.rows()-1; i++){
+////        x.row(i+1) += x.row(i);
+////    }
+////    std::cout<<"Cumsum = "<<endl<<x<<endl;
+////    std::cout<<y(0)<<endl;
+//
+////    VectorXd c(10);
+////    c.setLinSpaced(0,9);
+////    cout<< std::complex<double>( 2 + 1i) * c<<endl<<endl;
+//
+////    MatrixXcd d(3,3);
+////    d.setOnes();
+////    d = FastExp(d);
+////    cout<<d<<endl;
+//
+////    MatrixXd e(3,3);
+////    e.setOnes();
+////    RowVectorXd f(3);
+////    f.setOnes();
+////    std::cout<<f*e<<endl;
+//
+////    MatrixXd randMatrix1 = MatrixXd::Zero(3,3).unaryExpr([](double dummy){return n(engine);});
+////    MatrixXd randMatrix2 = MatrixXd::Zero(3,3).unaryExpr([](double dummy){return n(engine);});
+////    MatrixXcd randComplexMatrix(3,3);
+////    randComplexMatrix.real()<<randMatrix1;
+////    randComplexMatrix.imag()<<randMatrix2;
+////    std::cout<<randComplexMatrix<<endl;
+////    RowVectorXd sigma(3);
+////    sigma.setConstant(2);
+////    std::cout<<sigma * randComplexMatrix<<endl;
+////    gstate.SAMP_FREQ = 3;
+////    gstate.NSAMP = 2;
+//    RowVectorXd xx(3);
+//    RowVectorXd yy(3);
+////    xx << 1,2,3;
+////    yy << 1,2,3;
+////    laser_source(xx,yy,xx,yy,xx);
+////    std::cout<<xx<<endl;
+////    std::cout<<yy<<endl;
+////
+//    Option option;
+//    option.pol = 2;
+//    option.linewidth = xx;
+//    option.n0 = 0.5;
+//    EMultimode light = laser_source(xx,yy, option);
+//    std::cout<<"lambda = "<<light.lambda<<endl;
+//    std::cout<<"field = "<<light.field<<endl;
+////    double num1 = 5.0;
+////    int num2 = 6, num3 = 7;
+////    std::cout<<Sum(num1,num2,num3)<<endl;
+//}
+
+
+
+
+
