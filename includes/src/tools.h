@@ -38,22 +38,6 @@ void warning(const string &filename, const int &line, const string &func_name, c
 bool IsInt(const double &n);
 
 template<typename T>
-Matrix<T, Dynamic, 1> STLToEigen(vector<T> v) {
-    return Map<Matrix<T, Dynamic, 1>, Unaligned>(v.data(), (long) v.size());
-}
-
-template<typename T>
-vector<T> EigenToSTL(const Matrix<T, Dynamic, 1> &v) {
-    vector<T> vec(v.data(), v.data() + v.size());
-    return vec;
-}
-
-template<typename T>
-MatrixXi GetUnit(Matrix<T, Dynamic, Dynamic> m) {
-    return MatrixXi::Ones(m.rows(), m.cols());
-}
-
-template<typename T>
 void Print2DArray(T *array, size_t rows, size_t cols) {
     for (size_t i = 0; i < rows; ++i) {
         for (size_t j = 0; j < cols; ++j) {
@@ -71,16 +55,6 @@ void PrintArray(T *array, size_t length) {
     cout << endl;
 }
 
-VectorXd Diff(const VectorXd &v);
-
-VectorXd RemoveZero(const VectorXd &a, const VectorXd &b);
-
-RowVectorXd GenStepVector(const double &start, const double &step, const double &end);
-
-RowVectorXd GenVector(const double &start, const double &end);
-
-MatrixXcd FastExp(const MatrixXcd &m);
-
 tuple<int, int> continued_fraction_approximation(double f);
 
 string find_alpha(const string &s);
@@ -96,25 +70,6 @@ double UniformRng();
 RowVectorXi DecToBin(unsigned long dec, int n_bit);
 
 unsigned long HashStr(const string &s);
-
-void SetValueIndices(VectorXd &vec, const VectorXd &indices, double value);
-
-void ReplaceVector(VectorXd &vec, VectorXd indices, VectorXd replace);
-
-template<typename T>
-Matrix<T, Dynamic, 1> MatrixToVector(Matrix<T, Dynamic, Dynamic> m) {
-    return Map<Matrix<T, Dynamic, 1>>(m.data(), m.cols() * m.rows());
-}
-
-template<typename T>
-Matrix<T, Dynamic, 1> TruncateVector(Matrix<T, Dynamic, 1> &vec, VectorXd indices) {
-    assert(vec.size() >= indices.size());
-    Matrix<T, Dynamic, 1> truncate(indices.size());
-    for (Index i = 0; i < indices.size(); ++i) {
-        truncate[i] = vec((Index) indices[i]);
-    }
-    return truncate;
-}
 
 
 #endif  // OPTICALAB_TOOLS_H

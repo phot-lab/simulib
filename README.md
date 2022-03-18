@@ -1,30 +1,34 @@
 ## SimuLib
 
-数学仿真运算库，包括了光纤传输仿真软件的三个主要模块：
+Optical simulation library, which now includes three main modules of optical transmission simulation software:
 
-* 发射器模块
-* 光纤模块
-* 接收器模块
+* Modulator
+* Fiber
+* Receiver
 
-以下是该项目基本的目录结构：
+The directory structure of the project:
 
 ```
-SimuLib（项目root目录）
-├── .clang-format（C++代码格式化配置文件）
-├── CMakeLists.txt（项目总CMake配置文件）
-├── includes/（头文件目录）
-├── lib/（静态库和动态库）
-├── src/（源代码文件目录）
-└── test/（测试用例目录）
+SimuLib (root directory)
+├── .clang-format (c++ coding style formatting file)
+├── CMakeLists.txt (global cmake config file)
+├── includes/ (header files directory)
+├── lib/ (static and dynamic libraries)
+├── bin/ (executable files)
+├── src/ (source code files)
+├── example/ (example code)
+└── test/ (test cases)
 ```
 
-### 构建本项目需要安装的内容
+### Example
 
-* MKL（Intel提供的数学运算库）：[MKL下载地址](https://www.intel.com/content/www/us/en/developer/tools/oneapi/base-toolkit-download.html)
-* Eigen 3.* ([Installing without using CMake](https://eigen.tuxfamily.org/dox/GettingStarted.html))
+
+
+### Requirements of different Operating Systems
 
 #### Prerequisites for MacOS (Big Sur or higher)
-1. Install the Intel® oneAPI Base Toolkit by [m_BaseKit_p_2022.1.0.92_offline.dmg](https://registrationcenter-download.intel.com/akdlm/irc_nas/18342/m_BaseKit_p_2022.1.0.92_offline.dmg
+
+1. Install the Intel® oneAPI Base Toolkit: [m_BaseKit_p_2022.1.0.92_offline.dmg](https://registrationcenter-download.intel.com/akdlm/irc_nas/18342/m_BaseKit_p_2022.1.0.92_offline.dmg
    ).
 
 2. Install GNU GCC 7.* by `brew install gcc@7`, see [Homebrew](https://formulae.brew.sh/formula/gcc@7#default) for detail. Then check the installation
@@ -130,6 +134,6 @@ Do you want to continue? [Y/n]
 ### Build instructions
 1. Firstly, build the 'Library'. Check the output file under ./lib/
 
-2. Then, build the test case one by one, such as 'MKLTest', 'FiberTest'.
+2. Then, build the test cases such as 'MKLTest', 'FiberTest'. They are all mutually independent.
 
 3. Run the test case.

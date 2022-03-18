@@ -19,7 +19,7 @@
 #include <cmath>
 #include <iostream>
 #include <regex>
-#include <simulib>
+#include "simulib"
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -48,49 +48,6 @@ void warning(const string &filename, const int &line, const string &func_name, c
 
 bool IsInt(const double &n) {
     return abs(round(n) - n) < 0.000000000000001;
-}
-
-VectorXd Diff(const VectorXd &v) {
-    auto block_size = v.size() - 1;
-    return v.block(1, 0, block_size, 1) - v.block(0, 0, block_size, 1);
-}
-
-RowVectorXd GenVector(const double &start, const double &end) {
-    if (start > end) {
-        RowVectorXd vec(0);
-        return vec;
-    }
-    auto size = (unsigned long) ((end - start) + 1);
-    RowVectorXd res(size);
-    double cur = start;
-    for (unsigned i = 0; i < size; ++i) {
-        res(i) = cur++;
-    }
-    return res;
-}
-
-RowVectorXd GenStepVector(const double &start, const double &step, const double &end) {
-    auto size = (unsigned long) ((end - start) / step + 1);
-    RowVectorXd res(size);
-    double cur = start;
-    for (unsigned i = 0; i < size; ++i) {
-        res(i) = cur;
-        cur += step;
-    }
-    return res;
-}
-
-VectorXd RemoveZero(const VectorXd &a, const VectorXd &b) {
-    assert(a.size() == b.size());
-    vector<double> vec;
-    for (Index i = 0; i < a.size(); ++i) {
-        if (b[i] != 0) vec.emplace_back(a[i]);
-    }
-    return STLToEigen(vec);
-}
-
-MatrixXcd FastExp(const MatrixXcd &m) {
-    return (m * 1i).array().exp();
 }
 
 // https://gist.github.com/mikeando/7073d62385a34a61a6f7
@@ -195,15 +152,4 @@ unsigned long HashStr(const string &s) {
     return hash(s);
 }
 
-void SetValueIndices(VectorXd &vec, const VectorXd &indices, double value) {
-    for (const auto &item: indices) {
-        vec((Index) (item - 1)) = value;
-    }
-}
 
-void ReplaceVector(VectorXd &vec, VectorXd indices, VectorXd replace) {
-    assert(indices.size() == replace.size());
-    for (Index i = 0; i < indices.size(); ++i) {
-        vec((Index) indices(i)) = replace(i);
-    }
-}

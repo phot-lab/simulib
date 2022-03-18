@@ -16,7 +16,7 @@
  * Supported by: National Key Research and Development Program of China
  */
 
-#include <simulib>
+#include "simulib"
 
 using namespace std;
 
@@ -26,9 +26,9 @@ MatrixXcd ElecSrc(MatrixXcd level, string ptype, Par par, unsigned long n_symb, 
 
 tuple<MatrixXcd, double> DigitalMod(MatrixXi pat_bin, double symbrate, Par par, string mod_format, string ptype) {
     unsigned long n_fft = gstate.NSAMP;
-    double n_tini = gstate.SAMP_FREQ / symbrate;  // Wished samples per symbol
-    Index n_symb = max(pat_bin.rows(), pat_bin.cols());
-    double n_symbupdw = ceil((n_fft - 1) / n_tini);
+    double n_tini       = gstate.SAMP_FREQ / symbrate;  // Wished samples per symbol
+    Index n_symb        = max(pat_bin.rows(), pat_bin.cols());
+    double n_symbupdw   = ceil((n_fft - 1) / n_tini);
     if (n_symb < n_symbupdw) {
         ERROR("Too few symbols to fill the required number of samples.");
     } else if (n_symb > n_symbupdw) {
@@ -69,7 +69,9 @@ tuple<MatrixXcd, double> DigitalMod(MatrixXi pat_bin, double symbrate, Par par, 
             // required by a M.ach-Zehnder modulator. However, to preserve the
             // energy, the Mach-Zehnder must know such a normalization factor.
             VectorXcd real = (elec.real() / normf).array().asin().conjugate();
-            VectorXcd imag = (elec.imag() / normf).array().asin().conjugate() * 1i;
+            VectorXcd imag = (elec.imag() / normf).array().asin().conjugate();
+            imag           = imag * 1i;
+            elec           = real + imag;
         }
     } else {
         normf = 1;
@@ -84,7 +86,7 @@ MatrixXcd ElecSrc(MatrixXcd level, string ptype, Par par, unsigned long n_symb, 
     bool flag;
     if (ptype != "rc" && ptype != "rootrc" && ptype != "userfir" && ptype != "dirac" && ptype != "rect" &&
         ptype != "costails") {
-        flag = true; // the pulse is the impulse response of myfilter
+        flag = true;  // the pulse is the impulse response of myfilter
     } else {
         flag = false;
     }
@@ -94,7 +96,7 @@ MatrixXcd ElecSrc(MatrixXcd level, string ptype, Par par, unsigned long n_symb, 
     }
 
     MatrixXcd levelu = UpSample(level, nsps);
-    levelu.conservativeResize(nsps, n_symb); // truncate if necessary
+    levelu.conservativeResize(nsps, n_symb);  // truncate if necessary
 
     MatrixXcd levelu_fft = FFTCol(levelu);
 
@@ -102,24 +104,25 @@ MatrixXcd ElecSrc(MatrixXcd level, string ptype, Par par, unsigned long n_symb, 
     if (flag) {
         // 未完成
     } else {
-        VectorXcd elpulse = PulseDesign(ptype, nsps, n_symb, par); // single pulse
-        hfir = FFT(FFTShift(elpulse));
-        if (ptype == "rootrc") { // square-root raised cosine
+        VectorXcd elpulse = PulseDesign(ptype, nsps, n_symb, par);  // single pulse
+        hfir              = FFT(FFTShift(elpulse));
+        if (ptype == "rootrc") {  // square-root raised cosine
             hfir = (hfir *
-                    nsps).cwiseSqrt(); // Note: because I'm using filters normalized in peak spectrum (as if symbol time was 1)
+                    nsps)
+                           .cwiseSqrt();  // Note: because I'm using filters normalized in peak spectrum (as if symbol time was 1)
         }
     }
 
-    MatrixXcd elec = IFFTCol(levelu_fft.cwiseProduct(hfir)); // create PAM signal
+    MatrixXcd elec = IFFTCol(levelu_fft.cwiseProduct(hfir));  // create PAM signal
 
     Index length = max(elec.rows(), elec.cols());
-    if (length < n_fft) {
+    if (length < (long) n_fft) {
         ERROR("It is impossible to get the desired number of samples with the given pattern and sampling rate");
-    } else if (length > n_fft) {
+    } else if (length > (long) n_fft) {
         VectorXcd temp = MatrixToVector(elec);
-        VectorXd ceil = GenStepVector(1, nd, n_fft * nd).array().ceil();
-        temp = TruncateVector(temp, ceil);
-        elec = temp;
+        VectorXd ceil  = GenStepVector(1, nd, n_fft * nd).array().ceil();
+        temp           = TruncateVector(temp, ceil);
+        elec           = temp;
     }
 
     FormatInfo format_info{};
@@ -127,14 +130,16 @@ MatrixXcd ElecSrc(MatrixXcd level, string ptype, Par par, unsigned long n_symb, 
     // normalize to unit power
     if (par.norm == "iid") {
         // power spectra of linearly modulated signals
-        format_info = ModFormatInfo(par.mod_format);
-        double varak = format_info.symb_var; // expected variance
-        double meanak = format_info.symb_mean; // expected value or mean
-        avge = (varak * hfir.cwiseAbs2().sum() / n_symb + pow(abs(meanak), 2) * TruncateVector(hfir,
-                                                                                               GenStepVector(1,
-                                                                                                             n_symb,
-                                                                                                             hfir.size() -
-                                                                                                             1)).cwiseAbs2().sum()) /
+        format_info   = ModFormatInfo(par.mod_format);
+        double varak  = format_info.symb_var;   // expected variance
+        double meanak = format_info.symb_mean;  // expected value or mean
+        avge          = (varak * hfir.cwiseAbs2().sum() / n_symb + pow(abs(meanak), 2) * TruncateVector(hfir,
+                                                                                                        GenStepVector(1,
+                                                                                                                      n_symb,
+                                                                                                                      hfir.size() -
+                                                                                                                              1))
+                                                                                        .cwiseAbs2()
+                                                                                        .sum()) /
                pow(nsps, 2);
     } else if (par.norm == "mean") {
         avge = elec.cwiseAbs2().mean();
@@ -160,13 +165,13 @@ Option ResolveOption(string ptype) {
 
 VectorXd PulseDesign(string ptype, int nsps, unsigned long n_symb, Par par) {
     VectorXd elpulse = VectorXd::Zero(nsps, n_symb);
-    Option option = ResolveOption(ptype);
+    Option option    = ResolveOption(ptype);
     switch (option) {
         case Costails: {
-            double nl = round(0.5 * (1 - par.rolloff) * par.duty * nsps); // start index of cos roll-off
-            double nr = par.duty * nsps - nl - 1; // end index of cos roll-off
-            RowVectorXd nmark = GenVector(1, nl); // indices where the pulse is 1
-            RowVectorXd ncos = GenVector(nl, nr); // transition region of cos roll-off
+            double nl         = round(0.5 * (1 - par.rolloff) * par.duty * nsps);  // start index of cos roll-off
+            double nr         = par.duty * nsps - nl - 1;                          // end index of cos roll-off
+            RowVectorXd nmark = GenVector(1, nl);                                  // indices where the pulse is 1
+            RowVectorXd ncos  = GenVector(nl, nr);                                 // transition region of cos roll-off
             SetValueIndices(elpulse, nsps * n_symb / 2 + nmark.array(), 1);
             double hperiod = par.duty * nsps - 2 * nl;
             if (hperiod != 0) {
@@ -176,7 +181,7 @@ VectorXd PulseDesign(string ptype, int nsps, unsigned long n_symb, Par par) {
             }
             VectorXd replace = TruncateVector(elpulse, GenVector(nsps * n_symb / 2 + 1, nsps * n_symb)).reverse();
             VectorXd indices = GenVector(1, nsps * n_symb / 2);
-            ReplaceVector(elpulse, indices, replace); // first half of the pulse
+            ReplaceVector(elpulse, indices, replace);  // first half of the pulse
             break;
         }
         default:

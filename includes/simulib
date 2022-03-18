@@ -26,5 +26,6 @@
 #include "src/tools.h"
 #include "src/func.h"
 #include "src/dsp_tools.h"
+#include "src/matrix_tools.h"
 
 #endif  // SIMULIB_SIMULIB_H

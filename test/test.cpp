@@ -31,11 +31,6 @@
 
 using namespace std;
 
-
 int main() {
-    VectorXcd v(7);
-    v << 1, 2, 3, 4, 5, 6, 7;
-//    v=v.array().asin();
-    v = v.array().asin();
-    cout << v.conjugate() << endl;
+
 }

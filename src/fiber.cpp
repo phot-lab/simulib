@@ -20,7 +20,7 @@
 #include <chrono>
 #include <cmath>
 #include <iostream>
-#include <simulib>
+#include "simulib"
 
 using namespace std;
 using namespace Eigen;

@@ -18,7 +18,7 @@
 
 #include <iostream>
 #include <mkl.h>
-#include <simulib>
+#include "simulib"
 #include <vector>
 
 using namespace Eigen;

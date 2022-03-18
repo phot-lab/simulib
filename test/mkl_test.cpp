@@ -26,10 +26,12 @@ using namespace std;
 
 int main() {
 
-    chrono::steady_clock::time_point begin = chrono::steady_clock::now();
+    const size_t length = 100;
 
-    MatrixXd m1 = MatrixXd ::Random(1000, 1000);
-    MatrixXd m2 = MatrixXd ::Random(1000, 1000);
+    MatrixXd m1 = MatrixXd ::Random(length, length);
+    MatrixXd m2 = MatrixXd ::Random(length, length);
+
+    chrono::steady_clock::time_point begin = chrono::steady_clock::now();
 
     MatrixXd m3 = m1 * m2;
 
