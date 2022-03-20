@@ -20,11 +20,11 @@
 
 using namespace std;
 
-VectorXd PulseDesign(string ptype, int nsps, unsigned long n_symb, Par par);
+VectorXd pulseDesign(string ptype, int nsps, unsigned long n_symb, Par par);
 
-MatrixXcd ElecSrc(MatrixXcd level, string ptype, Par par, unsigned long n_symb, int nsps, int nd, unsigned long n_fft);
+MatrixXcd elecSrc(MatrixXcd level, string ptype, Par par, unsigned long n_symb, int nsps, int nd, unsigned long n_fft);
 
-tuple<MatrixXcd, double> DigitalMod(MatrixXi pat_bin, double symbrate, Par par, string mod_format, string ptype) {
+tuple<MatrixXcd, double> digitalModulator(MatrixXi pat_bin, double symbrate, Par par, string mod_format, string ptype) {
     unsigned long n_fft = gstate.NSAMP;
     double n_tini       = gstate.SAMP_FREQ / symbrate;  // Wished samples per symbol
     Index n_symb        = max(pat_bin.rows(), pat_bin.cols());
@@ -33,7 +33,7 @@ tuple<MatrixXcd, double> DigitalMod(MatrixXi pat_bin, double symbrate, Par par, 
         ERROR("Too few symbols to fill the required number of samples.");
     } else if (n_symb > n_symbupdw) {
         n_symb = n_symbupdw;
-        WARNING("Too many symbols. Pattern truncated to %d symbols.");
+        WARNING("Too many symbols. pattern truncated to %d symbols.");
     }
     int nt, nd;
     tie(nt, nd) = continued_fraction_approximation(n_tini);  // oversample, then downsample at the end
@@ -53,7 +53,7 @@ tuple<MatrixXcd, double> DigitalMod(MatrixXi pat_bin, double symbrate, Par par, 
     MatrixXcd level = Pat2Samp(pat_bin, mod_format).cast<complex<double>>();
 
     // 2: create a linearly modulated digital signal
-    MatrixXcd elec = ElecSrc(level, ptype, par, n_symb, nsps, nd, n_fft);
+    MatrixXcd signal = elecSrc(level, ptype, par, n_symb, nsps, nd, n_fft);
 
     // 3: resample if necessary
     if (nt != nsps) {
@@ -61,26 +61,26 @@ tuple<MatrixXcd, double> DigitalMod(MatrixXi pat_bin, double symbrate, Par par, 
     }
 
     // 4: Perform pre-emphasis
-    double normf;
+    double norm;
     if (par.emph != "") {
-        normf = max(elec.real().array().abs().maxCoeff(), elec.imag().array().abs().maxCoeff());
+        norm = max(signal.real().array().abs().maxCoeff(), signal.imag().array().abs().maxCoeff());
         if (par.emph == "asin") {
-            // thanks to normf, the result of each asin is for sure real, as
+            // thanks to norm, the result of each asin is for sure real, as
             // required by a M.ach-Zehnder modulator. However, to preserve the
             // energy, the Mach-Zehnder must know such a normalization factor.
-            VectorXcd real = (elec.real() / normf).array().asin().conjugate();
-            VectorXcd imag = (elec.imag() / normf).array().asin().conjugate();
+            VectorXcd real = (signal.real() / norm).array().asin().conjugate();
+            VectorXcd imag = (signal.imag() / norm).array().asin().conjugate();
             imag           = imag * 1i;
-            elec           = real + imag;
+            signal         = real + imag;
         }
     } else {
-        normf = 1;
+        norm = 1;
     }
 
-    return make_tuple(elec, normf);
+    return make_tuple(signal, norm);
 }
 
-MatrixXcd ElecSrc(MatrixXcd level, string ptype, Par par, unsigned long n_symb, int nsps, int nd, unsigned long n_fft) {
+MatrixXcd elecSrc(MatrixXcd level, string ptype, Par par, unsigned long n_symb, int nsps, int nd, unsigned long n_fft) {
     // The idea is the following: the pattern is first upsampled to par.nsps samples per symbol, and then filtered to create the PAM signal.
 
     bool flag;
@@ -96,7 +96,9 @@ MatrixXcd ElecSrc(MatrixXcd level, string ptype, Par par, unsigned long n_symb, 
     }
 
     MatrixXcd levelu = UpSample(level, nsps);
-    levelu.conservativeResize(nsps, n_symb);  // truncate if necessary
+    //    levelu.conservativeResize(1, n_symb * nsps);  // truncate if necessary
+    VectorXcd temp = MatrixToVector(levelu);
+    levelu         = TruncateVector(temp, GenVector(1, n_symb * nsps));  // truncate if necessary
 
     MatrixXcd levelu_fft = FFTCol(levelu);
 
@@ -104,7 +106,7 @@ MatrixXcd ElecSrc(MatrixXcd level, string ptype, Par par, unsigned long n_symb, 
     if (flag) {
         // 未完成
     } else {
-        VectorXcd elpulse = PulseDesign(ptype, nsps, n_symb, par);  // single pulse
+        VectorXcd elpulse = pulseDesign(ptype, nsps, n_symb, par);  // single pulse
         hfir              = FFT(FFTShift(elpulse));
         if (ptype == "rootrc") {  // square-root raised cosine
             hfir = (hfir *
@@ -113,7 +115,10 @@ MatrixXcd ElecSrc(MatrixXcd level, string ptype, Par par, unsigned long n_symb, 
         }
     }
 
-    MatrixXcd elec = IFFTCol(levelu_fft.cwiseProduct(hfir));  // create PAM signal
+    for (Index i = 0; i < levelu_fft.cols(); ++i) {
+        levelu_fft.col(i) = levelu_fft.col(i).cwiseProduct(hfir);
+    }
+    MatrixXcd elec = IFFTCol(levelu_fft);  // create PAM signal
 
     Index length = max(elec.rows(), elec.cols());
     if (length < (long) n_fft) {
@@ -130,7 +135,7 @@ MatrixXcd ElecSrc(MatrixXcd level, string ptype, Par par, unsigned long n_symb, 
     // normalize to unit power
     if (par.norm == "iid") {
         // power spectra of linearly modulated signals
-        format_info   = ModFormatInfo(par.mod_format);
+        format_info   = modFormatInfo(par.mod_format);
         double varak  = format_info.symb_var;   // expected variance
         double meanak = format_info.symb_mean;  // expected value or mean
         avge          = (varak * hfir.cwiseAbs2().sum() / n_symb + pow(abs(meanak), 2) * TruncateVector(hfir,
@@ -152,20 +157,20 @@ MatrixXcd ElecSrc(MatrixXcd level, string ptype, Par par, unsigned long n_symb, 
     return elec / sqrt(avge);
 }
 
-enum Option {
+enum PTypeOption {
     Costails,
     Userfir
 };
 
-Option ResolveOption(string ptype) {
+PTypeOption ResolveOption(string ptype) {
     if (ptype == "costails") return Costails;
     if (ptype == "userfir") return Userfir;
     return Costails;
 }
 
-VectorXd PulseDesign(string ptype, int nsps, unsigned long n_symb, Par par) {
-    VectorXd elpulse = VectorXd::Zero(nsps, n_symb);
-    Option option    = ResolveOption(ptype);
+VectorXd pulseDesign(string ptype, int nsps, unsigned long n_symb, Par par) {
+    VectorXd elpulse   = VectorXd::Zero(nsps * n_symb, 1);
+    PTypeOption option = ResolveOption(ptype);
     switch (option) {
         case Costails: {
             double nl         = round(0.5 * (1 - par.rolloff) * par.duty * nsps);  // start index of cos roll-off

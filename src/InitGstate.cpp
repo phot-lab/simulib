@@ -20,7 +20,7 @@
 
 using namespace std;
 
-void InitGstate(double Nsamp, double Fs) {
+void initGstate(double Nsamp, double Fs) {
     if (!IsInt(Nsamp))
         ERROR("The number of samples must be an integer");
     gstate.NSAMP     = (unsigned long) Nsamp;  // Number of samples

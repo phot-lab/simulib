@@ -26,3 +26,4 @@ add_compile_options("-DMKL_ILP64") # MacOS or Linux
 
 add_subdirectory(src)
 add_subdirectory(test)
+add_subdirectory(example)

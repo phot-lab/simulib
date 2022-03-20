@@ -30,4 +30,6 @@ struct Gstate {
     double SAMP_FREQ;
 };
 
+void initGstate(double Nsamp, double Fs);
+
 #endif //OPTICALAB_COMMON_TYPES_H

@@ -18,7 +18,7 @@
 #ifndef OPTICALAB_GLOBALS_H
 #define OPTICALAB_GLOBALS_H
 
-#include "common_types.h"
+#include "CommonTypes.h"
 
 extern const double LIGHT_SPEED;      // Speed of light in vacuum [m/s]
 extern const double PLANK_CONST;      // Planck's constant [J*s]

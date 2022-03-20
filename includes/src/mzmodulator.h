@@ -4,13 +4,13 @@
 
 #ifndef SIMULIB_MZMODULATOR_H
 #define SIMULIB_MZMODULATOR_H
+#include "simulib"
+#include <ctime>
 #include <float.h>
 #include <iostream>
-#include <random>
-#include <ctime>
-#include <stdarg.h>
 #include <limits.h>
-#include "simulib"
+#include <random>
+#include <stdarg.h>
 
 /**
  * @brief laser source simulation option
@@ -28,18 +28,20 @@
  * @param vpi: voltage yielding a phase shift of pi in each MZ branch.
  * @param norm: normalization factor
  */
-struct Mzoption{
+struct Mzoption {
     double exratio = INT_MAX;
-    double bias = INT_MAX;
-    double biasl = INT_MAX;
-    double biasu = INT_MAX;
-    enum{push_push=0, push_pull=1};
-    int mode = push_pull;
-    int nch = 1;
-    double vpi = INT_MAX;
+    double bias    = INT_MAX;
+    double biasl   = INT_MAX;
+    double biasu   = INT_MAX;
+    enum { push_push = 0,
+           push_pull = 1 };
+    int mode    = push_pull;
+    int nch     = 1;
+    double vpi  = INT_MAX;
     double norm = INT_MAX;
 };
 
-EMultimode mzmodulator(EMultimode light, VectorXd modsig,Mzoption options);
+E mzmodulator(E light, VectorXcd modSig);
+E mzmodulator(E light, VectorXd modsig, Mzoption options);
 
 #endif  // SIMULIB_MZMODULATOR_H

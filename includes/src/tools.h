@@ -57,11 +57,11 @@ void PrintArray(T *array, size_t length) {
 
 tuple<int, int> continued_fraction_approximation(double f);
 
-string find_alpha(const string &s);
+string findAlpha(const string &s);
 
-string find_digit(const string &s);
+string findDigit(const string &s);
 
-double StrToDigit(const string &s);
+double strToDigit(const string &s);
 
 string DigitToStr(double digit);
 

@@ -12,16 +12,28 @@
  */
 /**
  * Author: Chunyu Li
- * Created: 2022/3/11
+ * Created: 2022/3/19
  * Supported by: National Key Research and Development Program of China
  */
-#ifndef SIMULIB_FUNC_H
-#define SIMULIB_FUNC_H
+#ifndef PATTERN_H
+#define PATTERN_H
 
-#include "fiber_types.h"
+#include "CommonTypes.h"
+#include "Fiber.h"
 
-tuple<Out, E> FiberTransmit(E &e, Fiber fiber);
+struct Par {
+    string emph       = "asin";
+    int nsps          = 0;
+    string norm       = "iid";
+    int par           = 0;
+    string mod_format = "";
+    double rolloff    = 0;
+    double duty       = 1;
+};
 
-tuple<MatrixXcd, double> DigitalMod(MatrixXi pat_bin, double symbrate, Par par, string mod_format, string ptype);
+tuple<VectorXi, MatrixXi> pattern(unsigned nsymb, const string &ptype);
+tuple<VectorXi, MatrixXi> pattern(unsigned nsymb, const string &ptype, string array[]);
 
-#endif  // SIMULIB_FUNC_H
+MatrixXi Pat2Samp(const MatrixXi &pat_bin, const string &modFormat);
+
+#endif  // PATTERN_H

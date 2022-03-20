@@ -17,23 +17,23 @@
  */
 
 
+#include "simulib"
 #include <chrono>
 #include <cmath>
 #include <iostream>
-#include "simulib"
 
 using namespace std;
 using namespace Eigen;
 
 tuple<Linear *, double> CheckFiber(const E &e, Fiber &fiber);
-tuple<double, double> FirstStep(VectorXcd field, Fiber fiber);
-double NextStep(const VectorXcd &field, const Fiber &fiber, double dz_old);
+tuple<double, double> FirstStep(MatrixXcd field, Fiber fiber);
+double NextStep(const MatrixXcd &field, const Fiber &fiber, double dz_old);
 tuple<RowVectorXd, RowVectorXd> CheckStep(double zprop, double dz, double len_corr);
-VectorXcd LinearStep(Linear *linear, VectorXd betat, RowVectorXd dzb, RowVectorXd nindex, VectorXcd field);
+MatrixXcd LinearStep(Linear *linear, VectorXd betat, RowVectorXd dzb, RowVectorXd nindex, MatrixXcd field);
 VectorXcd NonlinearStep(VectorXcd field, Fiber fiber, double dz);
 tuple<double, unsigned long, E> SSFM(E e, Linear *linear, const VectorXd &betat, Fiber fiber);
 
-tuple<Out, E> FiberTransmit(E &e, Fiber fiber) {
+tuple<Out, E> fiberTransmit(E &e, Fiber fiber) {
 
     chrono::steady_clock::time_point begin = chrono::steady_clock::now();  // Start time
 
@@ -43,7 +43,7 @@ tuple<Out, E> FiberTransmit(E &e, Fiber fiber) {
 
     /************************ SET-UP PARAMETERS ************************/
 
-    fiber.alpha_lin = (log(10) * (1e-4)) * fiber.attenuation;  // [m^-1]
+    fiber.alphaLinear = (log(10) * (1e-4)) * fiber.attenuation;  // [m^-1]
 
     /******* Linear Parameters *******/
 
@@ -61,9 +61,9 @@ tuple<Out, E> FiberTransmit(E &e, Fiber fiber) {
     MatrixXd betat;
     Index omega_size = omega.size();
 
-    double domega_i  = 2 * M_PI * LIGHT_SPEED * (1. / e.lambda - 1. / fiber.lambda);  // [1/ns]
+    double domega_i  = 2 * M_PI * LIGHT_SPEED * (1. / e.lambda(0, 0) - 1. / fiber.lambda);  // [1/ns]
     unsigned int ipm = 0;
-    if (fiber.is_unique) {                   // Unique field
+    if (fiber.isUnique) {                    // Unique field
         double beta1  = b1 + dgd / 2;        // [ns/m] @ E.lambda
         double beta2  = b2 + b3 * domega_i;  // beta2 [ns^2/m] @ E.lambda
         double beta3  = b3;                  // [ns^3/m] @ E.lambda
@@ -76,8 +76,8 @@ tuple<Out, E> FiberTransmit(E &e, Fiber fiber) {
             betat.conservativeResize(omega_size, 2);
             betat.col(ipm + 1) = betat.col(ipm) - dgd / 2 * omega;
         }
-    } else {                                   // Separate field
-        double freq = LIGHT_SPEED / e.lambda;  // carrier frequencies [GHz]
+    } else {                                         // Separate field
+        double freq = LIGHT_SPEED / e.lambda(0, 0);  // carrier frequencies [GHz]
         // Separate field 情况还没有实现
     }
 
@@ -87,7 +87,7 @@ tuple<Out, E> FiberTransmit(E &e, Fiber fiber) {
     if (!fiber.is_kerr) {
         gam = 0;
     } else {
-        gam = (2 * M_PI * fiber.nonlinear_index) / (e.lambda * fiber.effective_area * 1e18);  // Nonlinear coeff [1/mW/m]
+        gam = (2 * M_PI * fiber.nonlinearIndex) / (e.lambda(0, 0) * fiber.effectiveArea * 1e18);  // Nonlinear coeff [1/mW/m]
         if (isinf(gam))
             ERROR("Cannot continue: not finite nonlinear Kerr coefficient.");
     }
@@ -106,8 +106,8 @@ tuple<Out, E> FiberTransmit(E &e, Fiber fiber) {
     fiber.gam = coeff * gam;  // [1/mW/m], including Manakov correction, if active
 
     if ((fiber.dispersion == 0 && fiber.slope == 0) || fiber.gam == 0) {  // only GVD or only Kerr
-        fiber.dphi_max = INFINITY;
-        fiber.dzmax    = fiber.length;
+        fiber.dphiMax = INFINITY;
+        fiber.dzmax   = fiber.length;
     }
 
     /********** SSFM Propagation **********/
@@ -130,13 +130,13 @@ tuple<double, unsigned long, E> SSFM(E e, Linear *linear, const VectorXd &betat,
     if (fiber.trace) {
         cout << "Stepupd      step #   z [m]" << endl;
     }
-    fiber.chlambda       = e.lambda;
+    fiber.chlambda       = e.lambda(0, 0);
     unsigned long ncycle = 1;                             // number of steps
     double len_corr      = fiber.length / fiber.nplates;  // waveplate length [m]
     double dz, phimax, dzs;
 
     tie(dz, phimax)   = FirstStep(e.field, fiber);
-    double half_alpha = 0.5 * fiber.alpha_lin;  // [1/m]
+    double half_alpha = 0.5 * fiber.alphaLinear;  // [1/m]
     double first_dz   = dz;
     double zprop      = dz;  // running distance [m]
 
@@ -186,12 +186,12 @@ tuple<double, unsigned long, E> SSFM(E e, Linear *linear, const VectorXd &betat,
     // Last Linear step: GVD + birefringence
     tie(dzb, nindex) = CheckStep(fiber.length, hlin, len_corr);
 
-    e.field  = LinearStep(linear, betat, dzb, nindex, e.field);
-    e.lambda = fiber.chlambda;
+    e.field        = LinearStep(linear, betat, dzb, nindex, e.field);
+    e.lambda(0, 0) = fiber.chlambda;
     return make_tuple(first_dz, ncycle, e);
 }
 
-tuple<double, double> FirstStep(VectorXcd field, Fiber fiber) {
+tuple<double, double> FirstStep(MatrixXcd field, Fiber fiber) {
     double step;
     double phimax;
     if (fiber.length == fiber.dzmax) {
@@ -201,23 +201,23 @@ tuple<double, double> FirstStep(VectorXcd field, Fiber fiber) {
         if (fiber.dphi_fwm) {
             fiber.bandwidth = gstate.SAMP_FREQ;
             double spac     = fiber.bandwidth * pow(fiber.chlambda, 2) / LIGHT_SPEED;  // bandwidth in [nm]
-            step            = (fiber.dphi_max / abs(fiber.dispersion) / (2 * M_PI * spac * fiber.bandwidth * 1e-3) * 1e3);
+            step            = (fiber.dphiMax / abs(fiber.dispersion) / (2 * M_PI * spac * fiber.bandwidth * 1e-3) * 1e3);
             if (step > fiber.dzmax)
                 step = fiber.dzmax;
             if (fiber.step_update == "nlp") {                              // nonlinear phase criterion
                 double invLnl = field.cwiseAbs2().maxCoeff() * fiber.gam;  // Max of 1/Lnl [1/m]
                 double leff;
-                if (fiber.alpha_lin == 0)
+                if (fiber.alphaLinear == 0)
                     leff = step;
                 else
-                    leff = (1 - std::exp(-fiber.alpha_lin * step)) / fiber.alpha_lin;
+                    leff = (1 - std::exp(-fiber.alphaLinear * step)) / fiber.alphaLinear;
                 phimax = invLnl * leff;  // recalculate max nonlinear phase [rad] per step
             } else {
-                phimax = fiber.dphi_max;
+                phimax = fiber.dphiMax;
             }
         } else {  // nonlinear phase criterion
             step   = NextStep(field, fiber, NAN);
-            phimax = fiber.dphi_max;
+            phimax = fiber.dphiMax;
         }
     }
     return make_tuple(step, phimax);
@@ -227,11 +227,11 @@ tuple<double, double> FirstStep(VectorXcd field, Fiber fiber) {
 // evaluates the step size of the SSFM. U is the electric field,
 // DZ_OLD is the step used in the previous SSFM cycle.
 
-double NextStep(const VectorXcd &field, const Fiber &fiber, double dz_old) {
+double NextStep(const MatrixXcd &field, const Fiber &fiber, double dz_old) {
     double step;
     if (fiber.is_cle) {  // constant local error (CLE)
         double q = fiber.is_sym ? 3 : 2;
-        step     = dz_old * std::exp(fiber.alpha_lin / q * dz_old);  // [m]
+        step     = dz_old * std::exp(fiber.alphaLinear / q * dz_old);  // [m]
 
     } else {  // nonlinear phase criterion
         double pmax;
@@ -241,16 +241,16 @@ double NextStep(const VectorXcd &field, const Fiber &fiber, double dz_old) {
         } else {
             pmax = field.cwiseAbs2().maxCoeff();
         }
-        double invLnl = pmax * fiber.gam;         // max over channels
-        double leff   = fiber.dphi_max / invLnl;  // effective length [m] of the step
-        double dl     = fiber.alpha_lin * leff;   // ratio effective length/attenuation length
+        double invLnl = pmax * fiber.gam;          // max over channels
+        double leff   = fiber.dphiMax / invLnl;    // effective length [m] of the step
+        double dl     = fiber.alphaLinear * leff;  // ratio effective length/attenuation length
         if (dl >= 1) {
             step = fiber.dzmax;  // [m]
         } else {
-            if (fiber.alpha_lin == 0) {
+            if (fiber.alphaLinear == 0) {
                 step = leff;
             } else {
-                step = -1 / fiber.alpha_lin * std::log(1 - dl);
+                step = -1 / fiber.alphaLinear * std::log(1 - dl);
             }
         }
     }
@@ -289,29 +289,32 @@ tuple<RowVectorXd, RowVectorXd> CheckStep(double zprop, double dz, double len_co
     return make_tuple(dzb, nindex);
 }
 
-VectorXcd LinearStep(Linear *linear, VectorXd betat, RowVectorXd dzb, RowVectorXd nindex, VectorXcd field) {
-    field = FFT(field);
+MatrixXcd LinearStep(Linear *linear, VectorXd betat, RowVectorXd dzb, RowVectorXd nindex, MatrixXcd field) {
+    field = FFTCol(field);
 
     if (linear->is_scalar) {
         auto *scalar_linear = (ScalarLinear *) linear;
         for (Index i = 0; i < dzb.size(); ++i) {  // the step is made of multi-waveplates
-            field = field.cwiseProduct(FastExp((-betat) * dzb[i]));
+            VectorXcd temp = FastExp((-betat) * dzb[i]);
+            for (Index j = 0; j < field.cols(); ++j) {
+                field.col(i) = field.col(i).cwiseProduct(temp);
+            }
         }
     } else {
         // Linear非标量的情况还未实现
     }
-    return IFFT(field);
+    return IFFTCol(field);
 }
 
 VectorXcd NonlinearStep(VectorXcd field, Fiber fiber, double dz) {
     double leff;
-    if (fiber.alpha_lin == 0)
+    if (fiber.alphaLinear == 0)
         leff = dz;
     else
-        leff = (1 - exp(-fiber.alpha_lin * dz)) / fiber.alpha_lin;  // effective length [m] of dz
-    double gamleff = fiber.gam * leff;                              // [1/mW]
-    if (fiber.is_unique) {                                          // UNIQUE FIELD
-        VectorXd phi       = field.cwiseAbs2() * gamleff;           // nl phase [rad].
+        leff = (1 - exp(-fiber.alphaLinear * dz)) / fiber.alphaLinear;  // effective length [m] of dz
+    double gamleff = fiber.gam * leff;                                  // [1/mW]
+    if (fiber.isUnique) {                                               // UNIQUE FIELD
+        VectorXd phi       = field.cwiseAbs2() * gamleff;               // nl phase [rad].
         VectorXcd expi_phi = FastExp(-phi);
         field              = field.cwiseProduct(expi_phi);  // expiphi .* u
 
@@ -331,7 +334,7 @@ tuple<Linear *, double> CheckFiber(const E &e, Fiber &fiber) {
     const double DEF_PHI_NLP     = 0.003;  // Default X.dphimax [rad] for NLP & ~X.dphi1fwm
 
     // Check if Kerr effect is active
-    if (isinf(fiber.effective_area) || (fiber.nonlinear_index == 0)) {
+    if (isinf(fiber.effectiveArea) || (fiber.nonlinearIndex == 0)) {
         fiber.is_kerr = false;
     } else {
         fiber.is_kerr = true;
@@ -350,10 +353,10 @@ tuple<Linear *, double> CheckFiber(const E &e, Fiber &fiber) {
             WARNING("Coupling not possible in scalar propagation");
         if (fiber.pmdpar != 0)
             WARNING("PMD does not exist in scalar propagation: set to 0.");
-        fiber.pmdpar      = 0;
-        fiber.beat_length = 0;
-        fiber.coupling    = "none";  // Coupling impossible with one pol
-    } else {                         // Dual-polarization
+        fiber.pmdpar     = 0;
+        fiber.beatLength = 0;
+        fiber.coupling   = "none";  // Coupling impossible with one pol
+    } else {                        // Dual-polarization
         if (fiber.is_manakov) {
             if (fiber.pmdpar == 0) {
                 fiber.coupling = "none";  // Coupling indeed makes a difference for the Kerr effect of CNLSE
@@ -400,7 +403,7 @@ tuple<Linear *, double> CheckFiber(const E &e, Fiber &fiber) {
         ((ScalarLinear *) linear)->matin = 1;
         ((ScalarLinear *) linear)->db    = 0;
     }
-    linear->is_unique = fiber.is_unique;
+    linear->is_unique = fiber.isUnique;
 
     // SSFM checks
 
@@ -423,15 +426,15 @@ tuple<Linear *, double> CheckFiber(const E &e, Fiber &fiber) {
         // First step parameter value
         if (fiber.dphi_fwm) {
             if (fiber.step_update == "cle") {
-                fiber.dphi_max = DEF_PHI_FWM_CLE;  // CLE
+                fiber.dphiMax = DEF_PHI_FWM_CLE;  // CLE
             } else {
-                fiber.dphi_max = DEF_PHI_FWM_NLP;  // NLP + PhiFWM in 1st step
+                fiber.dphiMax = DEF_PHI_FWM_NLP;  // NLP + PhiFWM in 1st step
             }
             if (fiber.bandwidth == 0) {
-                fiber.dphi_max = fiber.dphi_max * 2.25;  // because in [Mus18] they used the signal bandwidth, x1.5 smaller than the simulation bandwidth.
+                fiber.dphiMax = fiber.dphiMax * 2.25;  // because in [Mus18] they used the signal bandwidth, x1.5 smaller than the simulation bandwidth.
             }
         } else {
-            fiber.dphi_max = DEF_PHI_NLP;  // NLP
+            fiber.dphiMax = DEF_PHI_NLP;  // NLP
         }
     }
 

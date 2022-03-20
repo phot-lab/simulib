@@ -12,23 +12,32 @@
  */
 /**
  * Author: Chunyu Li
- * Created: 2022/3/10
+ * Created: 2022/3/19
  * Supported by: National Key Research and Development Program of China
  */
 
-#ifndef SIMULIB_SIMULIB_H
-#define SIMULIB_SIMULIB_H
+#include <simulib>
 
-#include "src/CommonTypes.h"
-#include "src/FFT.h"
-#include "src/Fiber.h"
-#include "src/Globals.h"
-#include "src/Tools.h"
-#include "src/DSPTools.h"
-#include "src/MatrixTools.h"
-#include "src/LaserSource.h"
-#include "src/Mzmodulator.h"
-#include "src/Pattern.h"
-#include "src/DigitalModulator.h"
+int main(){
+    RowVectorXd xx(3);
+    RowVectorXd yy(3);
+    xx.setConstant(3);
+    yy.setConstant(3);
+    gstate.NSAMP = 1;
+    Option option;
+    option.pol = 2;
+    option.linewidth = xx;
+    option.n0 = 0.5;
+    E light = laserSource(xx, yy);
+    std::cout<<"lambda = "<<light.lambda<<endl;
+    std::cout<<"field = "<<light.field<<endl;
 
-#endif  // SIMULIB_SIMULIB_H
+    VectorXcd modsig(1);
+    modsig.setConstant(1);
+    Mzoption mzoption;
+    light = mzmodulator(light,modsig,mzoption);
+    std::cout<<"lambda = "<<light.lambda<<endl;
+    std::cout<<"field = "<<light.field<<endl;
+
+    return 0;
+}

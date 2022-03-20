@@ -18,13 +18,13 @@
 
 #include <cmath>
 #include <iostream>
+#include <random>
 #include <regex>
 #include <simulib>
+#include <sstream>
 #include <stdexcept>
 #include <string>
 #include <vector>
-#include <sstream>
-#include <random>
 
 using namespace Eigen;
 using namespace std;
@@ -56,10 +56,10 @@ tuple<int, int> continued_fraction_approximation(double f) {
         return make_tuple(0, 1);
     bool flag = false;
     if (f <= 0) {
-        f = -f;
+        f    = -f;
         flag = true;
     }
-    double tol = 1.e-6 * f;
+    double tol   = 1.e-6 * f;
     int Aprev[2] = {1, 0};
     int Bprev[2] = {0, 1};
 
@@ -70,12 +70,12 @@ tuple<int, int> continued_fraction_approximation(double f) {
         x = 1 / x;
 
         int denominator = Aprev[0] + n * Aprev[1];
-        Aprev[0] = Aprev[1];
-        Aprev[1] = denominator;
+        Aprev[0]        = Aprev[1];
+        Aprev[1]        = denominator;
 
         int numerator = Bprev[0] + n * Bprev[1];
-        Bprev[0] = Bprev[1];
-        Bprev[1] = numerator;
+        Bprev[0]      = Bprev[1];
+        Bprev[1]      = numerator;
 
         double approx = (double) numerator / (double) denominator;
         if (fabs(approx - f) < tol) {
@@ -88,7 +88,7 @@ tuple<int, int> continued_fraction_approximation(double f) {
     }
 }
 
-string find_alpha(const string &s) {
+string findAlpha(const string &s) {
     std::smatch m;
     std::regex e("([a-zA-Z]?)");
     string result;
@@ -101,7 +101,7 @@ string find_alpha(const string &s) {
     return result;
 }
 
-string find_digit(const string &s) {
+string findDigit(const string &s) {
     std::smatch m;
     std::regex e("([0-9]?)");
     string result;
@@ -114,7 +114,7 @@ string find_digit(const string &s) {
     return result;
 }
 
-double StrToDigit(const string &s) {
+double strToDigit(const string &s) {
     double res;
     stringstream ss;
     ss << s;
@@ -138,7 +138,7 @@ double UniformRng() {
 }
 
 RowVectorXi DecToBin(unsigned long dec, int n_bit) {
-    auto binary = std::bitset<64>(dec).to_string();  // to binary
+    auto binary      = std::bitset<64>(dec).to_string();  // to binary
     size_t bin_index = binary.size() - 1;
     RowVectorXi res(n_bit);
     for (Index i = res.size() - 1; i >= 0; --i) {
@@ -152,13 +152,13 @@ unsigned long HashStr(const string &s) {
     return hash(s);
 }
 
-MatrixXd GetLambda(const double lamc, const double spac, const int Nch){
-    double freq = LIGHT_SPEED / lamc; // [GHz]
-    double DF = pow(spac / lamc,2) * LIGHT_SPEED;
-    MatrixXd lambda(1,Nch);
-    for(int i = 0; i < Nch; i++){
-        double freqt = freq + DF*(i - (Nch+1) / 2);
-        lambda(1,Nch-i-1) = LIGHT_SPEED / freqt;
+MatrixXd GetLambda(const double lamc, const double spac, const int Nch) {
+    double freq = LIGHT_SPEED / lamc;  // [GHz]
+    double DF   = pow(spac / lamc, 2) * LIGHT_SPEED;
+    MatrixXd lambda(1, Nch);
+    for (int i = 0; i < Nch; i++) {
+        double freqt           = freq + DF * (i - (Nch + 1) / 2);
+        lambda(1, Nch - i - 1) = LIGHT_SPEED / freqt;
     }
     return lambda;
 }

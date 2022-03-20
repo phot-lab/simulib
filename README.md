@@ -22,7 +22,7 @@ SimuLib (root directory)
 
 ### Example
 
-
+There are some code examples under example folder, which can guide those people who are unfamiliar with this library.
 
 ### Requirements of different Operating Systems
 

@@ -22,7 +22,7 @@
 
 using namespace std;
 
-VectorXcd ReadField() {
+VectorXcd readField() {
 
     // Open file in read mode
     ifstream infile;
@@ -45,13 +45,13 @@ int main() {
     unsigned symbrate = 10;             // symbol rate [Gbaud].
     unsigned Nsamp    = Nsymb * Nt;     // overall number of samples
     unsigned fs       = symbrate * Nt;  // sampling rate [GHz]
-    InitGstate(Nsamp, fs);              // initialize global variables: Nsamp and fs.
+    initGstate(Nsamp, fs);              // initialize global variables: Nsamp and fs.
 
     E e;
-    e.field = ReadField();
+    e.field = readField();
     Fiber fiber;
     Out out     = {};
-    tie(out, e) = FiberTransmit(e, fiber);
+    tie(out, e) = fiberTransmit(e, fiber);
     cout << e.field << endl;
 
     return 0;

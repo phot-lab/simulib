@@ -40,7 +40,7 @@ int main() {
     int m, n, k, i, j;
     double alpha, beta;
 
-    const int length = 5000;
+    const int length = 6000;
 
     printf("\n This example computes real matrix C=alpha*A*B+beta*C using \n"
            " Intel(R) MKL function dgemm, where A, B, and  C are matrices and \n"
@@ -83,6 +83,7 @@ int main() {
     MatrixXd m1 = MatrixXd ::Random(length, length);
     MatrixXd m2 = MatrixXd ::Random(length, length);
     MatrixXd m3(length, length);
+
     chrono::steady_clock::time_point begin = chrono::steady_clock::now();
 
     //    printf(" Computing matrix product using Intel(R) MKL dgemm function via CBLAS interface \n\n");

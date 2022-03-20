@@ -21,16 +21,17 @@
 #include <complex>
 #include <cstdlib>
 #include <fstream>
-#include <iostream>
-#include <random>
-#include <mkl.h>
-#include <regex>
-#include <string>
-#include <simulib>
 #include <functional>
+#include <iostream>
+#include <mkl.h>
+#include <random>
+#include <regex>
+#include <simulib>
+#include <string>
 
 using namespace std;
 
 int main() {
-
+    MatrixXd m(3,3);
+    auto x=m.col(0);
 }

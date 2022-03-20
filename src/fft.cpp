@@ -16,9 +16,9 @@
  * Supported by: National Key Research and Development Program of China
  */
 
+#include "simulib"
 #include <iostream>
 #include <mkl.h>
-#include "simulib"
 #include <vector>
 
 using namespace Eigen;

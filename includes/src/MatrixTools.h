@@ -19,8 +19,8 @@
 #define SIMULIB_MATRIX_TOOLS_H
 
 #include "Eigen/Core"
-#include <vector>
 #include <iostream>
+#include <vector>
 
 using namespace std;
 using namespace Eigen;
@@ -65,7 +65,7 @@ Matrix<T, Dynamic, 1> TruncateVector(Matrix<T, Dynamic, 1> &vec, VectorXd indice
     assert(vec.size() >= indices.size());
     Matrix<T, Dynamic, 1> truncate(indices.size());
     for (Index i = 0; i < indices.size(); ++i) {
-        truncate[i] = vec((Index) indices[i]);
+        truncate[i] = vec((Index) indices[i] - 1);
     }
     return truncate;
 }

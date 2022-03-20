@@ -12,23 +12,25 @@
  */
 /**
  * Author: Chunyu Li
- * Created: 2022/3/10
+ * Created: 2022/3/19
  * Supported by: National Key Research and Development Program of China
  */
+#ifndef DIGITALMODULATOR_H
+#define DIGITALMODULATOR_H
 
-#ifndef SIMULIB_SIMULIB_H
-#define SIMULIB_SIMULIB_H
+#include "CommonTypes.h"
+#include "Fiber.h"
 
-#include "src/CommonTypes.h"
-#include "src/FFT.h"
-#include "src/Fiber.h"
-#include "src/Globals.h"
-#include "src/Tools.h"
-#include "src/DSPTools.h"
-#include "src/MatrixTools.h"
-#include "src/LaserSource.h"
-#include "src/Mzmodulator.h"
-#include "src/Pattern.h"
-#include "src/DigitalModulator.h"
+struct FormatInfo {
+    double digit     = 0;
+    double symb_mean = 0;
+    double symb_var  = 0;
+    string alpha     = "";
+    string family    = "";
+};
 
-#endif  // SIMULIB_SIMULIB_H
+FormatInfo modFormatInfo(const string &modFormat);
+
+tuple<MatrixXcd, double> digitalModulator(MatrixXi pat_bin, double symbrate, Par par, string mod_format, string ptype);
+
+#endif  // DIGITALMODULATOR_H
