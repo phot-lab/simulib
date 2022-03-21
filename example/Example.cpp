@@ -16,7 +16,7 @@
  * Supported by: National Key Research and Development Program of China
  */
 
-#include "simulib"
+#include <simulib>
 #include <string>
 
 using namespace std;
@@ -36,7 +36,9 @@ int main() {
     double powerDBM  = 0;       // power [dBm]
 
     RowVectorXd lambda(1);
+    RowVectorXd ptx(1);
     lambda << 1550;  // carrier wavelength [nm]
+    ptx << 3;
 
     /**** Channel parameters ****/
     double dtot = 0;  // residual dispersion per span [ps/nm]
@@ -50,11 +52,14 @@ int main() {
     // Tx side
     RowVectorXd pLin(1);
     pLin << pow(10, powerDBM / 10);  // [mW]
+
     Option option{};
-    option.pol = 1;
+    option.pol       = 1;
+    option.linewidth = ptx;
+    option.n0        = 0.5;
 
     // 光源模块
-    E e = laserSource(pLin, lambda);  // y-pol does not exist
+    E e = laserSource(pLin, lambda, option);  // y-pol does not exist
 
     string array[2] = {"alpha", modFormat};
     VectorXi pat;

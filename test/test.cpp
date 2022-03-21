@@ -32,6 +32,5 @@
 using namespace std;
 
 int main() {
-    MatrixXd m(3,3);
-    auto x=m.col(0);
+    cout << VectorXd(1).setConstant(3) << endl;
 }

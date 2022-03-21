@@ -1,6 +1,20 @@
-//
-// Created by 18301 on 2022/3/18.
-//
+/**
+ * Copyright (c) 2022 Beijing Jiaotong University
+ * OpticaLab is licensed under [Open Source License].
+ * You can use this software according to the terms and conditions of the [Open Source License].
+ * You may obtain a copy of [Open Source License] at: [https://open.source.license/]
+ *
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+ * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+ * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ *
+ * See the [Open Source License] for more details.
+ */
+/**
+ * Author: Shihao Xie
+ * Created: 2022/3/17
+ * Supported by: National Key Research and Development Program of China
+ */
 
 #include "src/Mzmodulator.h"
 
@@ -30,7 +44,7 @@ E mzmodulator(E light, VectorXcd modSig) {
     VectorXd phi_l      = M_PI / 2 * (modSigReal + VectorXd(modSigReal.size()).setConstant(biasl * vpi)) / vpi;
 
     int Npol = 2;
-    if (light.field.size() == light.lambda.size() * 2)
+    if (light.field.cols() == light.lambda.cols())
         Npol = 1;
 
     // Now set polarizations in alternate way
@@ -41,8 +55,8 @@ E mzmodulator(E light, VectorXcd modSig) {
     for (int i = 0; i < Npol; i++) {
         int np = ncols(i);
         for (int j = 0; j < light.field.rows(); j++) {
-            if (light.field(j, i) != complex<double>(0, 0)) {
-                light.field.col(i) = normf * light.field.col(i).cwiseProduct((FastExp(phi_u) + gamma * FastExp(phi_l)) / (1 + gamma));
+            if (light.field(j, np - 1) != complex<double>(0, 0)) {
+                light.field.col(np - 1) = normf * light.field.col(np - 1).cwiseProduct((FastExp(phi_u) + gamma * FastExp(phi_l)) / (1 + gamma));
                 break;
             }
         }
@@ -94,7 +108,7 @@ E mzmodulator(E light, VectorXcd modSig, Mzoption options) {
     }
 
     int Npol = 2;
-    if (light.field.size() == light.lambda.size() * 2)
+    if (light.field.cols() == light.lambda.cols())
         Npol = 1;
 
     // Now set polarizations in alternate way
@@ -105,8 +119,8 @@ E mzmodulator(E light, VectorXcd modSig, Mzoption options) {
     for (int i = 0; i < Npol; i++) {
         int np = ncols(i);
         for (int j = 0; j < light.field.rows(); j++) {
-            if (light.field(j, i) != complex<double>(0, 0)) {
-                light.field.col(i) = normf * light.field.col(i).cwiseProduct((FastExp(phi_u) + gamma * FastExp(phi_l)) / (1 + gamma));
+            if (light.field(j, np - 1) != complex<double>(0, 0)) {
+                light.field.col(np - 1) = normf * light.field.col(np - 1).cwiseProduct((FastExp(phi_u) + gamma * FastExp(phi_l)) / (1 + gamma));
                 break;
             }
         }

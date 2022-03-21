@@ -9,15 +9,16 @@ Optical simulation library, which now includes three main modules of optical tra
 The directory structure of the project:
 
 ```
-SimuLib (root directory)
-├── .clang-format (c++ coding style formatting file)
-├── CMakeLists.txt (global cmake config file)
-├── includes/ (header files directory)
-├── lib/ (static and dynamic libraries)
-├── bin/ (executable files)
-├── src/ (source code files)
-├── example/ (example code)
-└── test/ (test cases)
+SimuLib              (root directory)
+├── .clang-format    (c++ coding style formatting file)
+├── CMakeLists.txt   (global cmake config file)
+├── includes/        (header files directory)
+├── lib/             (static and dynamic libraries)
+├── bin/             (executable files)
+├── src/             (source code files)
+├── example/         (example code)
+├── docs/            (documents of the project)
+└── test/            (test cases)
 ```
 
 ### Example
@@ -28,10 +29,12 @@ There are some code examples under example folder, which can guide those people 
 
 #### Prerequisites for MacOS (Big Sur or higher)
 
-1. Install the Intel® oneAPI Base Toolkit: [m_BaseKit_p_2022.1.0.92_offline.dmg](https://registrationcenter-download.intel.com/akdlm/irc_nas/18342/m_BaseKit_p_2022.1.0.92_offline.dmg
+1. Install the Intel® oneAPI Base
+   Toolkit: [m_BaseKit_p_2022.1.0.92_offline.dmg](https://registrationcenter-download.intel.com/akdlm/irc_nas/18342/m_BaseKit_p_2022.1.0.92_offline.dmg
    ).
 
-2. Install GNU GCC 7.* by `brew install gcc@7`, see [Homebrew](https://formulae.brew.sh/formula/gcc@7#default) for detail. Then check the installation
+2. Install GNU GCC 7.* by `brew install gcc@7`, see [Homebrew](https://formulae.brew.sh/formula/gcc@7#default) for
+   detail. Then check the installation
 
 ```shell
 $ gcc-7 --version
@@ -47,10 +50,15 @@ This is free software; see the source for copying conditions.  There is NO
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 ```
 
-3. Configure `CLion > Preference > Build, Execution, Deployment > Toolchains`, add profile with C compiler (path: `/usr/local/Cellar/gcc@7/7.5.0_4/bin/gcc-7`) and C++ compiler (path: `/usr/local/Cellar/gcc@7/7.5.0_4/bin/g++-7`). Then move the new profile to the top as default.
+3. Configure `CLion > Preference > Build, Execution, Deployment > Toolchains`, add profile with C compiler (
+   path: `/usr/local/Cellar/gcc@7/7.5.0_4/bin/gcc-7`) and C++ compiler (
+   path: `/usr/local/Cellar/gcc@7/7.5.0_4/bin/g++-7`). Then move the new profile to the top as default.
 
 #### Prerequisites for Ubuntu 18.04
-1. (Optional) Recommend installation of Qt5 denpendencys by following this [link](https://wiki.qt.io/Building_Qt_5_from_Git)
+
+1. (Optional) Recommend installation of Qt5 denpendencys by following
+   this [link](https://wiki.qt.io/Building_Qt_5_from_Git)
+
 ```
 $ sudo apt-get build-dep qt5-default
 $ sudo apt-get install libxcb-xinerama0-dev
@@ -63,6 +71,7 @@ $ sudo apt install libclang-6.0-dev llvm-6.0
 ```
 
 2. GCC 7.5 should be distributed with Ubuntu 18.04 by default. Check the GCC version.
+
 ```
 $ gcc --version
 gcc (Ubuntu 7.5.0-3ubuntu1~18.04) 7.5.0
@@ -77,7 +86,9 @@ This is free software; see the source for copying conditions.  There is NO
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 ```
 
-3. Install Intel® oneAPI Base Toolkit by following these [link1](https://www.intel.com/content/www/us/en/developer/tools/oneapi/base-toolkit-download.html?operatingsystem=linux&distributions=aptpackagemanager), [link2](https://www.intel.com/content/www/us/en/develop/documentation/installation-guide-for-intel-oneapi-toolkits-linux/top/installation/install-using-package-managers/apt.html#apt_apt-packages)
+3. Install Intel® oneAPI Base Toolkit by following
+   these [link1](https://www.intel.com/content/www/us/en/developer/tools/oneapi/base-toolkit-download.html?operatingsystem=linux&distributions=aptpackagemanager)
+   , [link2](https://www.intel.com/content/www/us/en/develop/documentation/installation-guide-for-intel-oneapi-toolkits-linux/top/installation/install-using-package-managers/apt.html#apt_apt-packages)
 
 > (1) Remove all Intel® oneAPI packages
 
@@ -95,7 +106,8 @@ wget -O- https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCT
 echo "deb [signed-by=/usr/share/keyrings/oneapi-archive-keyring.gpg] https://apt.repos.intel.com/oneapi all main" | sudo tee /etc/apt/sources.list.d/oneAPI.list
 ```
 
-Notice: Change the 'Download from' option in 'Software and Updates > Ubuntu Software', choose a server in China, for example, mirrors.tuna.tsinghua.edu.cn
+Notice: Change the 'Download from' option in 'Software and Updates > Ubuntu Software', choose a server in China, for
+example, mirrors.tuna.tsinghua.edu.cn
 
 > (3) Update the repository and install
 
@@ -129,11 +141,17 @@ After this operation, 18.2 GB of additional disk space will be used.
 Do you want to continue? [Y/n]
 ```
 
-4. Configure `CLion > Preference > Build, Execution, Deployment > Toolchains`, add profile with C compiler (path: `/usr/bin/gcc`) and C++ compiler (path: `/usr/bin/g++`). Then move the new profile to the top as default.
+4. Configure `CLion > Preference > Build, Execution, Deployment > Toolchains`, add profile with C compiler (
+   path: `/usr/bin/gcc`) and C++ compiler (path: `/usr/bin/g++`). Then move the new profile to the top as default.
 
 ### Build instructions
+
 1. Firstly, build the 'Library'. Check the output file under ./lib/
 
 2. Then, build the test cases such as 'MKLTest', 'FiberTest'. They are all mutually independent.
 
 3. Run the test case.
+
+### SimuLib Coding Style
+
+The custom coding style of the project: [details](docs/SimuLib Coding Style.md)
