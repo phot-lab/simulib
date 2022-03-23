@@ -16,7 +16,7 @@
  * Supported by: National Key Research and Development Program of China
  */
 
-#include "simulib"
+#include "SimuLib"
 
 using namespace std;
 
@@ -36,7 +36,7 @@ tuple<MatrixXcd, double> digitalModulator(MatrixXi pat_bin, double symbrate, Par
         WARNING("Too many symbols. pattern truncated to %d symbols.");
     }
     int nt, nd;
-    tie(nt, nd) = continued_fraction_approximation(n_tini);  // oversample, then downsample at the end
+    tie(nt, nd) = continuedFractionApproximation(n_tini);  // oversample, then downsample at the end
     int nsps;
     if (par.nsps != 0) {
         nsps = par.nsps;  // the function works with Nsps samples per symbol till the final resampling emulating the DAC
@@ -97,17 +97,17 @@ MatrixXcd elecSrc(MatrixXcd level, string ptype, Par par, unsigned long n_symb, 
 
     MatrixXcd levelu = UpSample(level, nsps);
     //    levelu.conservativeResize(1, n_symb * nsps);  // truncate if necessary
-    VectorXcd temp = MatrixToVector(levelu);
-    levelu         = TruncateVector(temp, GenVector(1, n_symb * nsps));  // truncate if necessary
+    VectorXcd temp = matrixToVec(levelu);
+    levelu         = truncateVec(temp, genVector(1, n_symb * nsps));  // truncate if necessary
 
-    MatrixXcd levelu_fft = FFTCol(levelu);
+    MatrixXcd levelu_fft = fftCol(levelu);
 
     VectorXcd hfir;
     if (flag) {
         // 未完成
     } else {
         VectorXcd elpulse = pulseDesign(ptype, nsps, n_symb, par);  // single pulse
-        hfir              = FFT(FFTShift(elpulse));
+        hfir              = fft(fftShift(elpulse));
         if (ptype == "rootrc") {  // square-root raised cosine
             hfir = (hfir *
                     nsps)
@@ -118,15 +118,15 @@ MatrixXcd elecSrc(MatrixXcd level, string ptype, Par par, unsigned long n_symb, 
     for (Index i = 0; i < levelu_fft.cols(); ++i) {
         levelu_fft.col(i) = levelu_fft.col(i).cwiseProduct(hfir);
     }
-    MatrixXcd elec = IFFTCol(levelu_fft);  // create PAM signal
+    MatrixXcd elec = ifftCol(levelu_fft);  // create PAM signal
 
     Index length = max(elec.rows(), elec.cols());
     if (length < (long) n_fft) {
         ERROR("It is impossible to get the desired number of samples with the given pattern and sampling rate");
     } else if (length > (long) n_fft) {
-        VectorXcd temp = MatrixToVector(elec);
-        VectorXd ceil  = GenStepVector(1, nd, n_fft * nd).array().ceil();
-        temp           = TruncateVector(temp, ceil);
+        VectorXcd temp = matrixToVec(elec);
+        VectorXd ceil  = genStepVector(1, nd, n_fft * nd).array().ceil();
+        temp           = truncateVec(temp, ceil);
         elec           = temp;
     }
 
@@ -138,11 +138,11 @@ MatrixXcd elecSrc(MatrixXcd level, string ptype, Par par, unsigned long n_symb, 
         format_info   = modFormatInfo(par.mod_format);
         double varak  = format_info.symb_var;   // expected variance
         double meanak = format_info.symb_mean;  // expected value or mean
-        avge          = (varak * hfir.cwiseAbs2().sum() / n_symb + pow(abs(meanak), 2) * TruncateVector(hfir,
-                                                                                                        GenStepVector(1,
-                                                                                                                      n_symb,
-                                                                                                                      hfir.size() -
-                                                                                                                              1))
+        avge          = (varak * hfir.cwiseAbs2().sum() / n_symb + pow(abs(meanak), 2) * truncateVec(hfir,
+                                                                                                     genStepVector(1,
+                                                                                                                   n_symb,
+                                                                                                                   hfir.size() -
+                                                                                                                           1))
                                                                                         .cwiseAbs2()
                                                                                         .sum()) /
                pow(nsps, 2);
@@ -175,18 +175,18 @@ VectorXd pulseDesign(string ptype, int nsps, unsigned long n_symb, Par par) {
         case Costails: {
             double nl         = round(0.5 * (1 - par.rolloff) * par.duty * nsps);  // start index of cos roll-off
             double nr         = par.duty * nsps - nl - 1;                          // end index of cos roll-off
-            RowVectorXd nmark = GenVector(1, nl);                                  // indices where the pulse is 1
-            RowVectorXd ncos  = GenVector(nl, nr);                                 // transition region of cos roll-off
-            SetValueIndices(elpulse, nsps * n_symb / 2 + nmark.array(), 1);
+            RowVectorXd nmark = genVector(1, nl);                                  // indices where the pulse is 1
+            RowVectorXd ncos  = genVector(nl, nr);                                 // transition region of cos roll-off
+            setValueIndices(elpulse, nsps * n_symb / 2 + nmark.array(), 1);
             double hperiod = par.duty * nsps - 2 * nl;
             if (hperiod != 0) {
                 VectorXd indices = ncos.array() + nsps * n_symb / 2 + 1;
                 VectorXd replace = (((ncos.array() - nl + 0.5) * M_PI / hperiod).cos() + 1) * 0.5;
-                ReplaceVector(elpulse, indices, replace);
+                replaceVector(elpulse, indices, replace);
             }
-            VectorXd replace = TruncateVector(elpulse, GenVector(nsps * n_symb / 2 + 1, nsps * n_symb)).reverse();
-            VectorXd indices = GenVector(1, nsps * n_symb / 2);
-            ReplaceVector(elpulse, indices, replace);  // first half of the pulse
+            VectorXd replace = truncateVec(elpulse, genVector(nsps * n_symb / 2 + 1, nsps * n_symb)).reverse();
+            VectorXd indices = genVector(1, nsps * n_symb / 2);
+            replaceVector(elpulse, indices, replace);  // first half of the pulse
             break;
         }
         default:

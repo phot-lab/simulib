@@ -19,7 +19,7 @@
 #define EIGEN_USE_MKL_ALL  // Turn on this to use MKL for all Eigen operations
 #include <chrono>
 #include <iostream>
-#include <simulib>
+#include <SimuLib>
 
 using namespace Eigen;
 using namespace std;

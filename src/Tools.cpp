@@ -20,7 +20,7 @@
 #include <iostream>
 #include <random>
 #include <regex>
-#include <simulib>
+#include <SimuLib>
 #include <sstream>
 #include <stdexcept>
 #include <string>
@@ -29,29 +29,29 @@
 using namespace Eigen;
 using namespace std;
 
-void LineInfo(const string &filename, const int &line, const string &func_name) {
+void lineInfo(const string &filename, const int &line, const string &func_name) {
     cerr << "File Name: " << filename << endl;  // File name
     cerr << "Code Line: " << line << endl;      // Code line
     cerr << "Function: " << func_name << endl;  // Function name
 }
 
 void error(const string &filename, const int &line, const string &func_name, const string &s) {
-    LineInfo(filename, line, func_name);
+    lineInfo(filename, line, func_name);
     throw runtime_error(s);
 }
 
 void warning(const string &filename, const int &line, const string &func_name, const string &s) {
-    LineInfo(filename, line, func_name);
+    lineInfo(filename, line, func_name);
     cerr << "Warning: " << s << endl
          << endl;
 }
 
-bool IsInt(const double &n) {
+bool isInt(const double &n) {
     return abs(round(n) - n) < 0.000000000000001;
 }
 
 // https://gist.github.com/mikeando/7073d62385a34a61a6f7
-tuple<int, int> continued_fraction_approximation(double f) {
+tuple<int, int> continuedFractionApproximation(double f) {
     if (f == 0)
         return make_tuple(0, 1);
     bool flag = false;
@@ -122,7 +122,7 @@ double strToDigit(const string &s) {
     return res;
 }
 
-string DigitToStr(double digit) {
+string digitToStr(double digit) {
     string res;
     stringstream ss;
     ss << digit;
@@ -130,13 +130,14 @@ string DigitToStr(double digit) {
     return res;
 }
 
-double UniformRng() {
+double uniformRng() {
     std::random_device rand_dev;
     std::mt19937 generator(rand_dev());
     std::uniform_real_distribution<double> distr(0, 1);
     return distr(generator);
 }
 
+// Decimal to Binary
 RowVectorXi DecToBin(unsigned long dec, int n_bit) {
     auto binary      = std::bitset<64>(dec).to_string();  // to binary
     size_t bin_index = binary.size() - 1;
@@ -152,13 +153,19 @@ unsigned long HashStr(const string &s) {
     return hash(s);
 }
 
-MatrixXd GetLambda(const double lamc, const double spac, const int Nch) {
-    double freq = LIGHT_SPEED / lamc;  // [GHz]
-    double DF   = pow(spac / lamc, 2) * LIGHT_SPEED;
-    MatrixXd lambda(1, Nch);
-    for (int i = 0; i < Nch; i++) {
-        double freqt           = freq + DF * (i - (Nch + 1) / 2);
-        lambda(1, Nch - i - 1) = LIGHT_SPEED / freqt;
-    }
-    return lambda;
+std::string toLower(std::string data) {
+    std::transform(data.begin(), data.end(), data.begin(),
+                   [](unsigned char c) { return std::tolower(c); });
+    return data;
+}
+
+std::string toUpper(std::string data) {
+    std::transform(data.begin(), data.end(), data.begin(),
+                   [](unsigned char c) { return std::toupper(c); });
+    return data;
+}
+
+complex<double> fastExp(complex<double> data) {
+    complex<double> imag = 1i;
+    return exp(data * imag);
 }

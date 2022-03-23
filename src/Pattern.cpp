@@ -16,7 +16,7 @@
  * Supported by: National Key Research and Development Program of China
  */
 
-#include <simulib>
+#include <SimuLib>
 #include <string>
 
 using namespace std;
@@ -28,7 +28,7 @@ tuple<VectorXi, MatrixXi> pattern(unsigned nsymb, const string &ptype) {
         int qq=2;
         patttern.resize(nsymb);
         for (Index i = 0; i < patttern.size(); ++i) {
-            patttern[i] = floor(UniformRng() * qq);
+            patttern[i] = floor(uniformRng() * qq);
         }
         patternBinary.resize(patttern.size(), log2(qq));
         for (Index i = 0; i < patternBinary.rows(); ++i) {
@@ -56,7 +56,7 @@ tuple<VectorXi, MatrixXi> pattern(unsigned nsymb, const string &ptype, string ar
         }
         patttern.resize(nsymb);
         for (Index i = 0; i < patttern.size(); ++i) {
-            patttern[i] = floor(UniformRng() * qq);
+            patttern[i] = floor(uniformRng() * qq);
         }
         patternBinary.resize(patttern.size(), log2(qq));
         for (Index i = 0; i < patternBinary.rows(); ++i) {

@@ -516,7 +516,7 @@ Packet pexp_double(const Packet _x)
   // Express exp(x) as exp(g + n*log(2)).
   fx = pmadd(cst_cephes_LOG2EF, x, cst_half);
 
-  // Get the integer modulus of log(2), i.e. the "n" described above.
+  // Get the integer modulusEigen of log(2), i.e. the "n" described above.
   fx = pfloor(fx);
 
   // Get the remainder modulo log(2), i.e. the "g" described above. Subtract

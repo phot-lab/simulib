@@ -15,9 +15,13 @@
  * Created: 2022/3/15
  * Supported by: National Key Research and Development Program of China
  */
-#include <simulib>
+
+#include <SimuLib>
+
 using namespace Eigen;
 using namespace std;
+
+MatrixXd getLambda(const double lamc, const double spac, const int Nch);
 
 ///**
 // * @brief It is a ideal laser source module with single channel in dual-polarization. It would compute x-polarizations
@@ -125,7 +129,7 @@ using namespace std;
 //    VectorXd tim(Nsamp);
 //    tim.setLinSpaced(0, Nsamp - 1);
 //    phase_noise = phase_noise - ((tim / (Nsamp - 1)) * phase_noise.row(phase_noise.rows() - 1));
-//    phase_noise = FastExp(phase_noise);
+//    phase_noise = fastExp(phase_noise);
 //    for (int i = 0; i < Nch - 1; i++)
 //        light.field.col(i * Npol) = light.field.col(i * Npol).cwiseProduct(phase_noise.col(i * Npol));
 //
@@ -213,7 +217,7 @@ E laserSource(RowVectorXd ptx, RowVectorXd lam, Option options) {
         VectorXd tim(Nsamp);
         tim.setLinSpaced(0, Nsamp - 1);
         phase_noise = phase_noise - (tim / (Nsamp - 1)) * phase_noise.row(phase_noise.rows()-1);
-        phase_noise = FastExp(phase_noise);
+        phase_noise = fastExp(phase_noise);
         for (int i = 0; i < Nch; i++)
             light.field.col(i * Npol) = light.field.col(i * Npol).cwiseProduct(phase_noise.col(i * Npol));
 
@@ -263,7 +267,7 @@ E laserSource(RowVectorXd ptx, RowVectorXd lam, Option options) {
 //    } else
 //        power = ptx;
 //
-//    light.lambda = GetLambda(lam, spac, Nch);
+//    light.lambda = getLambda(lam, spac, Nch);
 //    light.field  = MatrixXd::Zero(Nsamp, Nch * Npol);
 //    for (int i = 0; i < Nch; i++)
 //        light.field.col(i * Npol) = VectorXd(Nsamp).setConstant(sqrt(power(i)));
@@ -309,7 +313,7 @@ E laserSource(RowVectorXd ptx, RowVectorXd lam, Option options) {
 //    } else
 //        power = ptx;
 //
-//    light.lambda = GetLambda(lam(0), spac, Nch);
+//    light.lambda = getLambda(lam(0), spac, Nch);
 //    light.field  = MatrixXd::Zero(Nsamp, Nch * Npol);
 //    for (int i = 0; i < Nch; i++)
 //        light.field.col(i * Npol) = VectorXd(Nsamp).setConstant(sqrt(power(i)));
@@ -337,7 +341,7 @@ E laserSource(RowVectorXd ptx, RowVectorXd lam, Option options) {
 //    VectorXd tim(Nsamp);
 //    tim.setLinSpaced(0, Nsamp - 1);
 //    phase_noise = phase_noise - (tim / (Nsamp - 1)) * phase_noise.row(phase_noise.rows()-1);
-//    phase_noise = FastExp(phase_noise);
+//    phase_noise = fastExp(phase_noise);
 //    for (int i = 0; i < Nch; i++)
 //        light.field.col(i * Npol) = light.field.col(i * Npol).cwiseProduct(phase_noise.col(i * Npol));
 //
@@ -401,7 +405,7 @@ E laserSource(RowVectorXd ptx, RowVectorXd lam, double spac, int NLAMBDA, Option
 
     // uniformly spaced carriers
     if (spac != 0.0)
-        light.lambda = GetLambda(lam(0), spac, Nch);
+        light.lambda = getLambda(lam(0), spac, Nch);
     else
         light.lambda = lam;
 
@@ -436,7 +440,7 @@ E laserSource(RowVectorXd ptx, RowVectorXd lam, double spac, int NLAMBDA, Option
         VectorXd tim(Nsamp);
         tim.setLinSpaced(0, Nsamp - 1);
         phase_noise = phase_noise - (tim / (Nsamp - 1)) * phase_noise.row(phase_noise.rows() - 1);
-        phase_noise = FastExp(phase_noise);
+        phase_noise = fastExp(phase_noise);
         for (int i = 0; i < Nch; i++)
             light.field.col(i * Npol) = light.field.col(i * Npol).cwiseProduct(phase_noise.col(i * Npol));
 
@@ -455,4 +459,15 @@ E laserSource(RowVectorXd ptx, RowVectorXd lam, double spac, int NLAMBDA, Option
     }
 
     return light;
+}
+
+MatrixXd getLambda(const double lamc, const double spac, const int Nch) {
+    double freq = LIGHT_SPEED / lamc;  // [GHz]
+    double DF   = pow(spac / lamc, 2) * LIGHT_SPEED;
+    MatrixXd lambda(1, Nch);
+    for (int i = 0; i < Nch; i++) {
+        double freqt           = freq + DF * (i - (Nch + 1) / 2);
+        lambda(1, Nch - i - 1) = LIGHT_SPEED / freqt;
+    }
+    return lambda;
 }

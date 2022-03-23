@@ -12,25 +12,24 @@
  */
 /**
  * Author: Chunyu Li
- * Created: 2022/3/19
+ * Created: 2022/3/1
  * Supported by: National Key Research and Development Program of China
  */
-#ifndef DIGITALMODULATOR_H
-#define DIGITALMODULATOR_H
+#ifndef OPTICALAB_COMMON_TYPES_H
+#define OPTICALAB_COMMON_TYPES_H
 
-#include "CommonTypes.h"
-#include "Fiber.h"
+#include "Eigen/Core"
+#include <vector>
 
-struct FormatInfo {
-    double digit     = 0;
-    double symb_mean = 0;
-    double symb_var  = 0;
-    string alpha     = "";
-    string family    = "";
+using namespace std;
+using namespace Eigen;
+
+struct Gstate {
+    unsigned long NSAMP;
+    VectorXd FN;
+    double SAMP_FREQ;
 };
 
-FormatInfo modFormatInfo(const string &modFormat);
+void initGstate(double Nsamp, double Fs);
 
-tuple<MatrixXcd, double> digitalModulator(MatrixXi pat_bin, double symbrate, Par par, string mod_format, string ptype);
-
-#endif  // DIGITALMODULATOR_H
+#endif  // OPTICALAB_COMMON_TYPES_H

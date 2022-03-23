@@ -1,7 +1,7 @@
 ## SimuLib Coding Style
 
 | Type           | Coding Style |
-| -------------- | ------------ |
+|----------------| ------------ |
 | Class, Struct  | PascalCase   |
 | Function       | camelCase    |
 | Variable       | camelCase    |

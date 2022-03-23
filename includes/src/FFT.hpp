@@ -22,10 +22,10 @@
 
 using namespace Eigen;
 
-// The implementation of FFTShift referred to this website
+// The implementation of fftShift referred to this website
 // https://kerpanic.wordpress.com/2016/04/08/more-efficient-ifftshift-fftshift-in-c/
 template<typename T>
-Matrix<T, Dynamic, 1> FFTShift(const Matrix<T, Dynamic, 1> &in) {
+Matrix<T, Dynamic, 1> fftShift(const Matrix<T, Dynamic, 1> &in) {
     Index size = in.rows();
     Matrix<T, Dynamic, 1> out(size, 1);
 
@@ -39,7 +39,7 @@ Matrix<T, Dynamic, 1> FFTShift(const Matrix<T, Dynamic, 1> &in) {
 }
 
 template<typename T>
-Matrix<T, Dynamic, 1> IFFTShift(const Matrix<T, Dynamic, 1> &in) {
+Matrix<T, Dynamic, 1> ifftShift(const Matrix<T, Dynamic, 1> &in) {
     Index size = in.rows();
     Matrix<T, Dynamic, 1> out(size, 1);
 
@@ -52,16 +52,16 @@ Matrix<T, Dynamic, 1> IFFTShift(const Matrix<T, Dynamic, 1> &in) {
     return out;
 }
 
-VectorXcd FFT(const VectorXcd &in);
+VectorXcd fft(const VectorXcd &in);
 
-VectorXcd IFFT(const VectorXcd &in);
+VectorXcd ifft(const VectorXcd &in);
 
-MatrixXcd FFT2D(const MatrixXcd &in);
+MatrixXcd fft2D(const MatrixXcd &in);
 
-MatrixXcd IFFT2D(const MatrixXcd &in);
+MatrixXcd ifft2D(const MatrixXcd &in);
 
-MatrixXcd FFTCol(const MatrixXcd &in);
+MatrixXcd fftCol(const MatrixXcd &in);
 
-MatrixXcd IFFTCol(const MatrixXcd &in);
+MatrixXcd ifftCol(const MatrixXcd &in);
 
 #endif  // SIMULIB_FFT_H

@@ -1,7 +1,7 @@
 #include "MatlabDataArray.hpp"
 #include "MatlabEngine.hpp"
 #include <fstream>
-#include <simulib>
+#include <SimuLib>
 
 // Reference
 // https://www.mathworks.com/help/matlab/matlab_external/pass-variables-from-matlab-to-c.html

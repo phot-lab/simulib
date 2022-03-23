@@ -15,11 +15,11 @@
  * Created: 2022/3/19
  * Supported by: National Key Research and Development Program of China
  */
-#ifndef PATTERN_H
-#define PATTERN_H
+#ifndef PATTERN_HPP
+#define PATTERN_HPP
 
-#include "CommonTypes.h"
-#include "Fiber.h"
+#include "CommonTypes.hpp"
+#include "Fiber.hpp"
 
 struct Par {
     string emph       = "asin";
@@ -36,4 +36,4 @@ tuple<VectorXi, MatrixXi> pattern(unsigned nsymb, const string &ptype, string ar
 
 MatrixXi Pat2Samp(const MatrixXi &pat_bin, const string &modFormat);
 
-#endif  // PATTERN_H
+#endif  // PATTERN_HPP

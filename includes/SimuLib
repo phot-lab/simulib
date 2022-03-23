@@ -12,20 +12,26 @@
  */
 /**
  * Author: Chunyu Li
- * Created: 2022/3/1
+ * Created: 2022/3/10
  * Supported by: National Key Research and Development Program of China
  */
 
-#include "SimuLib"
+#ifndef SIMULIB_SIMULIB_H
+#define SIMULIB_SIMULIB_H
 
-using namespace std;
+#include "src/OperatorOverloading.hpp"
+#include "src/CommonTypes.hpp"
+#include "src/FFT.hpp"
+#include "src/Fiber.hpp"
+#include "src/Globals.hpp"
+#include "src/Tools.hpp"
+#include "src/DSPTools.hpp"
+#include "src/MatrixOperations.hpp"
+#include "src/LaserSource.hpp"
+#include "src/Mzmodulator.hpp"
+#include "src/Pattern.hpp"
+#include "src/DigitalModulator.hpp"
+#include "src/CustomDataStructure.hpp"
+#include "src/RxFrontend.hpp"
 
-void initGstate(double Nsamp, double Fs) {
-    if (!isInt(Nsamp))
-        ERROR("The number of samples must be an integer");
-    gstate.NSAMP     = (unsigned long) Nsamp;  // Number of samples
-    double stepf     = Fs / Nsamp;             // Minimum frequency [GHz]
-    VectorXd vec     = genStepVector(-Fs / 2, stepf, Fs / 2 - stepf);
-    gstate.FN        = fftShift(vec);  // Frequencies [GHz]
-    gstate.SAMP_FREQ = Fs;             // Sampling frequency [GHz]
-}
+#endif  // SIMULIB_SIMULIB_H

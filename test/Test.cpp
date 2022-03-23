@@ -12,20 +12,22 @@
  */
 /**
  * Author: Chunyu Li
- * Created: 2022/3/1
+ * Created: 2022/3/11
  * Supported by: National Key Research and Development Program of China
  */
 
-#include "SimuLib"
+#include <SimuLib>
 
 using namespace std;
+using namespace Eigen;
 
-void initGstate(double Nsamp, double Fs) {
-    if (!isInt(Nsamp))
-        ERROR("The number of samples must be an integer");
-    gstate.NSAMP     = (unsigned long) Nsamp;  // Number of samples
-    double stepf     = Fs / Nsamp;             // Minimum frequency [GHz]
-    VectorXd vec     = genStepVector(-Fs / 2, stepf, Fs / 2 - stepf);
-    gstate.FN        = fftShift(vec);  // Frequencies [GHz]
-    gstate.SAMP_FREQ = Fs;             // Sampling frequency [GHz]
+int main() {
+    //    MatrixXcd m(2, 2);
+    //    m << 1 + 4i, 45 + 3i, 2 + 4i, 9 + 10i;
+    //    cout << maxRow(m) << endl;
+    //    cout << minRow(m) << endl;
+    MatrixXd m(2, 2);
+    m << 2, 1, 3, 4;
+    cout << m << endl;
+    cout << maxCol(m) << endl;
 }

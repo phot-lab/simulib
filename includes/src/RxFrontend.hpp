@@ -12,23 +12,18 @@
  */
 /**
  * Author: Chunyu Li
- * Created: 2022/3/10
+ * Created: 2022/3/22
  * Supported by: National Key Research and Development Program of China
  */
+#ifndef RXFRONTEND_HPP
+#define RXFRONTEND_HPP
 
-#ifndef SIMULIB_SIMULIB_H
-#define SIMULIB_SIMULIB_H
+#include "Eigen/Core"
+#include "LaserSource.hpp"
+#include "Fiber.hpp"
 
-#include "src/CommonTypes.h"
-#include "src/FFT.h"
-#include "src/Fiber.h"
-#include "src/Globals.h"
-#include "src/Tools.h"
-#include "src/DSPTools.h"
-#include "src/MatrixTools.h"
-#include "src/LaserSource.h"
-#include "src/Mzmodulator.h"
-#include "src/Pattern.h"
-#include "src/DigitalModulator.h"
+using namespace Eigen;
 
-#endif  // SIMULIB_SIMULIB_H
+MatrixXcd rxFrontend(E e, RowVectorXd lambda, int symbrate, const Fiber& fiber);
+
+#endif  // RXFRONTEND_HPP

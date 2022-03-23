@@ -18,7 +18,7 @@
 
 #include <fstream>
 #include <iostream>
-#include <simulib>
+#include <SimuLib>
 
 using namespace std;
 

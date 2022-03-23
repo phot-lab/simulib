@@ -12,25 +12,25 @@
  */
 /**
  * Author: Chunyu Li
- * Created: 2022/3/11
+ * Created: 2022/3/19
  * Supported by: National Key Research and Development Program of China
  */
+#ifndef DIGITALMODULATOR_HPP
+#define DIGITALMODULATOR_HPP
 
-#include <bitset>
-#include <cmath>
-#include <complex>
-#include <cstdlib>
-#include <fstream>
-#include <functional>
-#include <iostream>
-#include <mkl.h>
-#include <random>
-#include <regex>
-#include <simulib>
-#include <string>
+#include "CommonTypes.hpp"
+#include "Fiber.hpp"
 
-using namespace std;
+struct FormatInfo {
+    double digit     = 0;
+    double symb_mean = 0;
+    double symb_var  = 0;
+    string alpha     = "";
+    string family    = "";
+};
 
-int main() {
-    cout << VectorXd(1).setConstant(3) << endl;
-}
+FormatInfo modFormatInfo(const string &modFormat);
+
+tuple<MatrixXcd, double> digitalModulator(MatrixXi pat_bin, double symbrate, Par par, string mod_format, string ptype);
+
+#endif  // DIGITALMODULATOR_HPP

@@ -17,7 +17,7 @@
  */
 
 
-#include "simulib"
+#include "SimuLib"
 #include <chrono>
 #include <cmath>
 #include <iostream>
@@ -269,7 +269,7 @@ tuple<RowVectorXd, RowVectorXd> CheckStep(double zprop, double dz, double len_co
     // first waveplate index is 1
     double nini      = floor(zini / len_corr) + 1;  // Waveplate of starting coordinate
     double nend      = ceil(zend / len_corr);       // waveplate of ending coordinate
-    RowVectorXd nmid = GenVector(nini, nend);       // waveplate indexes
+    RowVectorXd nmid = genVector(nini, nend);       // waveplate indexes
 
     RowVectorXd dz_split;
 
@@ -280,22 +280,22 @@ tuple<RowVectorXd, RowVectorXd> CheckStep(double zprop, double dz, double len_co
 
         // waveplate mid-coordinates
         RowVectorXd zmid      = len_corr * nmid.block(0, 0, 1, nmid.size() - 1);
-        RowVectorXd diff_zmid = Diff(zmid.transpose());
+        RowVectorXd diff_zmid = diff(zmid.transpose());
         dz_split.resize(2 + diff_zmid.size());
         dz_split << zmid(0) - zini, diff_zmid, zend - zmid(zmid.size() - 1);
     }
-    RowVectorXd dzb    = RemoveZero(dz_split, dz_split);  // remove zero-length steps
-    RowVectorXd nindex = RemoveZero(nmid, dz_split);      // remove zero-length steps
+    RowVectorXd dzb    = removeZero(dz_split, dz_split);  // remove zero-length steps
+    RowVectorXd nindex = removeZero(nmid, dz_split);      // remove zero-length steps
     return make_tuple(dzb, nindex);
 }
 
 MatrixXcd LinearStep(Linear *linear, VectorXd betat, RowVectorXd dzb, RowVectorXd nindex, MatrixXcd field) {
-    field = FFTCol(field);
+    field = fftCol(field);
 
     if (linear->is_scalar) {
         auto *scalar_linear = (ScalarLinear *) linear;
         for (Index i = 0; i < dzb.size(); ++i) {  // the step is made of multi-waveplates
-            VectorXcd temp = FastExp((-betat) * dzb[i]);
+            VectorXcd temp = fastExp((-betat) * dzb[i]);
             for (Index j = 0; j < field.cols(); ++j) {
                 field.col(i) = field.col(i).cwiseProduct(temp);
             }
@@ -303,7 +303,7 @@ MatrixXcd LinearStep(Linear *linear, VectorXd betat, RowVectorXd dzb, RowVectorX
     } else {
         // Linear非标量的情况还未实现
     }
-    return IFFTCol(field);
+    return ifftCol(field);
 }
 
 VectorXcd NonlinearStep(VectorXcd field, Fiber fiber, double dz) {
@@ -315,7 +315,7 @@ VectorXcd NonlinearStep(VectorXcd field, Fiber fiber, double dz) {
     double gamleff = fiber.gam * leff;                                  // [1/mW]
     if (fiber.isUnique) {                                               // UNIQUE FIELD
         VectorXd phi       = field.cwiseAbs2() * gamleff;               // nl phase [rad].
-        VectorXcd expi_phi = FastExp(-phi);
+        VectorXcd expi_phi = fastExp(-phi);
         field              = field.cwiseProduct(expi_phi);  // expiphi .* u
 
         // dual-polarization未完成

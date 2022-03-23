@@ -21,9 +21,9 @@
 
 #include "Eigen/Dense"
 #include <cstring>
+#include <iostream>
 #include <string>
 #include <vector>
-#include <iostream>
 
 #define ERROR(...) error(__FILE__, __LINE__, __func__, __VA_ARGS__)
 #define WARNING(...) warning(__FILE__, __LINE__, __func__, __VA_ARGS__)
@@ -35,7 +35,7 @@ void error(const string &filename, const int &line, const string &func_name, con
 
 void warning(const string &filename, const int &line, const string &func_name, const string &s);
 
-bool IsInt(const double &n);
+bool isInt(const double &n);
 
 template<typename T>
 void Print2DArray(T *array, size_t rows, size_t cols) {
@@ -55,7 +55,7 @@ void PrintArray(T *array, size_t length) {
     cout << endl;
 }
 
-tuple<int, int> continued_fraction_approximation(double f);
+tuple<int, int> continuedFractionApproximation(double f);
 
 string findAlpha(const string &s);
 
@@ -63,15 +63,18 @@ string findDigit(const string &s);
 
 double strToDigit(const string &s);
 
-string DigitToStr(double digit);
+string digitToStr(double digit);
 
-double UniformRng();
+double uniformRng();
 
 RowVectorXi DecToBin(unsigned long dec, int n_bit);
 
 unsigned long HashStr(const string &s);
 
-MatrixXd GetLambda(const double lamc, const double spac, const int Nch);
+std::string toUpper(std::string data);
+std::string toLower(std::string data);
+
+complex<double> fastExp(complex<double> data);
 
 
 #endif  // OPTICALAB_TOOLS_H

@@ -16,7 +16,7 @@
 * Supported by: National Key Research and Development Program of China
 */
 
-#include "simulib"
+#include "SimuLib"
 
 const double LIGHT_SPEED     = 299792458;        // Speed of light in vacuum [m/s]
 const double PLANK_CONST     = 6.62606896e-34;   // Planck's constant [J*s]

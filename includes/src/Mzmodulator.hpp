@@ -18,13 +18,14 @@
 
 #ifndef SIMULIB_MZMODULATOR_H
 #define SIMULIB_MZMODULATOR_H
-#include "simulib"
+
 #include <ctime>
-#include <float.h>
+#include <cfloat>
 #include <iostream>
-#include <limits.h>
+#include <climits>
 #include <random>
-#include <stdarg.h>
+#include <cstdarg>
+#include "LaserSource.hpp"
 
 /**
  * @brief laser source simulation option

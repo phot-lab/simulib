@@ -2,9 +2,10 @@
 #define OPTICALAB_FIBER_TYPES_H
 
 #include "Eigen/Core"
+#include "LaserSource.hpp"
 #include <complex>
+#include <memory>
 #include <vector>
-#include "LaserSource.h"
 
 using namespace std;
 using namespace Eigen;
@@ -43,9 +44,11 @@ struct Fiber {
     double nplates        = 100;    // Number of waveplates when birefringence is on
     double dzmax          = length;
     double chlambda       = 0;
+    double opar           = 0;  // dummy value
     double dphiMax        = 20;
     double alphaLinear    = 0;
     double bandwidth      = 0;
+    double mzdel          = 1;  // default interferometer delay: 1 symbol
     double gam            = 0;
     bool isUnique         = true;
     bool is_kerr          = false;
@@ -58,6 +61,10 @@ struct Fiber {
     string coupling       = "none";
     string step_update    = "cle";
     string step_type;
+    string modFormat;
+    string ofType;
+    shared_ptr<int> dcum;
+    shared_ptr<double> obw;
 };
 
 tuple<Out, E> fiberTransmit(E &e, Fiber fiber);

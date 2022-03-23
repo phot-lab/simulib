@@ -16,7 +16,7 @@
  * Supported by: National Key Research and Development Program of China
  */
 
-#include "simulib"
+#include "SimuLib"
 #include <string>
 #include <vector>
 
@@ -99,7 +99,7 @@ MatrixXi finalizePat2Samp(const MatrixXi &pat_bin, const FormatInfo &format_info
 
     double m = pow(2, n_col);  // constellation size
 
-    auto unit = GetUnit(pat_bin);
+    auto unit = getUnit(pat_bin);
     if (format_info.family == "ook")
         dataid = 2 * pat_bin;  // average energy: 1
     else if (format_info.alpha == "bpsk" || format_info.alpha == "dpsk" || format_info.alpha == "psbt" || (format_info.family == "psk" && m == 2)) {

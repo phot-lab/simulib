@@ -12,20 +12,28 @@
  */
 /**
  * Author: Chunyu Li
- * Created: 2022/3/1
+ * Created: 2022/3/23
  * Supported by: National Key Research and Development Program of China
  */
+#ifndef OPERATOR_OVERLOADING_HPP
+#define OPERATOR_OVERLOADING_HPP
 
-#include "SimuLib"
+#include <complex>
 
 using namespace std;
 
-void initGstate(double Nsamp, double Fs) {
-    if (!isInt(Nsamp))
-        ERROR("The number of samples must be an integer");
-    gstate.NSAMP     = (unsigned long) Nsamp;  // Number of samples
-    double stepf     = Fs / Nsamp;             // Minimum frequency [GHz]
-    VectorXd vec     = genStepVector(-Fs / 2, stepf, Fs / 2 - stepf);
-    gstate.FN        = fftShift(vec);  // Frequencies [GHz]
-    gstate.SAMP_FREQ = Fs;             // Sampling frequency [GHz]
+// bool operator<(const complex<double> &lhs, const complex<double> &rhs) {
+//     return lhs.real() < rhs.real();
+// }
+//
+// bool operator>(const complex<double> &lhs, const complex<double> &rhs) {
+//     return lhs.real() > rhs.real();
+// }
+
+complex<double> operator*(const int &lhs, complex<double> rhs) {
+    rhs.real(rhs.real() * lhs);
+    rhs.imag(rhs.imag() * lhs);
+    return rhs;
 }
+
+#endif  // OPERATOR_OVERLOADING_HPP

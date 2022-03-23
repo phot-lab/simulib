@@ -16,7 +16,7 @@
  * Supported by: National Key Research and Development Program of China
  */
 
-#include "simulib"
+#include "SimuLib"
 #include <iostream>
 #include <mkl.h>
 #include <vector>
@@ -24,39 +24,39 @@
 using namespace Eigen;
 using namespace std;
 
-// The implementation of FFT referred to this website
+// The implementation of fft referred to this website
 // https://stackoverflow.com/questions/29805767/is-there-any-simple-c-example-on-how-to-use-intel-mkl-fft
-VectorXcd FFT(const VectorXcd &in) {
+VectorXcd fft(const VectorXcd &in) {
     VectorXcd out(in.size());
     DFTI_DESCRIPTOR_HANDLE descriptor;
     MKL_LONG status;
 
     // Note after each operation status should be 0 on success
     status = DftiCreateDescriptor(&descriptor, DFTI_DOUBLE, DFTI_COMPLEX, 1, in.size());  // Specify size and precision
-    status = DftiSetValue(descriptor, DFTI_PLACEMENT, DFTI_NOT_INPLACE);                  // Out of place FFT
+    status = DftiSetValue(descriptor, DFTI_PLACEMENT, DFTI_NOT_INPLACE);                  // Out of place fft
     status = DftiCommitDescriptor(descriptor);                                            // Finalize the descriptor
-    status = DftiComputeForward(descriptor, (void *) in.data(), out.data());              // Compute the Forward FFT
+    status = DftiComputeForward(descriptor, (void *) in.data(), out.data());              // Compute the Forward fft
     status = DftiFreeDescriptor(&descriptor);                                             // Free the descriptor
     return out;
 }
 
-VectorXcd IFFT(const VectorXcd &in) {
+VectorXcd ifft(const VectorXcd &in) {
     VectorXcd out(in.size());
 
     DFTI_DESCRIPTOR_HANDLE descriptor;
     MKL_LONG status;
 
     status = DftiCreateDescriptor(&descriptor, DFTI_DOUBLE, DFTI_COMPLEX, 1, in.size());  // Specify size and precision
-    status = DftiSetValue(descriptor, DFTI_PLACEMENT, DFTI_NOT_INPLACE);                  // Out of place FFT
+    status = DftiSetValue(descriptor, DFTI_PLACEMENT, DFTI_NOT_INPLACE);                  // Out of place fft
     status = DftiSetValue(descriptor, DFTI_BACKWARD_SCALE, 1.0 / (double) in.size());     // Scale down the output
     status = DftiCommitDescriptor(descriptor);                                            // Finalize the descriptor
-    status = DftiComputeBackward(descriptor, (void *) in.data(), out.data());             // Compute the Forward FFT
+    status = DftiComputeBackward(descriptor, (void *) in.data(), out.data());             // Compute the Forward fft
     status = DftiFreeDescriptor(&descriptor);                                             // Free the descriptor
 
     return out;
 }
 
-MatrixXcd FFT2D(const MatrixXcd &in) {
+MatrixXcd fft2D(const MatrixXcd &in) {
     MatrixXcd out(in.rows(), in.cols());
     DFTI_DESCRIPTOR_HANDLE descriptor;
     MKL_LONG status;
@@ -64,30 +64,30 @@ MatrixXcd FFT2D(const MatrixXcd &in) {
 
     // Note after each operation status should be 0 on success
     status = DftiCreateDescriptor(&descriptor, DFTI_DOUBLE, DFTI_COMPLEX, 2, dim_sizes);  // Specify size and precision
-    status = DftiSetValue(descriptor, DFTI_PLACEMENT, DFTI_NOT_INPLACE);                  // Out of place FFT
+    status = DftiSetValue(descriptor, DFTI_PLACEMENT, DFTI_NOT_INPLACE);                  // Out of place fft
     status = DftiCommitDescriptor(descriptor);                                            // Finalize the descriptor
-    status = DftiComputeForward(descriptor, (void *) in.data(), out.data());              // Compute the Forward FFT
+    status = DftiComputeForward(descriptor, (void *) in.data(), out.data());              // Compute the Forward fft
     status = DftiFreeDescriptor(&descriptor);                                             // Free the descriptor
 
     return out;
 }
 
-MatrixXcd IFFT2D(const MatrixXcd &in) {
-    return FFT2D(in) / in.size();
+MatrixXcd ifft2D(const MatrixXcd &in) {
+    return fft2D(in) / in.size();
 }
 
-MatrixXcd FFTCol(const MatrixXcd &in) {
+MatrixXcd fftCol(const MatrixXcd &in) {
     MatrixXcd out(in.rows(), in.cols());
     for (Index i = 0; i < in.cols(); ++i) {
-        out.col(i) = FFT(in.col(i));
+        out.col(i) = fft(in.col(i));
     }
     return out;
 }
 
-MatrixXcd IFFTCol(const MatrixXcd &in) {
+MatrixXcd ifftCol(const MatrixXcd &in) {
     MatrixXcd out(in.rows(), in.cols());
     for (Index i = 0; i < in.cols(); ++i) {
-        out.col(i) = IFFT(in.col(i));
+        out.col(i) = ifft(in.col(i));
     }
     return out;
 }
