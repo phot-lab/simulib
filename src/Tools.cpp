@@ -80,9 +80,9 @@ tuple<int, int> continuedFractionApproximation(double f) {
         double approx = (double) numerator / (double) denominator;
         if (fabs(approx - f) < tol) {
             if (flag) {
-                return {-numerator, denominator};
+                return make_tuple(-numerator,denominator);
             } else {
-                return {numerator, denominator};
+                return make_tuple(numerator,denominator);
             }
         }
     }

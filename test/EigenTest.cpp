@@ -16,7 +16,7 @@
  * Supported by: National Key Research and Development Program of China
  */
 
-#define EIGEN_USE_MKL_ALL  // Turn on this to use MKL for all Eigen operations
+//#define EIGEN_USE_MKL_ALL  // Turn on this to use MKL for all Eigen operations
 #include <chrono>
 #include <iostream>
 #include <SimuLib>
@@ -26,7 +26,7 @@ using namespace std;
 
 int main() {
 
-    const int length = 6000;
+    const int length = 100;
 
     MatrixXd m1 = MatrixXd ::Random(length, length);
     MatrixXd m2 = MatrixXd ::Random(length, length);

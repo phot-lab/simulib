@@ -1,6 +1,5 @@
 # Project generates dirs
 *cmake-build*
-*cmake-build*
 /lib/
 /bin/
 .idea/

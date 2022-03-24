@@ -12,27 +12,13 @@
  */
 /**
  * Author: Chunyu Li
- * Created: 2022/3/10
+ * Created: 2022/3/24
  * Supported by: National Key Research and Development Program of China
  */
 
-#ifndef SIMULIB_SIMULIB_H
-#define SIMULIB_SIMULIB_H
+#ifndef MATHOPERATIONS_HPP
+#define MATHOPERATIONS_HPP
 
-#include "src/OperatorOverloading.hpp"
-#include "src/MathOperations.hpp"
-#include "src/CommonTypes.hpp"
-#include "src/FFT.hpp"
-#include "src/Fiber.hpp"
-#include "src/Globals.hpp"
-#include "src/Tools.hpp"
-#include "src/DSPTools.hpp"
-#include "src/MatrixOperations.hpp"
-#include "src/LaserSource.hpp"
-#include "src/Mzmodulator.hpp"
-#include "src/Pattern.hpp"
-#include "src/DigitalModulator.hpp"
-#include "src/CustomDataStructure.hpp"
-#include "src/RxFrontend.hpp"
+complex<double> complexProduct(complex<double> a, complex<double> b);
 
-#endif  // SIMULIB_SIMULIB_H
+#endif  // MATHOPERATIONS_HPP

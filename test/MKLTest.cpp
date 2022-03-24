@@ -42,6 +42,7 @@ int main() {
 
     const int length = 6000;
 
+
     printf("\n This example computes real matrix C=alpha*A*B+beta*C using \n"
            " Intel(R) MKL function dgemm, where A, B, and  C are matrices and \n"
            " alpha and beta are double precision scalars\n\n");

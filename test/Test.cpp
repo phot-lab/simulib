@@ -22,16 +22,10 @@ using namespace std;
 using namespace Eigen;
 
 int main() {
-    //    MatrixXcd m(2, 2);
-    //    m << 1 + 4i, 45 + 3i, 2 + 4i, 9 + 10i;
-    //    cout << maxRow(m) << endl;
-    //    cout << minRow(m) << endl;
+
     MatrixXd m(2, 2);
     m << 2, 1, 3, 4;
     cout << m << endl;
     cout << maxCol(m) << endl;
 
-    VectorXcd v(3);
-    v << 1, 2, 3;
-    cout << fft(v) << endl;
 }

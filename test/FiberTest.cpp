@@ -16,9 +16,9 @@
  * Supported by: National Key Research and Development Program of China
  */
 
+#include <SimuLib>
 #include <fstream>
 #include <iostream>
-#include <SimuLib>
 
 using namespace std;
 
@@ -49,6 +49,8 @@ int main() {
 
     E e;
     e.field = readField();
+    e.lambda.resize(1, 1);
+    e.lambda(0, 0) = 1550;
     Fiber fiber;
     Out out     = {};
     tie(out, e) = fiberTransmit(e, fiber);

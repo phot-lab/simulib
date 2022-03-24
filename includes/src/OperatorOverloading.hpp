@@ -22,13 +22,13 @@
 
 using namespace std;
 
-// bool operator<(const complex<double> &lhs, const complex<double> &rhs) {
-//     return lhs.real() < rhs.real();
-// }
+//bool operator<(const complex<double> &lhs, const complex<double> &rhs) {
+//    return lhs.real() < rhs.real();
+//}
 //
-// bool operator>(const complex<double> &lhs, const complex<double> &rhs) {
-//     return lhs.real() > rhs.real();
-// }
+//bool operator>(const complex<double> &lhs, const complex<double> &rhs) {
+//    return lhs.real() > rhs.real();
+//}
 
 //complex<double> operator*(const int &lhs, complex<double> rhs) {
 //    rhs.real(rhs.real() * lhs);

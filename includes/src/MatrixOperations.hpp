@@ -175,7 +175,12 @@ VectorXcd sortEigen(VectorXcd v, bool ascend = true);
 
 template<typename T>
 VectorXi indexOfSorted(Matrix<T, Dynamic, 1> vec, Matrix<T, Dynamic, 1> sorted) {
-    std::map<T, list<Index>> map;
+    struct ComplexCompare {
+        bool operator()(const complex<double> &lhs, const complex<double> &rhs) const {
+            return lhs.real() < rhs.real();
+        }
+    };
+    std::map<T, list<Index>, ComplexCompare> map;
     for (Index i = 0; i < sorted.size(); ++i) {
         T value = sorted[i];
         if (map.count(value) == 1) {
