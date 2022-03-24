@@ -16,7 +16,7 @@ add_compile_options("-Wno-unused-but-set-variable")
 add_compile_options("-finline-functions") # Attempt to Inline All Functions, even if they are not annotated with inlining. Note: inlining trades speed for increasing of code size.
 
 # Find MKL library on personal computer
-find_package(MKL REQUIRED)
+find_package(MKL)
 message(STATUS "${MKL_IMPORTED_TARGETS}") # Provides available list of targets based on input
 include_directories(${MKL_INCLUDE})
 

@@ -30,4 +30,8 @@ int main() {
     m << 2, 1, 3, 4;
     cout << m << endl;
     cout << maxCol(m) << endl;
+
+    VectorXcd v(3);
+    v << 1, 2, 3;
+    cout << fft(v) << endl;
 }

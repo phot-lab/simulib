@@ -16,10 +16,8 @@
  * Supported by: National Key Research and Development Program of China
  */
 
-#include "SimuLib"
-#include <iostream>
-#include <mkl.h>
-#include <vector>
+#include <SimuLib>
+//#include <mkl.h>
 
 using namespace Eigen;
 using namespace std;
@@ -27,47 +25,55 @@ using namespace std;
 // The implementation of fft referred to this website
 // https://stackoverflow.com/questions/29805767/is-there-any-simple-c-example-on-how-to-use-intel-mkl-fft
 VectorXcd fft(const VectorXcd &in) {
-    VectorXcd out(in.size());
-    DFTI_DESCRIPTOR_HANDLE descriptor;
-    MKL_LONG status;
+    VectorXcd out;
+    FFT<double> fft;
+    fft.fwd(out, in);
 
-    // Note after each operation status should be 0 on success
-    status = DftiCreateDescriptor(&descriptor, DFTI_DOUBLE, DFTI_COMPLEX, 1, in.size());  // Specify size and precision
-    status = DftiSetValue(descriptor, DFTI_PLACEMENT, DFTI_NOT_INPLACE);                  // Out of place fft
-    status = DftiCommitDescriptor(descriptor);                                            // Finalize the descriptor
-    status = DftiComputeForward(descriptor, (void *) in.data(), out.data());              // Compute the Forward fft
-    status = DftiFreeDescriptor(&descriptor);                                             // Free the descriptor
+    //    VectorXcd out(in.size());
+    //    DFTI_DESCRIPTOR_HANDLE descriptor;
+    //    MKL_LONG status;
+    //
+    //    // Note after each operation status should be 0 on success
+    //    status = DftiCreateDescriptor(&descriptor, DFTI_DOUBLE, DFTI_COMPLEX, 1, in.size());  // Specify size and precision
+    //    status = DftiSetValue(descriptor, DFTI_PLACEMENT, DFTI_NOT_INPLACE);                  // Out of place fft
+    //    status = DftiCommitDescriptor(descriptor);                                            // Finalize the descriptor
+    //    status = DftiComputeForward(descriptor, (void *) in.data(), out.data());              // Compute the Forward fft
+    //    status = DftiFreeDescriptor(&descriptor);                                             // Free the descriptor
     return out;
 }
 
 VectorXcd ifft(const VectorXcd &in) {
-    VectorXcd out(in.size());
+    VectorXcd out;
+    FFT<double> fft;
+    fft.inv(out, in);
 
-    DFTI_DESCRIPTOR_HANDLE descriptor;
-    MKL_LONG status;
-
-    status = DftiCreateDescriptor(&descriptor, DFTI_DOUBLE, DFTI_COMPLEX, 1, in.size());  // Specify size and precision
-    status = DftiSetValue(descriptor, DFTI_PLACEMENT, DFTI_NOT_INPLACE);                  // Out of place fft
-    status = DftiSetValue(descriptor, DFTI_BACKWARD_SCALE, 1.0 / (double) in.size());     // Scale down the output
-    status = DftiCommitDescriptor(descriptor);                                            // Finalize the descriptor
-    status = DftiComputeBackward(descriptor, (void *) in.data(), out.data());             // Compute the Forward fft
-    status = DftiFreeDescriptor(&descriptor);                                             // Free the descriptor
+    //    VectorXcd out(in.size());
+    //
+    //    DFTI_DESCRIPTOR_HANDLE descriptor;
+    //    MKL_LONG status;
+    //
+    //    status = DftiCreateDescriptor(&descriptor, DFTI_DOUBLE, DFTI_COMPLEX, 1, in.size());  // Specify size and precision
+    //    status = DftiSetValue(descriptor, DFTI_PLACEMENT, DFTI_NOT_INPLACE);                  // Out of place fft
+    //    status = DftiSetValue(descriptor, DFTI_BACKWARD_SCALE, 1.0 / (double) in.size());     // Scale down the output
+    //    status = DftiCommitDescriptor(descriptor);                                            // Finalize the descriptor
+    //    status = DftiComputeBackward(descriptor, (void *) in.data(), out.data());             // Compute the Forward fft
+    //    status = DftiFreeDescriptor(&descriptor);                                             // Free the descriptor
 
     return out;
 }
 
 MatrixXcd fft2D(const MatrixXcd &in) {
     MatrixXcd out(in.rows(), in.cols());
-    DFTI_DESCRIPTOR_HANDLE descriptor;
-    MKL_LONG status;
-    MKL_LONG dim_sizes[2] = {in.rows(), in.cols()};
-
-    // Note after each operation status should be 0 on success
-    status = DftiCreateDescriptor(&descriptor, DFTI_DOUBLE, DFTI_COMPLEX, 2, dim_sizes);  // Specify size and precision
-    status = DftiSetValue(descriptor, DFTI_PLACEMENT, DFTI_NOT_INPLACE);                  // Out of place fft
-    status = DftiCommitDescriptor(descriptor);                                            // Finalize the descriptor
-    status = DftiComputeForward(descriptor, (void *) in.data(), out.data());              // Compute the Forward fft
-    status = DftiFreeDescriptor(&descriptor);                                             // Free the descriptor
+//    DFTI_DESCRIPTOR_HANDLE descriptor;
+//    MKL_LONG status;
+//    MKL_LONG dim_sizes[2] = {in.rows(), in.cols()};
+//
+//    // Note after each operation status should be 0 on success
+//    status = DftiCreateDescriptor(&descriptor, DFTI_DOUBLE, DFTI_COMPLEX, 2, dim_sizes);  // Specify size and precision
+//    status = DftiSetValue(descriptor, DFTI_PLACEMENT, DFTI_NOT_INPLACE);                  // Out of place fft
+//    status = DftiCommitDescriptor(descriptor);                                            // Finalize the descriptor
+//    status = DftiComputeForward(descriptor, (void *) in.data(), out.data());              // Compute the Forward fft
+//    status = DftiFreeDescriptor(&descriptor);                                             // Free the descriptor
 
     return out;
 }

@@ -30,10 +30,10 @@ using namespace std;
 //     return lhs.real() > rhs.real();
 // }
 
-complex<double> operator*(const int &lhs, complex<double> rhs) {
-    rhs.real(rhs.real() * lhs);
-    rhs.imag(rhs.imag() * lhs);
-    return rhs;
-}
+//complex<double> operator*(const int &lhs, complex<double> rhs) {
+//    rhs.real(rhs.real() * lhs);
+//    rhs.imag(rhs.imag() * lhs);
+//    return rhs;
+//}
 
 #endif  // OPERATOR_OVERLOADING_HPP

@@ -19,6 +19,7 @@
 #define SIMULIB_FFT_H
 
 #include "Eigen/Core"
+#include "unsupported/Eigen/FFT"
 
 using namespace Eigen;
 

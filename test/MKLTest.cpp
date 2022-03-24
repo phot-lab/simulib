@@ -18,7 +18,7 @@
 
 /* C source code is found in dgemm_example.c */
 
-#include "mkl.h"
+#include <mkl.h>
 #include <chrono>
 #include <cstdio>
 #include <cstdlib>
