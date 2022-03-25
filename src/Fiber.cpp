@@ -72,7 +72,7 @@ tuple<Out, E> fiberTransmit(E &e, Fiber fiber) {
         betat.col(ipm) = omega.cwiseProduct((omega.cwiseProduct(omega * beta3 / 6 + unit * beta2 / 2)) + unit * beta1);
 
         // betat: deterministic beta coefficient [1/m]
-        if (fiber.is_dual) {  // Add DGD on polarizations
+        if (fiber.isDual) {  // Add DGD on polarizations
             betat.conservativeResize(omega_size, 2);
             betat.col(ipm + 1) = betat.col(ipm) - dgd / 2 * omega;
         }
@@ -84,7 +84,7 @@ tuple<Out, E> fiberTransmit(E &e, Fiber fiber) {
     /******* Nonlinear Parameters *******/
 
     double gam;
-    if (!fiber.is_kerr) {
+    if (!fiber.isKerr) {
         gam = 0;
     } else {
         gam = (2 * M_PI * fiber.nonlinearIndex) / (e.lambda(0, 0) * fiber.effectiveArea * 1e18);  // Nonlinear coeff [1/mW/m]
@@ -93,8 +93,8 @@ tuple<Out, E> fiberTransmit(E &e, Fiber fiber) {
     }
 
     double coeff;
-    if (fiber.is_manakov) {  // Manakov
-        if (fiber.is_dual) {
+    if (fiber.isManakov) {  // Manakov
+        if (fiber.isDual) {
             coeff = 8. / 9;
         } else {
             coeff = 1;  // Not a Manakov actually, but same model
@@ -122,7 +122,7 @@ tuple<Out, E> fiberTransmit(E &e, Fiber fiber) {
     long long duration_ms = chrono::duration_cast<chrono::milliseconds>(end - begin).count();
     double time           = (double) duration_ms / 1000;
 
-    Out out = {.time = time, .first_dz = first_dz, .ncycle = ncycle};
+    Out out = {.time = time, .firstStepLength = first_dz, .nCycle = ncycle};
     return make_tuple(out, e);
 }
 
@@ -141,7 +141,7 @@ tuple<double, unsigned long, E> SSFM(E e, Linear *linear, const VectorXd &betat,
     double zprop      = dz;  // running distance [m]
 
     RowVectorXd dzb, nindex;
-    if (fiber.is_sym) {  // first half LIN step outside the cycle
+    if (fiber.isSym) {  // first half LIN step outside the cycle
         tie(dzb, nindex) = CheckStep(dz / 2, dz / 2, len_corr);
         e.field          = LinearStep(linear, betat, dzb, nindex, e.field);  // Linear step
     } else {
@@ -151,7 +151,7 @@ tuple<double, unsigned long, E> SSFM(E e, Linear *linear, const VectorXd &betat,
         e.field = NonlinearStep(e.field, fiber, dz);  // Nonlinear step
         e.field = e.field * exp(-half_alpha * dz);    // Linear step 1/2: attenuation (scalar)
         double hlin;
-        if (fiber.is_sym) {
+        if (fiber.isSym) {
             dzs = NextStep(e.field, fiber, dz);
             if (zprop + dzs > fiber.length)
                 dzs = fiber.length - zprop;  // needed in case of last step
@@ -163,7 +163,7 @@ tuple<double, unsigned long, E> SSFM(E e, Linear *linear, const VectorXd &betat,
         // Linear step 2/2: GVD + birefringence
         tie(dzb, nindex) = CheckStep(zprop + dzs / 2, hlin, len_corr);       // zprop+dzs/2: end of step
         e.field          = LinearStep(linear, betat, dzb, nindex, e.field);  // Linear step
-        if (fiber.is_sym) {
+        if (fiber.isSym) {
             swap(dz, dzs);  // exchange dz and dzs
         } else {
             dz = NextStep(e.field, fiber, dz);
@@ -175,7 +175,7 @@ tuple<double, unsigned long, E> SSFM(E e, Linear *linear, const VectorXd &betat,
 
     double last_step = fiber.length - zprop + dz;
     zprop            = zprop - dz + last_step;
-    double hlin      = fiber.is_sym ? last_step / 2 : last_step;
+    double hlin      = fiber.isSym ? last_step / 2 : last_step;
 
     // Last Nonlinear step
     if (fiber.gam != 0)
@@ -198,13 +198,13 @@ tuple<double, double> FirstStep(MatrixXcd field, Fiber fiber) {
         step   = fiber.dzmax;
         phimax = INFINITY;
     } else {
-        if (fiber.dphi_fwm) {
+        if (fiber.dphiFwm) {
             fiber.bandwidth = gstate.SAMP_FREQ;
             double spac     = fiber.bandwidth * pow(fiber.chlambda, 2) / LIGHT_SPEED;  // bandwidth in [nm]
             step            = (fiber.dphiMax / abs(fiber.dispersion) / (2 * M_PI * spac * fiber.bandwidth * 1e-3) * 1e3);
             if (step > fiber.dzmax)
                 step = fiber.dzmax;
-            if (fiber.step_update == "nlp") {                              // nonlinear phase criterion
+            if (fiber.stepUpdate == "nlp") {                              // nonlinear phase criterion
                 double invLnl = field.cwiseAbs2().maxCoeff() * fiber.gam;  // Max of 1/Lnl [1/m]
                 double leff;
                 if (fiber.alphaLinear == 0)
@@ -229,13 +229,13 @@ tuple<double, double> FirstStep(MatrixXcd field, Fiber fiber) {
 
 double NextStep(const MatrixXcd &field, const Fiber &fiber, double dz_old) {
     double step;
-    if (fiber.is_cle) {  // constant local error (CLE)
-        double q = fiber.is_sym ? 3 : 2;
+    if (fiber.isCle) {  // constant local error (CLE)
+        double q = fiber.isSym ? 3 : 2;
         step     = dz_old * std::exp(fiber.alphaLinear / q * dz_old);  // [m]
 
     } else {  // nonlinear phase criterion
         double pmax;
-        if (fiber.is_dual) {  // max over time
+        if (fiber.isDual) {  // max over time
             // 存在偏振的情况，还未实现
             // Pmax = max(abs(u(:,1:2:end)).^2 + abs(u(:,2:2:end)).^2);
         } else {
@@ -335,9 +335,9 @@ tuple<Linear *, double> CheckFiber(const E &e, Fiber &fiber) {
 
     // Check if Kerr effect is active
     if (isinf(fiber.effectiveArea) || (fiber.nonlinearIndex == 0)) {
-        fiber.is_kerr = false;
+        fiber.isKerr = false;
     } else {
-        fiber.is_kerr = true;
+        fiber.isKerr = true;
     }
 
     // Set-up coupling
@@ -345,10 +345,10 @@ tuple<Linear *, double> CheckFiber(const E &e, Fiber &fiber) {
         ERROR(R"(Coupling must be "none" or "pol".)");
     }
 
-    if (!fiber.is_dual) {  // Scalar propagation
-        if (fiber.is_manakov)
+    if (!fiber.isDual) {  // Scalar propagation
+        if (fiber.isManakov)
             WARNING("Cannot use Manakov equation in scalar propagation: forced to NLSE.");
-        fiber.is_manakov = false;  // Because of no birefringence in scalar case
+        fiber.isManakov = false;  // Because of no birefringence in scalar case
         if (fiber.coupling != "none")
             WARNING("Coupling not possible in scalar propagation");
         if (fiber.pmdpar != 0)
@@ -357,7 +357,7 @@ tuple<Linear *, double> CheckFiber(const E &e, Fiber &fiber) {
         fiber.beatLength = 0;
         fiber.coupling   = "none";  // Coupling impossible with one pol
     } else {                        // Dual-polarization
-        if (fiber.is_manakov) {
+        if (fiber.isManakov) {
             if (fiber.pmdpar == 0) {
                 fiber.coupling = "none";  // Coupling indeed makes a difference for the Kerr effect of CNLSE
             } else {
@@ -368,8 +368,8 @@ tuple<Linear *, double> CheckFiber(const E &e, Fiber &fiber) {
                 }
             }
         } else {  // CNLSE
-            fiber.is_manakov = false;
-            if (!fiber.is_kerr && fiber.pmdpar == 0) {
+            fiber.isManakov = false;
+            if (!fiber.isKerr && fiber.pmdpar == 0) {
                 fiber.coupling = "none";
             } else {
                 fiber.coupling = "pol";
@@ -411,21 +411,21 @@ tuple<Linear *, double> CheckFiber(const E &e, Fiber &fiber) {
     if (fiber.dzmax > fiber.length)
         fiber.dzmax = fiber.length;
 
-    if (fiber.is_kerr) {
-        if (fiber.step_update.empty()) {
-            fiber.step_update = "cle";
+    if (fiber.isKerr) {
+        if (fiber.stepUpdate.empty()) {
+            fiber.stepUpdate = "cle";
         }
-        if (fiber.step_update == "cle") {
-            if (!fiber.dphi_fwm) {
-                ERROR("The combination fiber.dphi_fwm=false and fiber.step_update=\"cle\" is not possible");
+        if (fiber.stepUpdate == "cle") {
+            if (!fiber.dphiFwm) {
+                ERROR("The combination fiber.dphiFwm=false and fiber.stepUpdate=\"cle\" is not possible");
             }
-            fiber.is_cle = true;
+            fiber.isCle = true;
         } else {
-            fiber.is_cle = false;
+            fiber.isCle = false;
         }
         // First step parameter value
-        if (fiber.dphi_fwm) {
-            if (fiber.step_update == "cle") {
+        if (fiber.dphiFwm) {
+            if (fiber.stepUpdate == "cle") {
                 fiber.dphiMax = DEF_PHI_FWM_CLE;  // CLE
             } else {
                 fiber.dphiMax = DEF_PHI_FWM_NLP;  // NLP + PhiFWM in 1st step
@@ -439,16 +439,16 @@ tuple<Linear *, double> CheckFiber(const E &e, Fiber &fiber) {
     }
 
     // Step type
-    if (!fiber.step_type.empty()) {
-        if (fiber.step_type == "asymm") {
-            fiber.is_sym = false;
-        } else if (fiber.step_type == "symm") {
-            fiber.is_sym = true;
+    if (!fiber.stepType.empty()) {
+        if (fiber.stepType == "asymm") {
+            fiber.isSym = false;
+        } else if (fiber.stepType == "symm") {
+            fiber.isSym = true;
         } else {
             ERROR("Wrong step type.");
         }
     } else {
-        fiber.is_sym = DEF_IS_SYMMETRIC;
+        fiber.isSym = DEF_IS_SYMMETRIC;
     }
     return make_tuple(linear, dgd);
 }
