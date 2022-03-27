@@ -32,10 +32,10 @@ MatrixXcd rxFrontend(E e, RowVectorXd lambda, int symbrate, const Fiber& fiber) 
     VectorXcd hf;
     if (fiber.dcum != nullptr) {
         // Hf = postfiber(x.dcum,x.slopecum,x.lambda,lam,E.lambda);
-        // Hf = Hf .* myfilter(x.oftype,Fnorm,0.5*x.obw,x.opar);
+        // Hf = Hf .* myfilter(x.oftype,Fnorm,0.5*x.obw,x.filterParameter);
         // 未完成
     } else {
-        hf = myFilter(fiber.ofType, fNorm, 0.5 * (*fiber.obw), fiber.opar);
+        hf = myFilter(fiber.opticalFilterType, fNorm, 0.5 * (*fiber.obw), fiber.filterParameter);
     }
 
     // 1: apply optical filter
@@ -53,12 +53,12 @@ MatrixXcd oToE(E e, double nt, Fiber fiber) {
     if (fiber.modFormat == "ook") {
         iric = sumRow((MatrixXd) e.field.cwiseAbs2());  // PD. sum is over polarizations
     } else if (fiber.modFormat == "dpsk") {
-        VectorXd nDel  = nModulusEigen(genVector(1, nFFT).array() - round(fiber.mzdel * nt), nFFT);  // interferometer delay
+        VectorXd nDel  = nModulusEigen(genVector(1, nFFT).array() - round(fiber.mzDelay * nt), nFFT);  // interferometer delay
         VectorXcd temp = matrixToVec(e.field);
         temp           = truncateVec(temp, nDel).conjugate();
         iric           = sumRow((MatrixXd) e.field.cwiseProduct(temp).real());  // MZI + PD
     } else if (fiber.modFormat == "dqpsk") {
-        VectorXd nDel     = nModulusEigen(genVector(1, nFFT).array() - round(fiber.mzdel * nt), nFFT);  // interferometer delay
+        VectorXd nDel     = nModulusEigen(genVector(1, nFFT).array() - round(fiber.mzDelay * nt), nFFT);  // interferometer delay
         VectorXcd temp    = matrixToVec(e.field);
         temp              = truncateVec(temp, nDel).conjugate();
         MatrixXcd sumTemp = fastExp(-M_PI / 4) * e.field.cwiseProduct(temp).real();

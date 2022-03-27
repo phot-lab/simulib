@@ -1,4 +1,4 @@
-## SimuLib
+# SimuLib
 
 Optical simulation library, which now includes three main modules of optical transmission simulation software:
 
@@ -21,43 +21,53 @@ SimuLib              (root directory)
 └── test/            (test cases)
 ```
 
-### Example
+## Build Instructions
 
-There are some code examples under example folder, which can guide those people who are unfamiliar with this library.
-
-### Requirements of different Operating Systems
-
-#### Prerequisites for MacOS (Big Sur or higher)
-
-1. Install the Intel® oneAPI Base
-   Toolkit: [m_BaseKit_p_2022.1.0.92_offline.dmg](https://registrationcenter-download.intel.com/akdlm/irc_nas/18342/m_BaseKit_p_2022.1.0.92_offline.dmg
-   ).
-
-2. Install GNU GCC 7.* by `brew install gcc@7`, see [Homebrew](https://formulae.brew.sh/formula/gcc@7#default) for
-   detail. Then check the installation
+### Command Line Way
 
 ```shell
-$ gcc-7 --version
-gcc-7 (Homebrew GCC 7.5.0_4) 7.5.0
-Copyright (C) 2017 Free Software Foundation, Inc.
-This is free software; see the source for copying conditions.  There is NO
-warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-
-$ g++-7 --version
-g++-7 (Homebrew GCC 7.5.0_4) 7.5.0
-Copyright (C) 2017 Free Software Foundation, Inc.
-This is free software; see the source for copying conditions.  There is NO
-warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+$ cmake --version # Make sure cmake has been installed
+$ ninja --version # Make sure ninja has been installed
+$ gcc --version # Make sure gcc has been installed
+$ g++ --version # Make sure g++ has been installed
+$ mkdir cmake-build-debug # Place cmake build files in this directory
+$ cd cmake-build-debug
+$ cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=ninja -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ -G Ninja ../ # Build CMake project
+$ cd .. # Back to root directory
+$ cmake --build cmake-build-debug --target Library # Build Library target, the output archive file will be placed in the lib directory
+$ cmake --build cmake-build-debug --target <TARGET_NAME> # Then you can build any target with this command, the output executable file will be placed in the bin folder
 ```
+
+### CLion Way
+
+1. Click the small hammer on the left of `Library | Debug`, the static library will then be built.
+
+   ![Build Library](docs/images/Build Library.png)
+
+2. Click the run button on the right of `Example | Debug`, the program will be built and run.
+
+   ![Run Example](docs/images/Run Example.png)
+
+### Notes
+
+There are some test cases under `test` folder, which can be used for testing availability of different functions. All the required header files has been placed in the `includes` folder.
+
+## Installation Requirements of different Operating Systems
+
+### MacOS (Big Sur or higher)
+
+1. Install the Intel® oneAPI Base Toolkit: [m_BaseKit_p_2022.1.0.92_offline.dmg](https://registrationcenter-download.intel.com/akdlm/irc_nas/18342/m_BaseKit_p_2022.1.0.92_offline.dmg
+   ).
+   
+2. Install GNU GCC 7.* by `brew install gcc@7`, see [Homebrew](https://formulae.brew.sh/formula/gcc@7#default) for detail.
 
 3. Configure `CLion > Preference > Build, Execution, Deployment > Toolchains`, add profile with C compiler (
    path: `/usr/local/Cellar/gcc@7/7.5.0_4/bin/gcc-7`) and C++ compiler (
    path: `/usr/local/Cellar/gcc@7/7.5.0_4/bin/g++-7`). Then move the new profile to the top as default.
 
-#### Prerequisites for Ubuntu 18.04
+### Ubuntu 18.04
 
-1. (Optional) Recommend installation of Qt5 denpendencys by following
-   this [link](https://wiki.qt.io/Building_Qt_5_from_Git)
+1. (Optional) Recommend installation of Qt5 denpendencys by following this [link](https://wiki.qt.io/Building_Qt_5_from_Git)
 
 ```
 $ sudo apt-get build-dep qt5-default
@@ -86,9 +96,7 @@ This is free software; see the source for copying conditions.  There is NO
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 ```
 
-3. Install Intel® oneAPI Base Toolkit by following
-   these [link1](https://www.intel.com/content/www/us/en/developer/tools/oneapi/base-toolkit-download.html?operatingsystem=linux&distributions=aptpackagemanager)
-   , [link2](https://www.intel.com/content/www/us/en/develop/documentation/installation-guide-for-intel-oneapi-toolkits-linux/top/installation/install-using-package-managers/apt.html#apt_apt-packages)
+3. Install Intel® oneAPI Base Toolkit by following these [link1](https://www.intel.com/content/www/us/en/developer/tools/oneapi/base-toolkit-download.html?operatingsystem=linux&distributions=aptpackagemanager), [link2](https://www.intel.com/content/www/us/en/develop/documentation/installation-guide-for-intel-oneapi-toolkits-linux/top/installation/install-using-package-managers/apt.html#apt_apt-packages)
 
 > (1) Remove all Intel® oneAPI packages
 
@@ -144,14 +152,6 @@ Do you want to continue? [Y/n]
 4. Configure `CLion > Preference > Build, Execution, Deployment > Toolchains`, add profile with C compiler (
    path: `/usr/bin/gcc`) and C++ compiler (path: `/usr/bin/g++`). Then move the new profile to the top as default.
 
-### Build instructions
-
-1. Firstly, build the 'Library'. Check the output file under ./lib/
-
-2. Then, build the test cases such as 'MKLTest', 'FiberTest'. They are all mutually independent.
-
-3. Run the test case.
-
-### SimuLib Coding Style
+## SimuLib Coding Style
 
 The custom coding style of the project: [details](docs/SimuLib Coding Style.md)

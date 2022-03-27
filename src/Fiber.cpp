@@ -106,8 +106,8 @@ tuple<Out, E> fiberTransmit(E &e, Fiber fiber) {
     fiber.gam = coeff * gam;  // [1/mW/m], including Manakov correction, if active
 
     if ((fiber.dispersion == 0 && fiber.slope == 0) || fiber.gam == 0) {  // only GVD or only Kerr
-        fiber.dphiMax = INFINITY;
-        fiber.dzmax   = fiber.length;
+        fiber.accuracyParameter = INFINITY;
+        fiber.maxStepLength = fiber.length;
     }
 
     /********** SSFM Propagation **********/
@@ -132,7 +132,7 @@ tuple<double, unsigned long, E> SSFM(E e, Linear *linear, const VectorXd &betat,
     }
     fiber.chlambda       = e.lambda(0, 0);
     unsigned long ncycle = 1;                             // number of steps
-    double len_corr      = fiber.length / fiber.nplates;  // waveplate length [m]
+    double len_corr      = fiber.length / fiber.nWavePlates;  // waveplate length [m]
     double dz, phimax, dzs;
 
     tie(dz, phimax)   = FirstStep(e.field, fiber);
@@ -194,16 +194,16 @@ tuple<double, unsigned long, E> SSFM(E e, Linear *linear, const VectorXd &betat,
 tuple<double, double> FirstStep(MatrixXcd field, Fiber fiber) {
     double step;
     double phimax;
-    if (fiber.length == fiber.dzmax) {
-        step   = fiber.dzmax;
+    if (fiber.length == fiber.maxStepLength) {
+        step   = fiber.maxStepLength;
         phimax = INFINITY;
     } else {
         if (fiber.dphiFwm) {
             fiber.bandwidth = gstate.SAMP_FREQ;
             double spac     = fiber.bandwidth * pow(fiber.chlambda, 2) / LIGHT_SPEED;  // bandwidth in [nm]
-            step            = (fiber.dphiMax / abs(fiber.dispersion) / (2 * M_PI * spac * fiber.bandwidth * 1e-3) * 1e3);
-            if (step > fiber.dzmax)
-                step = fiber.dzmax;
+            step            = (fiber.accuracyParameter / abs(fiber.dispersion) / (2 * M_PI * spac * fiber.bandwidth * 1e-3) * 1e3);
+            if (step > fiber.maxStepLength)
+                step = fiber.maxStepLength;
             if (fiber.stepUpdate == "nlp") {                              // nonlinear phase criterion
                 double invLnl = field.cwiseAbs2().maxCoeff() * fiber.gam;  // Max of 1/Lnl [1/m]
                 double leff;
@@ -213,11 +213,11 @@ tuple<double, double> FirstStep(MatrixXcd field, Fiber fiber) {
                     leff = (1 - std::exp(-fiber.alphaLinear * step)) / fiber.alphaLinear;
                 phimax = invLnl * leff;  // recalculate max nonlinear phase [rad] per step
             } else {
-                phimax = fiber.dphiMax;
+                phimax = fiber.accuracyParameter;
             }
         } else {  // nonlinear phase criterion
             step   = NextStep(field, fiber, NAN);
-            phimax = fiber.dphiMax;
+            phimax = fiber.accuracyParameter;
         }
     }
     return make_tuple(step, phimax);
@@ -242,10 +242,10 @@ double NextStep(const MatrixXcd &field, const Fiber &fiber, double dz_old) {
             pmax = field.cwiseAbs2().maxCoeff();
         }
         double invLnl = pmax * fiber.gam;          // max over channels
-        double leff   = fiber.dphiMax / invLnl;    // effective length [m] of the step
+        double leff   = fiber.accuracyParameter / invLnl;    // effective length [m] of the step
         double dl     = fiber.alphaLinear * leff;  // ratio effective length/attenuation length
         if (dl >= 1) {
-            step = fiber.dzmax;  // [m]
+            step = fiber.maxStepLength;  // [m]
         } else {
             if (fiber.alphaLinear == 0) {
                 step = leff;
@@ -255,8 +255,8 @@ double NextStep(const MatrixXcd &field, const Fiber &fiber, double dz_old) {
         }
     }
     double dz;
-    if (step > fiber.dzmax)
-        dz = fiber.dzmax;
+    if (step > fiber.maxStepLength)
+        dz = fiber.maxStepLength;
     else
         dz = step;
     return dz;
@@ -351,14 +351,14 @@ tuple<Linear *, double> CheckFiber(const E &e, Fiber &fiber) {
         fiber.isManakov = false;  // Because of no birefringence in scalar case
         if (fiber.coupling != "none")
             WARNING("Coupling not possible in scalar propagation");
-        if (fiber.pmdpar != 0)
+        if (fiber.pmdParameter != 0)
             WARNING("PMD does not exist in scalar propagation: set to 0.");
-        fiber.pmdpar     = 0;
+        fiber.pmdParameter = 0;
         fiber.beatLength = 0;
         fiber.coupling   = "none";  // Coupling impossible with one pol
     } else {                        // Dual-polarization
         if (fiber.isManakov) {
-            if (fiber.pmdpar == 0) {
+            if (fiber.pmdParameter == 0) {
                 fiber.coupling = "none";  // Coupling indeed makes a difference for the Kerr effect of CNLSE
             } else {
                 if (fiber.coupling == "none") {
@@ -369,7 +369,7 @@ tuple<Linear *, double> CheckFiber(const E &e, Fiber &fiber) {
             }
         } else {  // CNLSE
             fiber.isManakov = false;
-            if (!fiber.isKerr && fiber.pmdpar == 0) {
+            if (!fiber.isKerr && fiber.pmdParameter == 0) {
                 fiber.coupling = "none";
             } else {
                 fiber.coupling = "pol";
@@ -381,22 +381,22 @@ tuple<Linear *, double> CheckFiber(const E &e, Fiber &fiber) {
     double dgd;
 
     if (fiber.coupling == "pol") {                                                                   // X-Y coupling
-        double corr_len = fiber.length / fiber.nplates;                                              // waveplate length [m] (aka correlation length)
-        dgd             = fiber.pmdpar / sqrt(corr_len) * sqrt(3 * M_PI / 8) / sqrt(1000) * (1e-3);  // Differential
+        double corr_len = fiber.length / fiber.nWavePlates;                                              // waveplate length [m] (aka correlation length)
+        dgd             = fiber.pmdParameter / sqrt(corr_len) * sqrt(3 * M_PI / 8) / sqrt(1000) * (1e-3);  // Differential
         // Group delay (DGD) per unit length [ns/m] @ x.lambda within a
         // Waveplate. To get [Df00] remember that within a waveplate the delay is dgd * corr_len.
 
         // 这两行没有替换
         //        x1.coupling = x.coupling;
         //        x1.beatlength = x.beatlength;
-        for (int i = 0; i < fiber.nplates; ++i) {  // SVD, hence different with the old FIBER version
+        for (int i = 0; i < fiber.nWavePlates; ++i) {  // SVD, hence different with the old FIBER version
                                                    //            [U,S]=eigendec(x1);
                                                    //            [lin.matin(:,:,l),lin.db0(l,:)] = deal(U,S);
         }
         // lin.db extended later
     } else {
         dgd                              = 0;  // Turn off all polarization and birefringence effects
-        fiber.nplates                    = 1;
+        fiber.nWavePlates                = 1;
         fiber.coupling                   = "none";
         linear                           = new ScalarLinear();
         linear->is_scalar                = true;
@@ -408,8 +408,8 @@ tuple<Linear *, double> CheckFiber(const E &e, Fiber &fiber) {
     // SSFM checks
 
     // Maximum step
-    if (fiber.dzmax > fiber.length)
-        fiber.dzmax = fiber.length;
+    if (fiber.maxStepLength > fiber.length)
+        fiber.maxStepLength = fiber.length;
 
     if (fiber.isKerr) {
         if (fiber.stepUpdate.empty()) {
@@ -426,15 +426,15 @@ tuple<Linear *, double> CheckFiber(const E &e, Fiber &fiber) {
         // First step parameter value
         if (fiber.dphiFwm) {
             if (fiber.stepUpdate == "cle") {
-                fiber.dphiMax = DEF_PHI_FWM_CLE;  // CLE
+                fiber.accuracyParameter = DEF_PHI_FWM_CLE;  // CLE
             } else {
-                fiber.dphiMax = DEF_PHI_FWM_NLP;  // NLP + PhiFWM in 1st step
+                fiber.accuracyParameter = DEF_PHI_FWM_NLP;  // NLP + PhiFWM in 1st step
             }
             if (fiber.bandwidth == 0) {
-                fiber.dphiMax = fiber.dphiMax * 2.25;  // because in [Mus18] they used the signal bandwidth, x1.5 smaller than the simulation bandwidth.
+                fiber.accuracyParameter = fiber.accuracyParameter * 2.25;  // because in [Mus18] they used the signal bandwidth, x1.5 smaller than the simulation bandwidth.
             }
         } else {
-            fiber.dphiMax = DEF_PHI_NLP;  // NLP
+            fiber.accuracyParameter = DEF_PHI_NLP;  // NLP
         }
     }
 
