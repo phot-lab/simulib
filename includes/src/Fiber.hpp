@@ -71,7 +71,7 @@ struct Fiber {
     string modFormat;                   // modulation format
     string opticalFilterType;           // optical filter (OBPF) type (see MYFILTER) (used in receiver module)
     shared_ptr<int> dcum;               // post compensating fiber accumulated dispersion [ps/nm]. The fiber is inserted before the optical filter.
-    shared_ptr<double> obw;             // OBPF bandwidth normalized to SYMBRATE.
+    double obw = 1.8;                   // OBPF bandwidth normalized to SYMBRATE.
 };
 
 /**

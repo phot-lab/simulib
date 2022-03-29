@@ -20,7 +20,6 @@
 #define SIMULIB_SIMULIB_H
 
 #include "src/OperatorOverloading.hpp"
-#include "src/MathOperations.hpp"
 #include "src/CommonTypes.hpp"
 #include "src/FFT.hpp"
 #include "src/Fiber.hpp"
@@ -34,5 +33,6 @@
 #include "src/DigitalModulator.hpp"
 #include "src/CustomDataStructure.hpp"
 #include "src/RxFrontend.hpp"
+#include "src/EvaluateEye.hpp"
 
 #endif  // SIMULIB_SIMULIB_H

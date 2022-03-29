@@ -22,7 +22,7 @@
 using namespace std;
 
 VectorXcd myFilter(string filterType, const VectorXd &freq, double bandwidth, double p);
-E filterEnv(E e, RowVectorXd lambda, VectorXcd hf);
+E filterEnv(E e, RowVectorXd lambda, const VectorXcd& hf);
 MatrixXcd oToE(E e, double nt, Fiber fiber);
 
 MatrixXcd rxFrontend(E e, RowVectorXd lambda, int symbrate, const Fiber& fiber) {
@@ -35,7 +35,7 @@ MatrixXcd rxFrontend(E e, RowVectorXd lambda, int symbrate, const Fiber& fiber) 
         // Hf = Hf .* myfilter(x.oftype,Fnorm,0.5*x.obw,x.filterParameter);
         // 未完成
     } else {
-        hf = myFilter(fiber.opticalFilterType, fNorm, 0.5 * (*fiber.obw), fiber.filterParameter);
+        hf = myFilter(fiber.opticalFilterType, fNorm, 0.5 * fiber.obw, fiber.filterParameter);
     }
 
     // 1: apply optical filter
@@ -78,7 +78,7 @@ MatrixXcd oToE(E e, double nt, Fiber fiber) {
  * @param hf
  * @return
  */
-E filterEnv(E e, RowVectorXd lambda, VectorXcd hf) {
+E filterEnv(E e, RowVectorXd lambda, const VectorXcd& hf) {
     double freqc   = e.lambda(0, 0) * LIGHT_SPEED;      // central frequency [GHz] (corresponding to the zero frequency of the lowpass equivalent signal by convention)
     double frec    = lambda[0] * LIGHT_SPEED;           // carrier frequency [GHz]
     double deltaFN = freqc - frec;                      // carrier frequency spacing [GHz]
@@ -86,7 +86,7 @@ E filterEnv(E e, RowVectorXd lambda, VectorXcd hf) {
     int ndfn       = (int) round((deltaFN / minFreq));  // Spacing in points
     e.field        = fftCol(e.field);
     e.field        = circShift(e.field, ndfn);  // Undo what did in MULTIPLEXER
-    e.field        = ifftCol(mvProduct(e.field, std::move(hf)));
+    e.field        = ifftCol(mvProduct(e.field, hf));
     return e;
 }
 

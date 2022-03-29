@@ -206,3 +206,11 @@ VectorXcd sortEigen(VectorXcd v, bool ascend) {
         std::sort(v.begin(), v.end(), [](complex<double> lhs, complex<double> rhs) { return rhs.real() < lhs.real(); });
     return v;
 }
+
+MatrixXcd mvProduct(MatrixXcd m, const VectorXcd &v) {
+    MatrixXcd res(m.rows(),m.cols());
+    for (Index i = 0; i < m.cols(); ++i) {
+        res.col(i) = m.col(i).cwiseProduct(v);
+    }
+    return res;
+}

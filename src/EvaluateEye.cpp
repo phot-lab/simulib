@@ -21,20 +21,20 @@
 using namespace std;
 using namespace Eigen;
 
-complex<double> evaluateEye(MatrixXi patternBinary, MatrixXcd signal, double symbrate, string modFormat, Fiber fiber) {
+tuple<complex<double>, MatrixXcd> evaluateEye(MatrixXi patternBinary, const MatrixXcd &signal, double symbrate, const string &modFormat, const Fiber &fiber) {
     double nt = gstate.SAMP_FREQ / symbrate;  // Number of points per symbol
     if (!isInt(nt))
         ERROR("Number of points per symbol is not an integer.");
     double nSymb          = (double) gstate.NSAMP / nt;
     Index nPol            = signal.cols();
     double nShift         = round(nt / 2);  // the first bit is centered at index 1
-    MatrixXcd iricMat     = circShift(signal, (int) nShift).reshaped(nt, nSymb * (double) nPol);
+    MatrixXcd iricMat     = circShift(signal, (int) nShift).reshaped(nt, nSymb * (double) nPol).transpose();
     FormatInfo formatInfo = modFormatInfo(modFormat);
     MatrixXcd botVec      = MatrixXcd ::Zero((Index) formatInfo.digit, (Index) nt);
     MatrixXcd topVec      = MatrixXcd ::Zero((Index) formatInfo.digit, (Index) nt);
 
     for (int i = 0; i < formatInfo.digit; ++i) {
-        VectorXi select     = patternBinary.array().cwiseEqual(i - 1).reshaped().cast<int>();
+        VectorXi select     = patternBinary.array().cwiseEqual(i).reshaped().cast<int>();
         MatrixXcd eyeSignal = selectRows(iricMat, select);
         topVec.row(i)       = minRow(eyeSignal);  // Top of eye
         botVec.row(i)       = maxRow(eyeSignal);  // Bottom of eye
@@ -46,8 +46,7 @@ complex<double> evaluateEye(MatrixXi patternBinary, MatrixXcd signal, double sym
     VectorXi indexBot      = indexOfSorted(maxCol(botVec), botVecSorted);
 
     // Eye opening: best of the worst among symbols
-
-    VectorXcd eyeOpeningVec    = maxCol((MatrixXcd) (selectRows(topVec, excludeFirst(indexTop)) - selectRows(botVec, excludeLast(indexBot))));  // Among samples
+    VectorXcd eyeOpeningVec    = maxCol((MatrixXcd) (truncateMatrix(topVec, excludeFirst(indexTop)) - (MatrixXcd) truncateMatrix(botVec, excludeLast(indexBot))));  // Among samples
     complex<double> eyeOpening = eyeOpeningVec.redux([](const complex<double> &a, const complex<double> &b) {
         if (a.real() < b.real())
             return a;
@@ -56,6 +55,7 @@ complex<double> evaluateEye(MatrixXi patternBinary, MatrixXcd signal, double sym
     if (eyeOpening.real() < 0)
         eyeOpening = NAN;
 
-    eyeOpening = complexProduct(10, log10(eyeOpening));  // // [dBm]
-    return eyeOpening;
+    complex<double> temp(10, 0);
+    eyeOpening = temp * log10(eyeOpening);  // [dBm]
+    return make_tuple(eyeOpening, iricMat);
 }

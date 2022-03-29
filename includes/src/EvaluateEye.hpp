@@ -12,13 +12,19 @@
  */
 /**
  * Author: Chunyu Li
- * Created: 2022/3/24
+ * Created: 2022/3/29
  * Supported by: National Key Research and Development Program of China
  */
+#ifndef EVALUATEEYE_HPP
+#define EVALUATEEYE_HPP
 
-#ifndef MATHOPERATIONS_HPP
-#define MATHOPERATIONS_HPP
+#include "Eigen/Core"
+#include "Fiber.hpp"
+#include <complex>
 
-complex<double> complexProduct(complex<double> a, complex<double> b);
+using namespace Eigen;
+using namespace std;
 
-#endif  // MATHOPERATIONS_HPP
+tuple<complex<double>, MatrixXcd> evaluateEye(MatrixXi patternBinary, const MatrixXcd& signal, double symbrate, const string& modFormat, const Fiber& fiber);
+
+#endif  // EVALUATEEYE_HPP

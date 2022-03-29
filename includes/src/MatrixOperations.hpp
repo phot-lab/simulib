@@ -73,13 +73,16 @@ Matrix<T, Dynamic, 1> truncateVec(Matrix<T, Dynamic, 1> &vec, VectorXd indices) 
 }
 
 template<typename T>
-Matrix<T, Dynamic, Dynamic> mvProduct(Matrix<T, Dynamic, Dynamic> m, Matrix<T, Dynamic, 1> v) {
-    Matrix<T, Dynamic, Dynamic> res;
-    for (Index i = 0; i < m.cols(); ++i) {
-        res.col(i) = m.col(i) * v;
+Matrix<T, Dynamic, Dynamic> truncateMatrix(Matrix<T, Dynamic, Dynamic> &m, VectorXi indices) {
+    assert(m.rows() >= indices.size());
+    Matrix<T, Dynamic, Dynamic> truncate(indices.size(),m.cols());
+    for (Index i = 0; i < indices.size(); ++i) {
+        truncate.row(i) = m.row((Index) indices[i]);
     }
-    return res;
+    return truncate;
 }
+
+MatrixXcd mvProduct(MatrixXcd m, const VectorXcd &v);
 
 // https://blog.csdn.net/xinshuwei/article/details/84643810
 template<typename T>

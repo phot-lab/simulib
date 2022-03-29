@@ -23,9 +23,10 @@ using namespace Eigen;
 
 int main() {
 
-    MatrixXd m(2, 2);
-    m << 2, 1, 3, 4;
-    cout << m << endl;
-    cout << maxCol(m) << endl;
-
+    //    MatrixXd m(2, 2);
+    //    m << 2, 1, 3, 4;
+    //    cout << m << endl;
+    //    cout << maxCol(m) << endl;
+    complex<double> a(3, 4);
+    cout << a * a << endl;
 }

@@ -87,5 +87,17 @@ int main() {
     cout << "光场矩阵的列：" << e.field.cols() << endl;
     cout << "光的波长：" << e.lambda(0, 0) << endl;
 
+    fiber.modFormat         = modFormat;
+    fiber.opticalFilterType = "gauss";
+
+    // 前端接收器
+    MatrixXcd returnSignal = rxFrontend(e, lambda, symbrate, fiber);
+
+    complex<double> eyeOpening;
+    MatrixXcd iricMat;
+
+    // 眼图分析器（随后使用eyeOpening和iricMat这两个值去绘制眼图）
+    tie(eyeOpening, iricMat) = evaluateEye(patBinary, returnSignal, symbrate, modFormat, fiber);
+
     return 0;
 }
