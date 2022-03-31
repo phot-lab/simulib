@@ -31,12 +31,11 @@ if (MKL_FOUND)
 endif ()
 
 add_subdirectory(src)
-find_library(LIBRARY Library ${PROJECT_SOURCE_DIR}/lib)
 
 if (MKL_FOUND)
-    set(LIBS ${LIBRARY} MKL::MKL)
+    set(LIBS Library MKL::MKL)
 else ()
-    set(LIBS ${LIBRARY})
+    set(LIBS Library)
 endif ()
 
 add_subdirectory(test)

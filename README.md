@@ -34,15 +34,14 @@ $ mkdir cmake-build-debug # Place cmake build files in this directory
 $ cd cmake-build-debug
 $ cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=ninja -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ -G Ninja ../ # Build CMake project
 $ cd .. # Back to root directory
-$ cmake --build cmake-build-debug --target Library # Build Library target, the output archive file will be placed in the lib directory
-$ cmake --build cmake-build-debug --target <TARGET_NAME> # Then you can build any target with this command, the output executable file will be placed in the bin folder
+$ cmake --build cmake-build-debug --target <TARGET_NAME> # Then you can build and run any target with this command, the output executable file will be placed in the bin folder
 ```
 
 ### CLion Way
 
-1. Click the small hammer on the left of `Library | Debug`, the static library will then be built.
+1. Right click the root directory and click `Reload CMake Project`, then the cmake project will be loaded. In general, the project will be loaded automatically by CLion at first time you open the project.
 
-   ![Build Library](docs/images/Build Library.png)
+   ![Reload Project](docs/images/Reload Project.png)
 
 2. Click the run button on the right of `Example | Debug`, the program will be built and run.
 

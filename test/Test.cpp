@@ -21,12 +21,26 @@
 using namespace std;
 using namespace Eigen;
 
-int main() {
+//#define TEST
+#ifdef TEST
 
-    //    MatrixXd m(2, 2);
-    //    m << 2, 1, 3, 4;
-    //    cout << m << endl;
-    //    cout << maxCol(m) << endl;
-    complex<double> a(3, 4);
-    cout << a * a << endl;
+void test() {
+    cout << "func a" << endl;
+}
+
+#else
+
+void test() {
+    cout << "func b" << endl;
+}
+
+#endif
+
+void test();
+
+int main() {
+    MatrixXd m(2, 2);
+    m << 2, 1, 3, 4;
+    cout << m << endl;
+    cout << maxCol(m) << endl;
 }
