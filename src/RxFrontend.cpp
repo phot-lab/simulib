@@ -25,6 +25,19 @@ VectorXcd myFilter(string filterType, const VectorXd &freq, double bandwidth, do
 E filterEnv(E e, RowVectorXd lambda, const VectorXcd& hf);
 MatrixXcd oToE(E e, double nt, Fiber fiber);
 
+/**
+ * @brief receiver front-end
+ * @param e: electric field, is a struct of fields.
+ *        E.lambda: central wavelength [nm] of the electric field, i.e.,
+ *          wavelength that relates the lowpass equivalent signal to the
+ *          corresponding bandpass signal.
+ *        E.field: time samples of the electric field, with polarizations (if
+ *          existing) alternated on columns
+ * @param lambda: the central wavelength of the optical bandpass filter
+ * @param symbrate: the symbol rate [Gbaud] of the signal.
+ * @param fiber: the connected fiber.
+ * @return electric wave.
+ */
 MatrixXcd rxFrontend(E e, RowVectorXd lambda, int symbrate, const Fiber& fiber) {
 
     // Create linear optical filters: OBPF (+fiber)

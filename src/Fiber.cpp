@@ -33,6 +33,18 @@ MatrixXcd LinearStep(Linear *linear, VectorXd betat, RowVectorXd dzb, RowVectorX
 VectorXcd NonlinearStep(VectorXcd field, Fiber fiber, double dz);
 tuple<double, unsigned long, E> SSFM(E e, Linear *linear, const VectorXd &betat, Fiber fiber);
 
+/**
+ * @brief Single-mode optical fiber in the nonlinear regime
+ * @param e: electric field, is a struct of fields.
+ *        E.lambda: central wavelength [nm] of the electric field, i.e.,
+ *          wavelength that relates the lowpass equivalent signal to the
+ *          corresponding bandpass signal.
+ *        E.field: time samples of the electric field, with polarizations (if
+ *          existing) alternated on columns
+ * @param fiber: the transmit fiber.
+ * @return out: fiber option
+ * @return e: electric field
+ */
 tuple<Out, E> fiberTransmit(E &e, Fiber fiber) {
 
     chrono::steady_clock::time_point begin = chrono::steady_clock::now();  // Start time

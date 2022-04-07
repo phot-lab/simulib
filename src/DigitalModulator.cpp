@@ -24,6 +24,48 @@ VectorXd pulseDesign(string ptype, int nsps, unsigned long n_symb, Par par);
 
 MatrixXcd elecSrc(MatrixXcd level, string ptype, Par par, unsigned long n_symb, int nsps, int nd, unsigned long n_fft);
 
+
+/**
+ * @brief linearly modulated digital signal
+ * @param pat_bin: a matrix containing the pattern. PAT can be a matrix of bits, of size number of
+ *        bits-by-log2(alphabet size), or a column vector containing the decimal representation.
+ * @param symbrate: the signal symbol-rate in [Gbaud].
+ * @param par: a struct with the following fields:
+ *        PAR.rolloff = roll-off (0<=PAR.rolloff<=1) of raised cosine and root-raised cosine pulses.
+ *        PAR.duty = pulse duty cycle (0 < PAR.duty <= 1). The time axis is scaled by PAR.duty. Default: PAR.duty = 1.
+ *        PAR.norm. power normalization.
+ *            'iid': the output signal is normalized to unit average power under the assumption that the symbols are
+ *            independent and identically distributed symbols with uniform distribution.[Default].
+ *            'mean': the power is normalized to the average power of the
+ *            current signal.
+ *            'no': no normalization is applied.
+ *        PAR.nsps = number of samples per symbol.This option allows using a different sampling rate for internal
+ *           operations before the final setting to match the global GSTATE.FSAMPLING. The transmitted sequence is
+ *           upsampled to PAR.Nsps samples, and then filtered with a FIR filter with impulse response equal to the
+ *           desired pulse shape. Default value: GSTATE.FSAMPLING/SYMBRATE. If not an integer, a rational approximation
+ *           with RAT is used.
+ *        PAR.firtaps = taps of the FIR filter creating the pulse. The corresponding sampling rate is set by PAR.nsps.
+ *           Default: PAR.firtaps = length(PAT). This field is used only with PTYPE='userfir'.
+ *        PAR.emph = emphasis type. After creation, the signal may experience an emphasis.
+ *        PAR.bw = bandwidth, normalized to the symbol rate SYMBRATE, of the filter used by filter when PTYPE is a
+ *           valid string supported by filter (in RxFrontedn.cpp).
+ *        PAR.par = optional parameters of MYFILTER when PTYPE is a valid string supported by filter (in RxFrontedn.cpp).
+ * @param mod_format: a string with options below:
+ *        'ook': on-off keying [Mach Zehnder modulator]
+ *        'bpsk': binary phase-shift keying (PSK) [Mach Zehnder modulator]
+ *        'qpsk': quadrature phase-shift keying (QPSK) [iq modulator]
+ *        'psk': PSK [iq modulator + (possibly) phase modulator(s)]
+ *        '[num]qam': quadrature amplitude modulation. [num] is the alphabet size[iq modulator]
+ *        '[num]pam': M-ary (power of two) pulse amplitude modulation. [num] is the alphabet size. [Mach Zehnder modulator]
+ * @param ptype: the pulse type:
+ *        'rc': raised cosine pulse.
+ *        'rootrc': root raised-cosine pulse.
+ *        'userfir': the shape of the pulse is given by the user as a column vector.
+ *        'costails': a non-square pulse with cosine-shaped tails.
+ *        'dirac': the pulse is a Dirac delta.
+ *        'rect': rectangular pulse.
+ * @return E: a struct of wave, details in fiber_types.h
+ */
 tuple<MatrixXcd, double> digitalModulator(MatrixXi pat_bin, double symbrate, Par par, string mod_format, string ptype) {
     unsigned long n_fft = gstate.NSAMP;
     double n_tini       = gstate.SAMP_FREQ / symbrate;  // Wished samples per symbol
