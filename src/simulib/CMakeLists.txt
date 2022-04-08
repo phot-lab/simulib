@@ -1,0 +1,5 @@
+file(GLOB SOURCE_FILES *.cpp)
+add_library(Library STATIC ${SOURCE_FILES})
+if(CUDAToolkit_FOUND)
+    target_link_libraries(Library GPULibrary)
+endif()

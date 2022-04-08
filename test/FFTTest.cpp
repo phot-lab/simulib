@@ -12,32 +12,20 @@
  */
 /**
  * Author: Chunyu Li
- * Created: 2022/3/10
+ * Created: 2022/4/1
  * Supported by: National Key Research and Development Program of China
  */
 
-#ifndef SIMULIB_SIMULIB_H
-#define SIMULIB_SIMULIB_H
+#include <SimuLib>
 
-#include "src/OperatorOverloading.hpp"
-#include "src/CommonTypes.hpp"
-#include "src/FFT.hpp"
-#include "src/Fiber.hpp"
-#include "src/Globals.hpp"
-#include "src/Tools.hpp"
-#include "src/DSPTools.hpp"
-#include "src/MatrixOperations.hpp"
-#include "src/LaserSource.hpp"
-#include "src/Mzmodulator.hpp"
-#include "src/Pattern.hpp"
-#include "src/DigitalModulator.hpp"
-#include "src/CustomDataStructure.hpp"
-#include "src/RxFrontend.hpp"
-#include "src/EvaluateEye.hpp"
+int main() {
 
-#ifdef SIMULIB_USE_GPU
-#include "src/gpu/Tools.cuh"
-#include "src/gpu/CuFFT.cuh"
-#endif
+    VectorXcd v(3);
+    v << 1, 2, 3;
+    cout << v << endl;
+    v = fft(v);
+    cout << v << endl;
+    v = ifft(v);
+    cout << v << endl;
 
-#endif  // SIMULIB_SIMULIB_H
+}

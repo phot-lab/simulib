@@ -531,7 +531,7 @@ EIGEN_DEVICE_FUNC EIGEN_STRONG_INLINE typename QuaternionBase<Derived>::Vector3
 QuaternionBase<Derived>::_transformVector(const Vector3& v) const
 {
     // Note that this algorithm comes from the optimization by hand
-    // of the conversion to a Matrix followed by a Matrix/Vector product.
+    // of the conversion to a Matrix followed by a Matrix/VectorXd product.
     // It appears to be much faster than the common algorithm found
     // in the literature (30 versus 39 flops). It also requires two
     // Vector3 as temporaries.

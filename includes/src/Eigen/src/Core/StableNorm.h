@@ -216,7 +216,7 @@ MatrixBase<Derived>::stableNorm() const
 }
 
 /** \returns the \em l2 norm of \c *this using the Blue's algorithm.
-  * A Portable Fortran Program to Find the Euclidean Norm of a Vector,
+  * A Portable Fortran Program to Find the Euclidean Norm of a VectorXd,
   * ACM TOMS, Vol 4, Issue 1, 1978.
   *
   * For architecture/scalar types without vectorization, this version

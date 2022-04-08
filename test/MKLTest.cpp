@@ -40,8 +40,7 @@ int main() {
     int m, n, k, i, j;
     double alpha, beta;
 
-    const int length = 6000;
-
+    const int length = 60;
 
     printf("\n This example computes real matrix C=alpha*A*B+beta*C using \n"
            " Intel(R) MKL function dgemm, where A, B, and  C are matrices and \n"

@@ -16,31 +16,35 @@
  * Supported by: National Key Research and Development Program of China
  */
 
-#include <SimuLib>
+//#include <SimuLib>
 
 using namespace std;
-using namespace Eigen;
 
-//#define TEST
-#ifdef TEST
+#include <iostream>
+#include <src/Eigen/Core>
 
-void test() {
-    cout << "func a" << endl;
-}
+#define PARMAT_USE_GPU
 
-#else
+namespace ParMat {
+    class VectorXd : public Eigen::VectorXd {
+        using Matrix::Matrix;
 
-void test() {
-    cout << "func b" << endl;
-}
-
+    public:
+#ifdef PARMAT_USE_GPU
+        double dot(const VectorXd &other) {
+            return this->operator()(1) * other(1);
+        }
 #endif
+    };
+}  // namespace ParMat
 
-void test();
+using namespace ParMat;
 
 int main() {
-    MatrixXd m(2, 2);
-    m << 2, 1, 3, 4;
-    cout << m << endl;
-    cout << maxCol(m) << endl;
+    VectorXd v(3);
+    v << 1, 2, 3;
+    cout << v.dot(v) << endl;
+#ifdef TWO
+    cout << "Hello" << endl;
+#endif
 }

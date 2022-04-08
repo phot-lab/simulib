@@ -88,7 +88,7 @@ public:
   * \li \c Matrix2Xf is a partially fixed-size (dynamic-size) matrix of floats (\c Matrix<float, 2, Dynamic>)
   * \li \c MatrixX3d is a partially dynamic-size (fixed-size) matrix of double (\c Matrix<double, Dynamic, 3>)
   *
-  * See \link matrixtypedefs this page \endlink for a complete list of predefined \em %Matrix and \em Vector typedefs.
+  * See \link matrixtypedefs this page \endlink for a complete list of predefined \em %Matrix and \em VectorXd typedefs.
   *
   * You can access elements of vectors and matrices using normal subscripting:
   *
@@ -473,7 +473,7 @@ class Matrix
   *   - `MatrixXSize<Type>` and `MatrixSizeX<Type>` where `Size` can be \c 2,\c 3,\c 4 for hybrid dynamic/fixed matrices.
   *   - `VectorSize<Type>` and `RowVectorSize<Type>` for column and row vectors.
   *
-  * With \cpp11, you can also use fully generic column and row vector types: `Vector<Type,Size>` and `RowVector<Type,Size>`.
+  * With \cpp11, you can also use fully generic column and row vector types: `VectorXd<Type,Size>` and `RowVector<Type,Size>`.
   *
   * \sa class Matrix
   */

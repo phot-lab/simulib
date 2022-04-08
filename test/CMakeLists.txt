@@ -4,13 +4,18 @@ add_executable(EigenTest EigenTest.cpp)
 add_executable(MKLTest MKLTest.cpp)
 add_executable(FiberTest FiberTest.cpp)
 add_executable(MzmodTest MzmodTest.cpp)
+add_executable(FFTTest FFTTest.cpp)
 
 set(TEST_TARGETS "")
-list(APPEND TEST_TARGETS Test MatlabTest EigenTest MKLTest FiberTest MzmodTest)
+list(APPEND TEST_TARGETS Test MatlabTest EigenTest MKLTest FiberTest MzmodTest FFTTest)
 
 foreach (target IN LISTS TEST_TARGETS)
-    target_link_libraries(${target} ${LIBS})
+    target_link_libraries(${target} Library)
 endforeach ()
+
+if (MKL_FOUND)
+    target_link_libraries(MKLTest MKL::MKL)
+endif ()
 
 # Find Matlab library on personal computer
 find_package(Matlab)

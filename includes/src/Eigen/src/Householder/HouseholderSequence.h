@@ -164,7 +164,7 @@ template<typename VectorsType, typename CoeffsType, int Side> class HouseholderS
 
     /** \brief Constructor.
       * \param[in]  v      %Matrix containing the essential parts of the Householder vectors
-      * \param[in]  h      Vector containing the Householder coefficients
+      * \param[in]  h      VectorXd containing the Householder coefficients
       *
       * Constructs the Householder sequence with coefficients given by \p h and vectors given by \p v. The
       * i-th Householder coefficient \f$ h_i \f$ is given by \p h(i) and the essential part of the i-th
@@ -213,7 +213,7 @@ template<typename VectorsType, typename CoeffsType, int Side> class HouseholderS
 
     /** \brief Essential part of a Householder vector.
       * \param[in]  k  Index of Householder reflection
-      * \returns    Vector containing non-trivial entries of k-th Householder vector
+      * \returns    VectorXd containing non-trivial entries of k-th Householder vector
       *
       * This function returns the essential part of the Householder vector \f$ v_i \f$. This is a vector of
       * length \f$ n-i \f$ containing the last \f$ n-i \f$ entries of the vector
