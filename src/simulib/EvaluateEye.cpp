@@ -21,6 +21,16 @@
 using namespace std;
 using namespace Eigen;
 
+/**
+ * @brief Evaluate the eye-opening
+ * @param patternBinary: pattern sample.
+ * @param signal: signal sample.
+ * @param symbrate: the symbol rate [Gbaud] of the signal.
+ * @param modFormat: indicating the modulation format.(In DigitalModulator.cpp)
+ * @param fiber: the fiber that transfer light.
+ * @return eyeOpening:
+ * @return iricMat:
+ */
 tuple<complex<double>, MatrixXcd> evaluateEye(MatrixXi patternBinary, const MatrixXcd &signal, double symbrate, const string &modFormat, const Fiber &fiber) {
     double nt = gstate.SAMP_FREQ / symbrate;  // Number of points per symbol
     if (!isInt(nt))

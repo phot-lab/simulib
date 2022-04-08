@@ -18,14 +18,13 @@
 
 #include "SimuLib"
 
+
 /**
  * @brief modulates the optical field E with the electric signal MODSIG by a Mach-Zehnder interferometer.
  * @param light: optical field, is a struct of fields lambda, field.
  * @param MODSIG: the electrical driving signal
- * @param option: compute option. Details in mzmodulator.h
  * @return E_multimode: a struct of wave, details in laserSource.h
  */
-
 E mzmodulator(E light, VectorXcd modSig) {
     double biasl   = -1;                     // bias of lower arm
     double biasu   = -1;                     // bias of upper arm
@@ -64,6 +63,13 @@ E mzmodulator(E light, VectorXcd modSig) {
     return light;
 }
 
+/**
+ * @brief modulates the optical field E with the electric signal MODSIG by a Mach-Zehnder interferometer.
+ * @param light: optical field, is a struct of fields lambda, field.
+ * @param MODSIG: the electrical driving signal
+ * @param option: compute option. Details in mzmodulator.h
+ * @return E_multimode: a struct of wave, details in laserSource.h
+ */
 E mzmodulator(E light, VectorXcd modSig, Mzoption options) {
     double biasl   = -1;                     // bias of lower arm
     double biasu   = -1;                     // bias of upper arm
