@@ -25,7 +25,7 @@ int main() {
     Par par{};
 
     // Global parameters
-    int nSymb = 1024;  // number of symbols
+    int nSymb = 8;  // number of symbols
     int nt    = 32;    // number of discrete points per symbol
 
     // Tx parameters
@@ -82,22 +82,29 @@ int main() {
     // 光纤传输模块
     tie(out, e) = fiberTransmit(e, fiber);
 
-    cout << "光场：" << e.field << endl;
-    cout << "光场矩阵的行：" << e.field.rows() << endl;
-    cout << "光场矩阵的列：" << e.field.cols() << endl;
-    cout << "光的波长：" << e.lambda(0, 0) << endl;
+//    cout << "光场：" << e.field << endl;
+//    cout << "光场矩阵的行：" << e.field.rows() << endl;
+//    cout << "光场矩阵的列：" << e.field.cols() << endl;
+//    cout << "光的波长：" << e.lambda(0, 0) << endl;
+//    cout << "light field:" << e.field << endl;
+    cout << "light field row:" << e.field.rows() << endl;
+    cout << "light field col:" << e.field.cols() << endl;
+    cout << "light field wavelength:" << e.lambda(0, 0) << endl;
 
     fiber.modFormat         = modFormat;
     fiber.opticalFilterType = "gauss";
 
     // 前端接收器
     MatrixXcd returnSignal = rxFrontend(e, lambda, symbrate, fiber);
+    cout << "returnSignal:" << returnSignal << endl;
+    cout << "patBinary:" << patBinary << endl;
 
     complex<double> eyeOpening;
     MatrixXcd iricMat;
 
     // 眼图分析器（随后使用eyeOpening和iricMat这两个值去绘制眼图）
     tie(eyeOpening, iricMat) = evaluateEye(patBinary, returnSignal, symbrate, modFormat, fiber);
-
+    cout << "Eye open:" << eyeOpening << endl;
+//    cout << "iricMat:" << iricMat << endl;
     return 0;
 }

@@ -28,7 +28,7 @@
 #include "LaserSource.hpp"
 
 /**
- * @brief laser source simulation option
+ * @brief Mach-Zehnder modulator simulation option
  * @param exratio: extinction ratio [dB]
  * @param bias: bias, normalized to Vpi.
  * @param biasl: bias of the lower arm only.
@@ -57,6 +57,6 @@ struct Mzoption {
 };
 
 E mzmodulator(E light, VectorXcd modSig);
-E mzmodulator(E light, VectorXd modsig, Mzoption options);
+E mzmodulator(E light, VectorXcd modsig, Mzoption options);
 
 #endif  // SIMULIB_MZMODULATOR_H

@@ -93,6 +93,7 @@ tuple<MatrixXcd, double> digitalModulator(MatrixXi pat_bin, double symbrate, Par
 
     // 1: convert the pattern into stars of the constellations
     MatrixXcd level = Pat2Samp(pat_bin, mod_format).cast<complex<double>>();
+    //cout << "pat_bin:" << pat_bin << endl;
 
     // 2: create a linearly modulated digital signal
     MatrixXcd signal = elecSrc(level, ptype, par, n_symb, nsps, nd, n_fft);
@@ -141,14 +142,13 @@ MatrixXcd elecSrc(MatrixXcd level, string ptype, Par par, unsigned long n_symb, 
     //    levelu.conservativeResize(1, n_symb * nsps);  // truncate if necessary
     VectorXcd temp = matrixToVec(levelu);
     levelu         = truncateVec(temp, genVector(1, n_symb * nsps));  // truncate if necessary
-
     MatrixXcd levelu_fft = fftCol(levelu);
 
     VectorXcd hfir;
     if (flag) {
         // 未完成
     } else {
-        VectorXcd elpulse = pulseDesign(ptype, nsps, n_symb, par);  // single pulse
+        VectorXd elpulse = pulseDesign(ptype, nsps, n_symb, par);  // single pulse
         hfir              = fft(fftShift(elpulse));
         if (ptype == "rootrc") {  // square-root raised cosine
             hfir = (hfir *
@@ -161,6 +161,7 @@ MatrixXcd elecSrc(MatrixXcd level, string ptype, Par par, unsigned long n_symb, 
         levelu_fft.col(i) = levelu_fft.col(i).cwiseProduct(hfir);
     }
     MatrixXcd elec = ifftCol(levelu_fft);  // create PAM signal
+    //cout << "----------------------elec after ifft:\n" << elec << endl;
 
     Index length = max(elec.rows(), elec.cols());
     if (length < (long) n_fft) {
@@ -195,18 +196,22 @@ MatrixXcd elecSrc(MatrixXcd level, string ptype, Par par, unsigned long n_symb, 
     } else {
         ERROR("Unknwon normalization method");
     }
-
+    //cout << "--------------------sqrt(avge):\n" << sqrt(avge) << endl;
     return elec / sqrt(avge);
 }
 
 enum PTypeOption {
     Costails,
-    Userfir
+    Userfir,
+    rc,
+    rootrc
 };
 
 PTypeOption ResolveOption(string ptype) {
     if (ptype == "costails") return Costails;
     if (ptype == "userfir") return Userfir;
+    if (ptype == "rc") return rc;
+    if (ptype == "rootrc") return rootrc;
     return Costails;
 }
 
@@ -229,6 +234,28 @@ VectorXd pulseDesign(string ptype, int nsps, unsigned long n_symb, Par par) {
             VectorXd replace = truncateVec(elpulse, genVector(nsps * n_symb / 2 + 1, nsps * n_symb)).reverse();
             VectorXd indices = genVector(1, nsps * n_symb / 2);
             replaceVector(elpulse, indices, replace);  // first half of the pulse
+            break;
+        }
+        case rc:
+        case rootrc:{
+            VectorXd tfir =  VectorXd(nsps * n_symb);
+            tfir = ArrayXd(nsps * n_symb).setLinSpaced( -((long)n_symb)/2, (long)n_symb/2 - 1/nsps);
+            tfir = (1/par.duty) * tfir;
+            VectorXd sinc_tfit = tfir;
+            sinc_tfit = sinc_tfit.unaryExpr([](double x){
+                if(x == 0)
+                    return x;
+                else
+                    return sin(M_PI*x)/ (M_PI*x);
+            });
+            VectorXd cos_tfir = M_PI * par.rolloff * tfir;
+            cos_tfir = cos_tfir.array().cos();
+            VectorXd unit = VectorXd(tfir.size()).setOnes();
+            VectorXd devide_tfir = 2 * par.rolloff * tfir;
+            devide_tfir = devide_tfir.array().pow(2);
+            devide_tfir = unit - devide_tfir;
+            elpulse  = sinc_tfit.cwiseProduct(cos_tfir);
+            elpulse = elpulse.cwiseProduct(devide_tfir.cwiseInverse());
             break;
         }
         default:

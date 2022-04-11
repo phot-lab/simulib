@@ -230,8 +230,8 @@ E laserSource(RowVectorXd ptx, RowVectorXd lam, Option options) {
         MatrixXd randMatrix1 = MatrixXd::Zero(Nsamp, Nch * Npol).unaryExpr([](double dummy) { return n(engine); });
         MatrixXd randMatrix2 = MatrixXd::Zero(Nsamp, Nch * Npol).unaryExpr([](double dummy) { return n(engine); });
         MatrixXcd randComplexMatrix(Nsamp, Nch * Npol);
-        randComplexMatrix.real() << randMatrix1;
-        randComplexMatrix.imag() << randMatrix2;
+//        randComplexMatrix.real() << randMatrix1;
+//        randComplexMatrix.imag() << randMatrix2;
         light.field = light.field + sigma * randComplexMatrix;
     }
 

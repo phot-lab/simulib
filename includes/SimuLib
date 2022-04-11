@@ -34,6 +34,10 @@
 #include "src/CustomDataStructure.hpp"
 #include "src/RxFrontend.hpp"
 #include "src/EvaluateEye.hpp"
+#include "src/PolarizationBeamSplitter.h"
+#include "src/IQModulator.h"
+#include "src/PolarizationBeamCombiner.h"
+#include "src/DecimalToBinary.h"
 
 #ifdef SIMULIB_USE_GPU
 #include "src/gpu/Tools.cuh"
