@@ -92,11 +92,15 @@ tuple<MatrixXcd, double> digitalModulator(MatrixXi pat_bin, double symbrate, Par
     par.mod_format = mod_format;
 
     // 1: convert the pattern into stars of the constellations
+//    cout << "pat_bin:" << pat_bin << endl;
     MatrixXcd level = Pat2Samp(pat_bin, mod_format).cast<complex<double>>();
-    //cout << "pat_bin:" << pat_bin << endl;
+
+//    cout << "level:" << level << endl;
 
     // 2: create a linearly modulated digital signal
     MatrixXcd signal = elecSrc(level, ptype, par, n_symb, nsps, nd, n_fft);
+
+//    cout << "signal:" << signal << endl;
 
     // 3: resample if necessary
     if (nt != nsps) {
@@ -139,17 +143,28 @@ MatrixXcd elecSrc(MatrixXcd level, string ptype, Par par, unsigned long n_symb, 
     }
 
     MatrixXcd levelu = UpSample(level, nsps);
+
+//    cout << "levelu:\n" << levelu << endl;
+
     //    levelu.conservativeResize(1, n_symb * nsps);  // truncate if necessary
     VectorXcd temp = matrixToVec(levelu);
     levelu         = truncateVec(temp, genVector(1, n_symb * nsps));  // truncate if necessary
     MatrixXcd levelu_fft = fftCol(levelu);
+
+//    cout << "levelu_fft:\n" << levelu_fft << endl;
 
     VectorXcd hfir;
     if (flag) {
         // 未完成
     } else {
         VectorXd elpulse = pulseDesign(ptype, nsps, n_symb, par);  // single pulse
+
+//        cout << "elpulse:\n" << elpulse << endl;
+
         hfir              = fft(fftShift(elpulse));
+
+//        cout << "hfir :\n" << hfir  << endl;
+
         if (ptype == "rootrc") {  // square-root raised cosine
             hfir = (hfir *
                     nsps)
@@ -161,7 +176,7 @@ MatrixXcd elecSrc(MatrixXcd level, string ptype, Par par, unsigned long n_symb, 
         levelu_fft.col(i) = levelu_fft.col(i).cwiseProduct(hfir);
     }
     MatrixXcd elec = ifftCol(levelu_fft);  // create PAM signal
-    //cout << "----------------------elec after ifft:\n" << elec << endl;
+//    cout << "----------------------elec after ifft:\n" << elec << endl;
 
     Index length = max(elec.rows(), elec.cols());
     if (length < (long) n_fft) {
@@ -196,7 +211,7 @@ MatrixXcd elecSrc(MatrixXcd level, string ptype, Par par, unsigned long n_symb, 
     } else {
         ERROR("Unknwon normalization method");
     }
-    //cout << "--------------------sqrt(avge):\n" << sqrt(avge) << endl;
+//    cout << "--------------------sqrt(avge):\n" << sqrt(avge) << endl;
     return elec / sqrt(avge);
 }
 

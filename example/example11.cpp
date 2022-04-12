@@ -78,16 +78,21 @@ int main() {
 //    cout << "after pbs ey.field:" << ey.field << endl;
 
     string array[2] = {"alpha", modFormat};
-    VectorXi patX;
+    VectorXi patX(64);
     MatrixXi patBinaryX(64,1);
-    VectorXi patY;
+    VectorXi patY(64);
     MatrixXi patBinaryY(64,1);
 
     // 随机二进制生成器
-    tie(patX, patBinaryX) = pattern(nSymb, "rand", array);
-    tie(patY, patBinaryY) = pattern(nSymb, "rand", array);
+//    tie(patX, patBinaryX) = pattern(nSymb, "rand", array);
+//    tie(patY, patBinaryY) = pattern(nSymb, "rand", array);
 //    patBinaryX.setOnes();
 //    patBinaryY.setOnes();
+    for(int i = 0; i < 64; i++){
+        patX(i) = i % 4;
+        patY(i) = i % 4;
+    }
+
 
     MatrixXcd signalX;
     double normX = 1;
@@ -96,8 +101,8 @@ int main() {
 
 //    cout << "before digitalModulator patBinaryX:" << patBinaryX << endl;
     // 数字调制器
-    tie(signalX, normX) = digitalModulator(patBinaryX, symbrate, par, modFormat, "rootrc");
-    tie(signalY, normY) = digitalModulator(patBinaryX, symbrate, par, modFormat, "rootrc");
+    tie(signalX, normX) = digitalModulator(patX, symbrate, par, modFormat, "rootrc");
+    tie(signalY, normY) = digitalModulator(patY, symbrate, par, modFormat, "rootrc");
 
     // IQ调制器
     IQOption iqOptionX{};
@@ -147,14 +152,14 @@ int main() {
     MatrixXcd signalAngle = returnSignal.unaryExpr([](const complex<double> &a){
         return atan2(a.imag(),a.real());
     });
-    cout << "returnSignal:" << returnSignal << endl;
-//    cout << "signalAngle:" << signalAngle << endl;
+//    cout << "returnSignal:\n" << returnSignal << endl;
+//    cout << "signalAngle:\n" << signalAngle << endl;
 
-//    MatrixXi patBinary(patBinaryX.rows() + patBinaryY.rows(),patBinaryX.cols());
-//
-//    patBinary << patBinaryX, patBinaryY;
-//    cout << "patBinary:" << patBinary << endl;
-    tie(eyeOpening, iricMat) = evaluateEye(patBinaryX, signalAngle , symbrate, modFormat, fiber);
+    MatrixXi pat(patX.rows() ,patX.cols() + patY.cols());
+
+    pat << patX, patY;
+//    cout << "pat:\n" << pat << endl;
+    tie(eyeOpening, iricMat) = evaluateEye(pat, signalAngle , symbrate, modFormat, fiber);
     cout << "Eye open:" << eyeOpening << endl;
 //    cout << "iricMat:" << iricMat << endl;
     return 0;

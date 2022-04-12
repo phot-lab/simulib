@@ -96,6 +96,7 @@ E IQModulator(E e, VectorXcd modSig, IQOption option) {
 //    cout << "before mzmodulator eq:" << endl;
 //    cout << mzoptionq.exratio << endl;
 //    cout << mzoptionq.vpi << endl;
+
     ei = mzmodulator(ei, modSig.real(), mzoptioni);
     eq = mzmodulator(eq, modSig.imag(), mzoptionq);
 
