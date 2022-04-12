@@ -74,6 +74,11 @@ int main() {
     // 数字调制器
     tie(signal, norm) = digitalModulator(patBinary, symbrate, par, modFormat, "costails");
 
+    double gain = 0;
+
+    // 电信号放大器
+    tie(e, gain) = electricAmplifier(e, 10, 1, 10.0e-12);
+
     // MZ调制器
     e = mzmodulator(e, signal);
 
@@ -89,6 +94,9 @@ int main() {
 
     fiber.modFormat         = modFormat;
     fiber.opticalFilterType = "gauss";
+
+    // 电信号放大器
+    tie(e, gain) = electricAmplifier(e, 20, 1, 10.0e-12);
 
     // 前端接收器
     MatrixXcd returnSignal = rxFrontend(e, lambda, symbrate, fiber);

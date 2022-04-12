@@ -26,7 +26,7 @@ using namespace std;
 using namespace Eigen;
 
 tuple<Linear *, double> CheckFiber(const E &e, Fiber &fiber);
-tuple<double, double> FirstStep(MatrixXcd field, Fiber fiber);
+tuple<double, double> FirstStep(const MatrixXcd& field, Fiber fiber);
 double NextStep(const MatrixXcd &field, const Fiber &fiber, double dz_old);
 tuple<RowVectorXd, RowVectorXd> CheckStep(double zprop, double dz, double len_corr);
 MatrixXcd LinearStep(Linear *linear, VectorXd betat, RowVectorXd dzb, RowVectorXd nindex, MatrixXcd field);
@@ -203,7 +203,7 @@ tuple<double, unsigned long, E> SSFM(E e, Linear *linear, const VectorXd &betat,
     return make_tuple(first_dz, ncycle, e);
 }
 
-tuple<double, double> FirstStep(MatrixXcd field, Fiber fiber) {
+tuple<double, double> FirstStep(const MatrixXcd& field, Fiber fiber) {
     double step;
     double phimax;
     if (fiber.length == fiber.maxStepLength) {

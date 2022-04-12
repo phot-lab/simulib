@@ -66,6 +66,8 @@ double strToDigit(const string &s);
 string digitToStr(double digit);
 
 double uniformRng();
+double normalRng();
+MatrixXd normalRng(Index rows, Index cols);
 
 RowVectorXi DecToBin(unsigned long dec, int n_bit);
 

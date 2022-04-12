@@ -130,11 +130,33 @@ string digitToStr(double digit) {
     return res;
 }
 
+// Uniform Distribution: 均匀随机分布
 double uniformRng() {
     std::random_device rand_dev;
     std::mt19937 generator(rand_dev());
     std::uniform_real_distribution<double> distr(0, 1);
     return distr(generator);
+}
+
+// Normal Distribution: 标准正态分布
+double normalRng() {
+    std::random_device rand_dev;
+    std::mt19937 generator(rand_dev());
+    std::normal_distribution<double> distr(0, 1);
+    return distr(generator);
+}
+
+MatrixXd normalRng(Index rows, Index cols) {
+    std::random_device rand_dev;
+    std::mt19937 generator(rand_dev());
+    std::normal_distribution<double> distr(0, 1);
+    MatrixXd m(rows, cols);
+    for (Index j = 0; j < m.cols(); ++j) {
+        for (Index i = 0; i < m.rows(); ++i) {
+            m(i, j) = distr(generator);
+        }
+    }
+    return m;
 }
 
 // Decimal to Binary
@@ -169,3 +191,4 @@ complex<double> fastExp(complex<double> data) {
     complex<double> imag = 1i;
     return exp(data * imag);
 }
+

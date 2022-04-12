@@ -34,6 +34,7 @@
 #include "src/CustomDataStructure.hpp"
 #include "src/RxFrontend.hpp"
 #include "src/EvaluateEye.hpp"
+#include "src/ElectricAmplifier.hpp"
 
 #ifdef SIMULIB_USE_GPU
 #include "src/gpu/Tools.cuh"

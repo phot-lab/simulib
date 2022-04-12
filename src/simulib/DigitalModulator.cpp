@@ -20,9 +20,9 @@
 
 using namespace std;
 
-VectorXd pulseDesign(string ptype, int nsps, unsigned long n_symb, Par par);
+static VectorXd pulseDesign(string ptype, int nsps, unsigned long n_symb, Par par);
 
-MatrixXcd elecSrc(MatrixXcd level, string ptype, Par par, unsigned long n_symb, int nsps, int nd, unsigned long n_fft);
+static MatrixXcd elecSrc(MatrixXcd level, string ptype, Par par, unsigned long n_symb, int nsps, int nd, unsigned long n_fft);
 
 
 /**
@@ -64,7 +64,8 @@ MatrixXcd elecSrc(MatrixXcd level, string ptype, Par par, unsigned long n_symb, 
  *        'costails': a non-square pulse with cosine-shaped tails.
  *        'dirac': the pulse is a Dirac delta.
  *        'rect': rectangular pulse.
- * @return E: a struct of wave, details in fiber_types.h
+ * @return E: a struct of wave, details in Fiber.hpp
+ * @return norm: Normalization factor
  */
 tuple<MatrixXcd, double> digitalModulator(MatrixXi pat_bin, double symbrate, Par par, string mod_format, string ptype) {
     unsigned long n_fft = gstate.NSAMP;
@@ -104,7 +105,7 @@ tuple<MatrixXcd, double> digitalModulator(MatrixXi pat_bin, double symbrate, Par
 
     // 4: Perform pre-emphasis
     double norm;
-    if (par.emph != "") {
+    if (!par.emph.empty()) {
         norm = max(signal.real().array().abs().maxCoeff(), signal.imag().array().abs().maxCoeff());
         if (par.emph == "asin") {
             // thanks to norm, the result of each asin is for sure real, as
@@ -122,7 +123,7 @@ tuple<MatrixXcd, double> digitalModulator(MatrixXi pat_bin, double symbrate, Par
     return make_tuple(signal, norm);
 }
 
-MatrixXcd elecSrc(MatrixXcd level, string ptype, Par par, unsigned long n_symb, int nsps, int nd, unsigned long n_fft) {
+static MatrixXcd elecSrc(MatrixXcd level, string ptype, Par par, unsigned long n_symb, int nsps, int nd, unsigned long n_fft) {
     // The idea is the following: the pattern is first upsampled to par.nsps samples per symbol, and then filtered to create the PAM signal.
 
     bool flag;
@@ -210,7 +211,7 @@ PTypeOption ResolveOption(string ptype) {
     return Costails;
 }
 
-VectorXd pulseDesign(string ptype, int nsps, unsigned long n_symb, Par par) {
+static VectorXd pulseDesign(string ptype, int nsps, unsigned long n_symb, Par par) {
     VectorXd elpulse   = VectorXd::Zero(nsps * n_symb, 1);
     PTypeOption option = ResolveOption(ptype);
     switch (option) {

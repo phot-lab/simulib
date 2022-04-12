@@ -12,20 +12,14 @@
  */
 /**
  * Author: Chunyu Li
- * Created: 2022/3/11
+ * Created: 2022/4/11
  * Supported by: National Key Research and Development Program of China
  */
+#ifndef ELECTRICAMPLIFIER_HPP
+#define ELECTRICAMPLIFIER_HPP
 
-#include <SimuLib>
+#include "Fiber.hpp"
 
-using namespace std;
-using namespace Eigen;
+tuple<E, double> electricAmplifier(E e, double gainEA, double powerW, double oneSidedSpectralDensity);
 
-#include <iostream>
-#include <src/Eigen/Core>
-
-int main() {
-    cout << normalRng(5, 5) << endl;
-    MatrixXcd m(3, 3);
-
-}
+#endif  // ELECTRICAMPLIFIER_HPP
