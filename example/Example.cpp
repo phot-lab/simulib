@@ -25,7 +25,7 @@ int main() {
     Par par{};
 
     // Global parameters
-    int nSymb = 8;  // number of symbols
+    int nSymb = 1024;  // number of symbols
     int nt    = 32;    // number of discrete points per symbol
 
     // Tx parameters
@@ -96,8 +96,6 @@ int main() {
 
     // 前端接收器
     MatrixXcd returnSignal = rxFrontend(e, lambda, symbrate, fiber);
-    cout << "returnSignal:" << returnSignal << endl;
-    cout << "patBinary:" << patBinary << endl;
 
     complex<double> eyeOpening;
     MatrixXcd iricMat;

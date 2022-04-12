@@ -64,20 +64,23 @@ tuple<complex<double>, MatrixXcd> evaluateEye(MatrixXi pattern, const MatrixXcd 
 
     // Eye opening: best of the worst among symbols
     //VectorXcd eyeOpeningVec    = maxCol((MatrixXcd) (truncateMatrix(topVec, excludeFirst(indexTop)) - (MatrixXcd) truncateMatrix(botVec, excludeLast(indexBot))));  // Among samples
-    VectorXcd eyeOpeningVec(topVec.rows() - 1 );
+    VectorXd eyeOpeningVec(topVec.rows() - 1 );
     for(int i = 0; i < eyeOpeningVec.rows(); i++)
         eyeOpeningVec(i) = (topVec.row( indexTop(i+1) ) - botVec.row( indexBot(i) ) ).maxCoeff();
 
-    complex<double> eyeOpening = eyeOpeningVec.redux([](const complex<double> &a, const complex<double> &b) {
-        if (a.real() < b.real())
-            return a;
-        return b;
-    });
+//    complex<double> eyeOpening = eyeOpeningVec.redux([](const complex<double> &a, const complex<double> &b) {
+//        if (a.real() < b.real())
+//            return a;
+//        return b;
+//    });
+    double eyeOpening = eyeOpeningVec.minCoeff();
+//    cout<< "eyeOpening : \n" << eyeOpening<<endl;
 
-    if (eyeOpening.real() < 0)
+    if (eyeOpening < 0)
         eyeOpening = NAN;
 
-    complex<double> temp(10, 0);
+//    complex<double> temp(10, 0);
+    double temp = 10;
     eyeOpening = temp * log10(eyeOpening);  // [dBm]
     return make_tuple(eyeOpening, iricMat);
 }

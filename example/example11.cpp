@@ -25,8 +25,8 @@ int main() {
     Par par{};
 
     // Global parameters
-    int nSymb = 64;  // number of symbols
-    int nt    = 8;    // number of discrete points per symbol
+    int nSymb = 1024;  // number of symbols
+    int nt    = 32;    // number of discrete points per symbol
 
     // Tx parameters
     int symbrate     = 10;      // symbol rate [Gbaud].
@@ -132,6 +132,6 @@ int main() {
     pat << patX, patY;
     tie(eyeOpening, iricMat) = evaluateEye(pat, signalAngle , symbrate, modFormat, fiber);
     cout << "Eye open:" << eyeOpening << endl;
-    cout << "iricMat:" << iricMat << endl;
+//    cout << "iricMat:" << iricMat << endl;
     return 0;
 }
