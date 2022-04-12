@@ -41,8 +41,6 @@ tuple<complex<double>, MatrixXcd> evaluateEye(MatrixXi pattern, const MatrixXcd 
     double nShift         = round(nt / 2);  // the first bit is centered at index 1
     MatrixXd iricMat     = circShift(signal, (int) nShift).reshaped(nt, nSymb * (double) nPol).transpose().real();
 
-    cout << "iricMat:\n" << iricMat << endl;
-
     FormatInfo formatInfo = modFormatInfo(modFormat);
 
     MatrixXd botVec      = MatrixXd ::Zero((Index) formatInfo.digit, (Index) nt);
@@ -55,26 +53,14 @@ tuple<complex<double>, MatrixXcd> evaluateEye(MatrixXi pattern, const MatrixXcd 
         botVec.row(i)       = eyeSignal.colwise().minCoeff(); // Bottom of eye
     }
 
-    cout << "topVec:\n" << topVec << endl;
-    cout << "botVec:\n" << botVec << endl;
-
     VectorXd topVecRowMax = topVec.rowwise().maxCoeff();
     VectorXd botVecRowMin = topVec.rowwise().minCoeff();
-
-    cout << "topVecRowMax:\n" << topVecRowMax << endl;
-    cout << "botVecRowMin:\n" << botVecRowMin << endl;
 
     VectorXd topVecSorted = sortEigen( topVecRowMax);
     VectorXd botVecSorted = sortEigen(botVecRowMin);
 
-    cout << "topVecSorted:\n" << topVecSorted << endl;
-    cout << "botVecSorted:\n" <<  botVecSorted << endl;
-
     VectorXi indexTop      = sortMapIndex( topVecRowMax, topVecSorted);  // Sort because of pattern
     VectorXi indexBot      = sortMapIndex( botVecRowMin, botVecSorted);
-
-    cout << "indexTop:\n" << indexTop << endl;
-    cout << "indexBot:\n" << indexBot << endl;
 
     // Eye opening: best of the worst among symbols
     //VectorXcd eyeOpeningVec    = maxCol((MatrixXcd) (truncateMatrix(topVec, excludeFirst(indexTop)) - (MatrixXcd) truncateMatrix(botVec, excludeLast(indexBot))));  // Among samples
@@ -82,14 +68,11 @@ tuple<complex<double>, MatrixXcd> evaluateEye(MatrixXi pattern, const MatrixXcd 
     for(int i = 0; i < eyeOpeningVec.rows(); i++)
         eyeOpeningVec(i) = (topVec.row( indexTop(i+1) ) - botVec.row( indexBot(i) ) ).maxCoeff();
 
-    cout << "eyeOpeningVec:\n" << eyeOpeningVec << endl;
     complex<double> eyeOpening = eyeOpeningVec.redux([](const complex<double> &a, const complex<double> &b) {
         if (a.real() < b.real())
             return a;
         return b;
     });
-
-    cout << "eyeOpening:\n" << eyeOpening << endl;
 
     if (eyeOpening.real() < 0)
         eyeOpening = NAN;

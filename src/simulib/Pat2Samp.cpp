@@ -38,7 +38,6 @@ MatrixXcd Pat2Samp(const MatrixXi &pat_bin, const string &modFormat) {
     }
     if (n_col == 1) {
         pat = decToBin(pat,num_bit);
-//        cout << "pat:\n" << pat << endl;
     }else{
         if( n_row == 1)
             pat = decToBin( pat.transpose(),num_bit);

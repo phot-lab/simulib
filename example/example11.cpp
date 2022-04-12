@@ -71,11 +71,8 @@ int main() {
     E e = laserSource(pLin, lambda);  // y-pol does not exist
     E ex;
     E ey;
-//    cout << "before pbs e size:" << e.field.rows() <<"  "<<e.field.cols() << endl;
-//    cout << "before pbs e.field:" << e.field << endl;
+
     tie(ex, ey) = pbs(e);
-//    cout << "after pbs ex.field:" << ex.field << endl;
-//    cout << "after pbs ey.field:" << ey.field << endl;
 
     string array[2] = {"alpha", modFormat};
     VectorXi patX(64);
@@ -84,22 +81,14 @@ int main() {
     MatrixXi patBinaryY(64,1);
 
     // 随机二进制生成器
-//    tie(patX, patBinaryX) = pattern(nSymb, "rand", array);
-//    tie(patY, patBinaryY) = pattern(nSymb, "rand", array);
-//    patBinaryX.setOnes();
-//    patBinaryY.setOnes();
-    for(int i = 0; i < 64; i++){
-        patX(i) = i % 4;
-        patY(i) = i % 4;
-    }
-
+    tie(patX, patBinaryX) = pattern(nSymb, "rand", array);
+    tie(patY, patBinaryY) = pattern(nSymb, "rand", array);
 
     MatrixXcd signalX;
     double normX = 1;
     MatrixXcd signalY;
     double normY = 1;
 
-//    cout << "before digitalModulator patBinaryX:" << patBinaryX << endl;
     // 数字调制器
     tie(signalX, normX) = digitalModulator(patX, symbrate, par, modFormat, "rootrc");
     tie(signalY, normY) = digitalModulator(patY, symbrate, par, modFormat, "rootrc");
@@ -113,17 +102,9 @@ int main() {
     iqOptionY.nch  = 1;
     iqOptionX.vpi = M_PI/2;
     iqOptionY.vpi = M_PI/2;
-//    cout << "e.field:" << e.field << endl;
-//    cout << "before iq ex.field:" << ex.field << endl;
-//    cout << "before iq ey.field:" << ey.field << endl;
-
-//    cout << "before iq signalX:\n" << signalX << endl;
-//    cout << "before iq signalY:\n" << signalY << endl;
 
     ex             = IQModulator(ex, signalX, iqOptionX);
     ey             = IQModulator(ey, signalY, iqOptionY);
-//    cout << "after iq ex.field:\n" << ex.field << endl;
-//    cout << "after iq ey.field:\n" << ey.field << endl;
 
     e = pbc(ex, ey);
 
@@ -132,18 +113,11 @@ int main() {
     // 光纤传输模块
 //    tie(out, e) = fiberTransmit(e, fiber);
 
-//    cout << "after pbc e.field:" << e.field << endl;
-//    cout << "light field row:" << e.field.rows() << endl;
-//    cout << "light field col:" << e.field.cols() << endl;
-//    cout << "light field wavelength:" << e.lambda(0, 0) << endl;
-
     fiber.modFormat         = modFormat;
     fiber.opticalFilterType = "gauss";
 
     // 前端接收器
     MatrixXcd returnSignal = rxFrontend(e, lambda, symbrate, fiber);
-//    cout << "returnSignal:\n" << returnSignal << endl;
-//    cout << "patBinary:" << patBinaryX << endl;
 
     complex<double> eyeOpening;
     MatrixXcd iricMat;
@@ -152,15 +126,12 @@ int main() {
     MatrixXcd signalAngle = returnSignal.unaryExpr([](const complex<double> &a){
         return atan2(a.imag(),a.real());
     });
-//    cout << "returnSignal:\n" << returnSignal << endl;
-//    cout << "signalAngle:\n" << signalAngle << endl;
 
     MatrixXi pat(patX.rows() ,patX.cols() + patY.cols());
 
     pat << patX, patY;
-//    cout << "pat:\n" << pat << endl;
     tie(eyeOpening, iricMat) = evaluateEye(pat, signalAngle , symbrate, modFormat, fiber);
     cout << "Eye open:" << eyeOpening << endl;
-//    cout << "iricMat:" << iricMat << endl;
+    cout << "iricMat:" << iricMat << endl;
     return 0;
 }

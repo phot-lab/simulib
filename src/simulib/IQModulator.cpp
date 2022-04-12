@@ -85,23 +85,8 @@ E IQModulator(E e, VectorXcd modSig, IQOption option) {
         eq.field.col(col) = e.field.col(col) * (1 - sr);
     }
 
-//    cout << "before mzmodulator ei"  << endl;
-//    cout << mzoptioni.exratio << endl;
-//    cout << mzoptioni.biasl << endl;
-//    cout << mzoptioni.biasu << endl;
-//    cout << mzoptioni.vpi << endl;
-//    cout << mzoptioni.mode << endl;
-//    cout << mzoptioni.nch << endl;
-//    cout << mzoptioni.norm << endl;
-//    cout << "before mzmodulator eq:" << endl;
-//    cout << mzoptionq.exratio << endl;
-//    cout << mzoptionq.vpi << endl;
-
     ei = mzmodulator(ei, modSig.real(), mzoptioni);
     eq = mzmodulator(eq, modSig.imag(), mzoptionq);
-
-//    cout << "after mzmodulator ei.field:\n" << ei.field << endl;
-//    cout << "after mzmodulator eq.field:\n" << eq.field << endl;
 
     // *2: undo the two 3dB coupler loss
     for (int i = 0; i < ncols.size(); i++) {

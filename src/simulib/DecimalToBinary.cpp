@@ -22,13 +22,9 @@ MatrixXi decToBin(MatrixXi dec, int nBit){
     MatrixXd bin = dec.cast<double>();
     MatrixXd exponent(1,abs(1-nBit)+1);
     exponent.row(0) =  ArrayXd::LinSpaced(abs(1-nBit)+1,1-nBit ,0);
-//    cout << "before pow exponent:\n" << exponent << endl;
     exponent = pow(2,exponent.array());
-//    cout << "after pow exponent:\n" << exponent << endl;
     bin = bin * exponent;
-//    cout << "before floor bin:\n" << bin << endl;
     bin = floor(bin.array());
-//    cout << "after floor bin:\n" << bin << endl;
 
     return bin.unaryExpr([](double x){
         if ( x > 0)
