@@ -18,11 +18,9 @@
 #ifndef EVALUATEEYE_HPP
 #define EVALUATEEYE_HPP
 
-#include "Eigen/Core"
 #include "Fiber.hpp"
 #include <complex>
 
-using namespace Eigen;
 using namespace std;
 
 tuple<complex<double>, MatrixXcd> evaluateEye(MatrixXi patternBinary, const MatrixXcd& signal, double symbrate, const string& modFormat, const Fiber& fiber);

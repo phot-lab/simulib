@@ -18,7 +18,6 @@
 
 #include "SimuLib"
 
-using namespace Eigen;
 using namespace std;
 
 MatrixXd getLambda(const double lamc, const double spac, const int Nch);
@@ -32,7 +31,7 @@ MatrixXd getLambda(const double lamc, const double spac, const int Nch);
 // * @return E_multimode: a struct of wave, details in fiber_types.h.
 // */
 //
-//E laserSource(RowVectorXd ptx, RowVectorXd lam) {
+// E laserSource(RowVectorXd ptx, RowVectorXd lam) {
 //    unsigned long Nsamp = gstate.NSAMP;  // Sampling frequency
 //    int Npow            = ptx.size();    // Number of the power of transmit channel
 //    int Nch             = lam.size();    // Number of wavelength of transmit channel
@@ -73,7 +72,7 @@ MatrixXd getLambda(const double lamc, const double spac, const int Nch);
 // * @return E_multimode: a struct of wave, details in fiber_types.h
 // */
 //
-//E laserSource(RowVectorXd ptx, RowVectorXd lam, Option options) {
+// E laserSource(RowVectorXd ptx, RowVectorXd lam, Option options) {
 //    E light;                    // transmit light
 //    unsigned long Nsamp = gstate.NSAMP;  // Sampling frequency
 //    int Npow            = ptx.size();    // Number of the power of transmit channel
@@ -156,18 +155,18 @@ MatrixXd getLambda(const double lamc, const double spac, const int Nch);
  * @return E: a struct of wave, details in fiber_types.h
  */
 E laserSource(RowVectorXd ptx, RowVectorXd lam, Option options) {
-    E light;                    // transmit light
+    E light;                             // transmit light
     unsigned long Nsamp = gstate.NSAMP;  // Sampling frequency
     int Npow            = ptx.size();    // Number of the power of transmit channel
-    int Nch             = lam.size();       // Number of carriers
+    int Nch             = lam.size();    // Number of carriers
 
     if (Npow > 1 && Npow != Nch)
         ERROR("Powers and wavelengths must have the same length");
 
-    double N0 = options.n0;
-    int Npol  = options.pol;  // Number of polarizations
+    double N0             = options.n0;
+    int Npol              = options.pol;  // Number of polarizations
     RowVectorXd linewidth = RowVectorXd(0);
-    if ( options.linewidth.size() != 0 && options.linewidth(0) != 0){
+    if (options.linewidth.size() != 0 && options.linewidth(0) != 0) {
         if (options.linewidth.size() == 1) {
             linewidth = RowVectorXd(Nch);
             linewidth.setConstant(options.linewidth(0));
@@ -186,7 +185,7 @@ E laserSource(RowVectorXd ptx, RowVectorXd lam, Option options) {
     // uniformly spaced carriers
     light.lambda = lam;
 
-    light.field  = MatrixXd::Zero(Nsamp, Nch * Npol);
+    light.field = MatrixXd::Zero(Nsamp, Nch * Npol);
     // by default, fully polarized on x (odd columns):
     for (int i = 0; i < Nch; i++)
         light.field.col(i * Npol) = VectorXd(Nsamp).setConstant(sqrt(power(i)));
@@ -198,7 +197,7 @@ E laserSource(RowVectorXd ptx, RowVectorXd lam, Option options) {
     // Add phase noise
     // This part refer to 'freq_noise  = (ones(Nsamp,1) * sqrt(2*pi*linewidth./GSTATE.FSAMPLING)) .* randn( Nsamp, Nch)' in Optilux.
     // New a vector named one(Nsamp,1) in equation above.
-    if ( linewidth.size() != 0){
+    if (linewidth.size() != 0) {
         VectorXd oneVector(Nsamp);
         oneVector.setOnes();
         // New a matrix named randn( Nsamp, Nch), which follows standard normal distribution X(0,1).
@@ -216,15 +215,14 @@ E laserSource(RowVectorXd ptx, RowVectorXd lam, Option options) {
 
         VectorXd tim(Nsamp);
         tim.setLinSpaced(0, Nsamp - 1);
-        phase_noise = phase_noise - (tim / (Nsamp - 1)) * phase_noise.row(phase_noise.rows()-1);
+        phase_noise = phase_noise - (tim / (Nsamp - 1)) * phase_noise.row(phase_noise.rows() - 1);
         phase_noise = fastExp(phase_noise);
         for (int i = 0; i < Nch; i++)
             light.field.col(i * Npol) = light.field.col(i * Npol).cwiseProduct(phase_noise.col(i * Npol));
-
     }
 
     // Add Gaussian complex white noise
-    if ( N0 != INT_MIN){
+    if (N0 != INT_MIN) {
         double N0_lin        = pow(10, N0 / 10);
         double sigma         = sqrt(N0_lin / 2 * gstate.SAMP_FREQ);
         MatrixXd randMatrix1 = MatrixXd::Zero(Nsamp, Nch * Npol).unaryExpr([](double dummy) { return n(engine); });
@@ -248,7 +246,7 @@ E laserSource(RowVectorXd ptx, RowVectorXd lam, Option options) {
 // * @return E_multimode: a struct of wave, details in fiber_types.h
 // */
 //
-//E laserSource(RowVectorXd ptx, double lam, double spac, int NLAMBDA) {
+// E laserSource(RowVectorXd ptx, double lam, double spac, int NLAMBDA) {
 //    E light;                    // transmit light
 //    unsigned long Nsamp = gstate.NSAMP;  // Sampling frequency
 //    int Npow            = ptx.size();    // Number of the power of transmit channel
@@ -285,7 +283,7 @@ E laserSource(RowVectorXd ptx, RowVectorXd lam, Option options) {
 // * @param option: compute option. Details in laserSource.h.
 // * @return E: a struct of wave, details in fiber_types.h
 // */
-//E laserSource(RowVectorXd ptx, RowVectorXd lam, double spac, int NLAMBDA, Option options) {
+// E laserSource(RowVectorXd ptx, RowVectorXd lam, double spac, int NLAMBDA, Option options) {
 //    E light;                    // transmit light
 //    unsigned long Nsamp = gstate.NSAMP;  // Sampling frequency
 //    int Npow            = ptx.size();    // Number of the power of transmit channel
@@ -369,25 +367,24 @@ E laserSource(RowVectorXd ptx, RowVectorXd lam, Option options) {
  * @return E: a struct of wave, details in fiber_types.h
  */
 E laserSource(RowVectorXd ptx, RowVectorXd lam, double spac, int NLAMBDA, Option options) {
-    E light;                    // transmit light
+    E light;                             // transmit light
     unsigned long Nsamp = gstate.NSAMP;  // Sampling frequency
     int Npow            = ptx.size();    // Number of the power of transmit channel
     int Nch             = NLAMBDA;       // Number of carriers
 
-    if( NLAMBDA > 0 ){
-        if( !(lam.size() == 1) )
+    if (NLAMBDA > 0) {
+        if (!(lam.size() == 1))
             ERROR("LAM is the central wavelength of the WDM comb. Size is one.");
-    }
-    else
-        Nch = lam.size();               // Number of carriers
+    } else
+        Nch = lam.size();  // Number of carriers
 
     if (Npow > 1 && Npow != Nch)
         ERROR("Powers and wavelengths must have the same length");
 
-    double N0 = options.n0;
-    int Npol  = options.pol;  // Number of polarizations
+    double N0             = options.n0;
+    int Npol              = options.pol;  // Number of polarizations
     RowVectorXd linewidth = RowVectorXd(0);
-    if ( options.linewidth.size() != 0 && options.linewidth(0) != 0){
+    if (options.linewidth.size() != 0 && options.linewidth(0) != 0) {
         if (options.linewidth.size() == 1) {
             linewidth = RowVectorXd(Nch);
             linewidth.setConstant(options.linewidth(0));
@@ -409,7 +406,7 @@ E laserSource(RowVectorXd ptx, RowVectorXd lam, double spac, int NLAMBDA, Option
     else
         light.lambda = lam;
 
-    light.field  = MatrixXd::Zero(Nsamp, Nch * Npol);
+    light.field = MatrixXd::Zero(Nsamp, Nch * Npol);
     // by default, fully polarized on x (odd columns):
     for (int i = 0; i < Nch; i++)
         light.field.col(i * Npol) = VectorXd(Nsamp).setConstant(sqrt(power(i)));
@@ -421,7 +418,7 @@ E laserSource(RowVectorXd ptx, RowVectorXd lam, double spac, int NLAMBDA, Option
     // Add phase noise
     // This part refer to 'freq_noise  = (ones(Nsamp,1) * sqrt(2*pi*linewidth./GSTATE.FSAMPLING)) .* randn( Nsamp, Nch)' in Optilux.
     // New a vector named one(Nsamp,1) in equation above.
-    if ( linewidth.size() != 0){
+    if (linewidth.size() != 0) {
         VectorXd oneVector(Nsamp);
         oneVector.setOnes();
         // New a matrix named randn( Nsamp, Nch), which follows standard normal distribution X(0,1).
@@ -443,11 +440,10 @@ E laserSource(RowVectorXd ptx, RowVectorXd lam, double spac, int NLAMBDA, Option
         phase_noise = fastExp(phase_noise);
         for (int i = 0; i < Nch; i++)
             light.field.col(i * Npol) = light.field.col(i * Npol).cwiseProduct(phase_noise.col(i * Npol));
-
     }
 
     // Add Gaussian complex white noise
-    if ( N0 != INT_MIN){
+    if (N0 != INT_MIN) {
         double N0_lin        = pow(10, N0 / 10);
         double sigma         = sqrt(N0_lin / 2 * gstate.SAMP_FREQ);
         MatrixXd randMatrix1 = MatrixXd::Zero(Nsamp, Nch * Npol).unaryExpr([](double dummy) { return n(engine); });

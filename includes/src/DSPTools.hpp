@@ -18,10 +18,6 @@
 #ifndef SIMULIB_DSP_TOOLS_H
 #define SIMULIB_DSP_TOOLS_H
 
-#include "Eigen/Core"
-
-using namespace Eigen;
-
 template<typename T>
 Matrix<T, Dynamic, Dynamic> UpSample(Matrix<T, Dynamic, Dynamic> matrix, int n) {
     Matrix<T, Dynamic, Dynamic> res = Matrix<T, Dynamic, Dynamic>::Zero(matrix.rows() * n, matrix.cols());

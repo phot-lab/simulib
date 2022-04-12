@@ -19,7 +19,6 @@
 #include "SimuLib"
 
 using namespace std;
-using namespace Eigen;
 
 /**
  * @brief Evaluate the eye-opening

@@ -12,15 +12,25 @@
  */
 /**
  * Author: Chunyu Li
- * Created: 2022/3/22
+ * Created: 2022/4/12
  * Supported by: National Key Research and Development Program of China
  */
-#ifndef RXFRONTEND_HPP
-#define RXFRONTEND_HPP
 
-#include "LaserSource.hpp"
-#include "Fiber.hpp"
+#include <SimuLib>
 
-MatrixXcd rxFrontend(E e, RowVectorXd lambda, int symbrate, const Fiber& fiber);
+int main() {
+    MatrixXd m(2, 2);
+    m << 1, 2, 3, 4;
+    std::cout << m << std::endl;
+    std::cout << m + m << std::endl;
+    std::cout << m - m << std::endl;
+    std::cout << m * m << std::endl;
 
-#endif  // RXFRONTEND_HPP
+    MatrixXcd m2(2, 2);
+    m2 << 1, 2, 3, 4;
+    std::cout << m2 << std::endl;
+    std::cout << m2 + m2 << std::endl;
+    std::cout << m2 - m2 << std::endl;
+    std::cout << m2 * m2 << std::endl;
+
+}

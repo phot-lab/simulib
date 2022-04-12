@@ -18,7 +18,6 @@
 
 #include "SimuLib"
 
-using namespace Eigen;
 using namespace std;
 
 #ifdef SIMULIB_USE_GPU

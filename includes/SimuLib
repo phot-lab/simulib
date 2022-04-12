@@ -19,6 +19,16 @@
 #ifndef SIMULIB_SIMULIB_H
 #define SIMULIB_SIMULIB_H
 
+#ifdef SIMULIB_USE_GPU
+#define PARMAT_USE_GPU
+#endif
+
+#include "src/parmat/BasicInfo.hpp"
+#include "src/parmat/MatrixDouble.hpp"
+#include "src/parmat/MatrixComplex.hpp"
+
+using namespace ParMat;
+
 #include "src/OperatorOverloading.hpp"
 #include "src/CommonTypes.hpp"
 #include "src/FFT.hpp"

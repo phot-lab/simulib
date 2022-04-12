@@ -26,7 +26,6 @@
 #include <string>
 #include <vector>
 
-using namespace Eigen;
 using namespace std;
 
 void lineInfo(const string &filename, const int &line, const string &func_name) {

@@ -21,7 +21,6 @@
 #include <iostream>
 #include <SimuLib>
 
-using namespace Eigen;
 using namespace std;
 
 int main() {

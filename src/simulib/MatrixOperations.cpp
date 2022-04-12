@@ -18,7 +18,6 @@
 
 #include "SimuLib"
 
-using namespace Eigen;
 using namespace std;
 
 VectorXd diff(const VectorXd &v) {

@@ -12,15 +12,28 @@
  */
 /**
  * Author: Chunyu Li
- * Created: 2022/3/22
+ * Created: 2022/4/12
  * Supported by: National Key Research and Development Program of China
  */
-#ifndef RXFRONTEND_HPP
-#define RXFRONTEND_HPP
+#ifndef BASICINFO_HPP
+#define BASICINFO_HPP
 
-#include "LaserSource.hpp"
-#include "Fiber.hpp"
+#include "src/Eigen/Core"
+#include "src/unsupported/Eigen/FFT"
 
-MatrixXcd rxFrontend(E e, RowVectorXd lambda, int symbrate, const Fiber& fiber);
+namespace ParMat {
+    using Eigen::Dynamic;
+    using Eigen::FFT;
+    using Eigen::Index;
+    using Eigen::Map;
+    using Eigen::Matrix;
+    using Eigen::Unaligned;
 
-#endif  // RXFRONTEND_HPP
+    // Since the cuBLAS doesn't provide int matrix API, so I don't implement these
+    using Eigen::MatrixXi;
+    using Eigen::RowVectorXi;
+    using Eigen::VectorXi;
+
+}  // namespace ParMat
+
+#endif  // BASICINFO_HPP

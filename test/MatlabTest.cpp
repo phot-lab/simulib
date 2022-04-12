@@ -8,7 +8,6 @@
 
 using namespace matlab::engine;
 using namespace std;
-using namespace Eigen;
 
 int main() {
 

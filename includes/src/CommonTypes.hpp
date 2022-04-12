@@ -18,11 +18,18 @@
 #ifndef OPTICALAB_COMMON_TYPES_H
 #define OPTICALAB_COMMON_TYPES_H
 
-#include "Eigen/Core"
 #include <vector>
+#include <limits>
+
+#ifndef INT_MAX
+#define INT_MAX __INT_MAX__
+#endif
+
+#ifndef INT_MIN
+#define INT_MIN INT64_MIN
+#endif
 
 using namespace std;
-using namespace Eigen;
 
 struct Gstate {
     unsigned long NSAMP;

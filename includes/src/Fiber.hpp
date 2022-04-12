@@ -1,14 +1,12 @@
 #ifndef OPTICALAB_FIBER_TYPES_H
 #define OPTICALAB_FIBER_TYPES_H
 
-#include "Eigen/Core"
 #include "LaserSource.hpp"
 #include <complex>
 #include <memory>
 #include <vector>
 
 using namespace std;
-using namespace Eigen;
 
 struct Linear {
     bool is_scalar;

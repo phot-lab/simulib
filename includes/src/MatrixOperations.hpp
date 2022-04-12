@@ -18,14 +18,12 @@
 #ifndef SIMULIB_MATRIX_TOOLS_H
 #define SIMULIB_MATRIX_TOOLS_H
 
-#include "Eigen/Core"
 #include <iostream>
 #include <list>
 #include <map>
 #include <vector>
 
 using namespace std;
-using namespace Eigen;
 
 template<typename T>
 Matrix<T, Dynamic, 1> stlToEigen(vector<T> v) {
@@ -59,8 +57,14 @@ void replaceVector(VectorXd &vec, VectorXd indices, VectorXd replace);
 
 template<typename T>
 Matrix<T, Dynamic, 1> matrixToVec(Matrix<T, Dynamic, Dynamic> m) {
-    return Map<Matrix<T, Dynamic, 1>>(m.data(), m.cols() * m.rows());
+    return m.reshaped(m.rows(),m.cols());
+//    return Map<Matrix<T, Dynamic, 1>>(m.data(), m.cols() * m.rows());
 }
+
+//template<typename Derived>
+//MatrixBase<Derived> matrixToVec(MatrixBase<Derived> m){
+//    return m.reshaped(m.rows(),m.cols());
+//}
 
 template<typename T>
 Matrix<T, Dynamic, 1> truncateVec(Matrix<T, Dynamic, 1> &vec, VectorXd indices) {
@@ -75,7 +79,7 @@ Matrix<T, Dynamic, 1> truncateVec(Matrix<T, Dynamic, 1> &vec, VectorXd indices) 
 template<typename T>
 Matrix<T, Dynamic, Dynamic> truncateMatrix(Matrix<T, Dynamic, Dynamic> &m, VectorXi indices) {
     assert(m.rows() >= indices.size());
-    Matrix<T, Dynamic, Dynamic> truncate(indices.size(),m.cols());
+    Matrix<T, Dynamic, Dynamic> truncate(indices.size(), m.cols());
     for (Index i = 0; i < indices.size(); ++i) {
         truncate.row(i) = m.row((Index) indices[i]);
     }

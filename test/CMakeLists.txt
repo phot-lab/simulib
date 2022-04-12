@@ -5,9 +5,10 @@ add_executable(MKLTest MKLTest.cpp)
 add_executable(FiberTest FiberTest.cpp)
 add_executable(MzmodTest MzmodTest.cpp)
 add_executable(FFTTest FFTTest.cpp)
+add_executable(ParMatTest ParMatTest.cpp)
 
 set(TEST_TARGETS "")
-list(APPEND TEST_TARGETS Test MatlabTest EigenTest MKLTest FiberTest MzmodTest FFTTest)
+list(APPEND TEST_TARGETS Test MatlabTest EigenTest MKLTest FiberTest MzmodTest FFTTest ParMatTest)
 
 foreach (target IN LISTS TEST_TARGETS)
     target_link_libraries(${target} Library)

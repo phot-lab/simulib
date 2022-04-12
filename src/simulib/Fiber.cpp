@@ -23,7 +23,6 @@
 #include <iostream>
 
 using namespace std;
-using namespace Eigen;
 
 tuple<Linear *, double> CheckFiber(const E &e, Fiber &fiber);
 tuple<double, double> FirstStep(const MatrixXcd& field, Fiber fiber);

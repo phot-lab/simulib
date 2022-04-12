@@ -18,14 +18,11 @@
 
 #include <SimuLib>
 
-using namespace std;
-using namespace Eigen;
-
-#include <iostream>
-#include <src/Eigen/Core>
-
 int main() {
-    cout << normalRng(5, 5) << endl;
-    MatrixXcd m(3, 3);
-
+    MatrixXd m(2, 2);
+    m << 1, 2, 3, 4;
+    std::cout << m << std::endl;
+    std::cout << m + m << std::endl;
+    std::cout << m - m << std::endl;
+    std::cout << m * m << std::endl;
 }

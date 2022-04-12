@@ -18,10 +18,7 @@
 #ifndef SIMULIB_FFT_H
 #define SIMULIB_FFT_H
 
-#include "Eigen/Core"
 #include "unsupported/Eigen/FFT"
-
-using namespace Eigen;
 
 // The implementation of fftShift referred to this website
 // https://kerpanic.wordpress.com/2016/04/08/more-efficient-ifftshift-fftshift-in-c/

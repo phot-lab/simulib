@@ -19,7 +19,6 @@
 #ifndef OPTICALAB_TOOLS_H
 #define OPTICALAB_TOOLS_H
 
-#include "Eigen/Dense"
 #include <cstring>
 #include <iostream>
 #include <string>
@@ -29,7 +28,6 @@
 #define WARNING(...) warning(__FILE__, __LINE__, __func__, __VA_ARGS__)
 
 using namespace std;
-using namespace Eigen;
 
 void error(const string &filename, const int &line, const string &func_name, const string &s);
 
