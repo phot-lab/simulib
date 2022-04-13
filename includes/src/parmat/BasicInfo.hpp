@@ -22,6 +22,7 @@
 #include "src/unsupported/Eigen/FFT"
 
 namespace ParMat {
+    using Eigen::ArrayXd;
     using Eigen::Dynamic;
     using Eigen::FFT;
     using Eigen::Index;
