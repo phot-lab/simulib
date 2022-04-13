@@ -34,6 +34,6 @@ struct Par {
 tuple<VectorXi, MatrixXi> pattern(unsigned nsymb, const string &ptype);
 tuple<VectorXi, MatrixXi> pattern(unsigned nsymb, const string &ptype, string array[]);
 
-MatrixXi Pat2Samp(const MatrixXi &pat_bin, const string &modFormat);
+MatrixXcd Pat2Samp(const MatrixXi &pat_bin, const string &modFormat);
 
 #endif  // PATTERN_HPP

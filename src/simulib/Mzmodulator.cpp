@@ -22,7 +22,7 @@
  * @brief modulates the optical field E with the electric signal MODSIG by a Mach-Zehnder interferometer.
  * @param light: optical field, is a struct of fields lambda, field.
  * @param MODSIG: the electrical driving signal
- * @return E_multimode: a struct of wave, details in laserSource.h
+ * @return E: a struct of wave, details in laserSource.h
  */
 E mzmodulator(E light, VectorXcd modSig) {
     double biasl   = -1;                     // bias of lower arm
@@ -67,7 +67,7 @@ E mzmodulator(E light, VectorXcd modSig) {
  * @param light: optical field, is a struct of fields lambda, field.
  * @param MODSIG: the electrical driving signal
  * @param option: compute option. Details in mzmodulator.h
- * @return E_multimode: a struct of wave, details in laserSource.h
+ * @return E: a struct of wave, details in laserSource.h
  */
 
 E mzmodulator(E light, VectorXcd modSig, Mzoption options) {
@@ -94,6 +94,8 @@ E mzmodulator(E light, VectorXcd modSig, Mzoption options) {
         if (options.biasu != INT_MAX)
             biasu = options.biasu;
     }
+    if(options.exratio != INT_MAX)
+        exratio = options.exratio;
     mode = options.mode;
     if (options.norm != INT_MAX)
         normf = options.norm;
@@ -110,7 +112,7 @@ E mzmodulator(E light, VectorXcd modSig, Mzoption options) {
         phi_l = M_PI * (modSigReal + VectorXd(modSigReal.size()).setConstant(biasl * vpi)) / vpi;
     } else {
         phi_u = M_PI / 2 * (modSigReal + VectorXd(modSigReal.size()).setConstant(biasu * vpi)) / vpi;
-        phi_l = M_PI / 2 * (modSigReal + VectorXd(modSigReal.size()).setConstant(biasl * vpi)) / vpi;
+        phi_l = -M_PI / 2 * (modSigReal + VectorXd(modSigReal.size()).setConstant(biasl * vpi)) / vpi;
     }
 
     int Npol = 2;
@@ -126,7 +128,7 @@ E mzmodulator(E light, VectorXcd modSig, Mzoption options) {
         int np = ncols(i);
         for (int j = 0; j < light.field.rows(); j++) {
             if (light.field(j, np - 1) != complex<double>(0, 0)) {
-                light.field.col(np - 1) = normf * light.field.col(np - 1).cwiseProduct((fastExp(phi_u) + gamma * fastExp(phi_l)) / (1 + gamma));
+                light.field.col(np - 1) = normf * light.field.col(np - 1).cwiseProduct(( fastExp(phi_u) + gamma * fastExp(phi_l) ) / (1 + gamma));
                 break;
             }
         }

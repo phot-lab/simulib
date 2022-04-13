@@ -22,6 +22,7 @@
 
 // The implementation of fftShift referred to this website
 // https://kerpanic.wordpress.com/2016/04/08/more-efficient-ifftshift-fftshift-in-c/
+// 于optilux的fftShift有5-10%的误差。 There are 5-10% deviation from Optilux fftShift.
 template<typename T>
 Matrix<T, Dynamic, 1> fftShift(const Matrix<T, Dynamic, 1> &in) {
     Index size = in.rows();
