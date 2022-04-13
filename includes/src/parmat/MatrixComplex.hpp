@@ -18,16 +18,17 @@
 #ifndef MATRIXCOMPLEX_HPP
 #define MATRIXCOMPLEX_HPP
 
-#ifdef SIMULIB_USE_GPU
+#ifdef PARMAT_USE_GPU
 #include "FunctionsComplex.hpp"
 #endif
 
 namespace ParMat {
 
-#ifdef SIMULIB_USE_GPU
+#ifdef PARMAT_USE_GPU
     template<int Rows, int Cols>
     class MatrixComplex : public Eigen::Matrix<std::complex<double>, Rows, Cols> {
         typedef Eigen::Matrix<std::complex<double>, Rows, Cols> Base;
+        typedef ParMat::MatrixComplex<Rows, Cols> Derived;
         using Base::Base;
 
     public:
@@ -35,16 +36,19 @@ namespace ParMat {
         using Base::operator+;
         using Base::operator-;
 
-        MatrixComplex<Rows, Cols> operator+(const MatrixComplex<Rows, Cols> &other) {
-            return geam(*this, other, true);
+        template<typename Type>
+        Derived operator+(const MatrixBase<Type> &other) {
+            return geam(*this, static_cast<Derived>(other), true);
         }
 
-        MatrixComplex<Rows, Cols> operator-(const MatrixComplex<Rows, Cols> &other) {
-            return geam(*this, other, false);
+        template<typename Type>
+        Derived operator-(const MatrixBase<Type> &other) {
+            return geam(*this, static_cast<Derived>(other), false);
         }
 
-        MatrixComplex<Rows, Cols> operator*(const MatrixComplex<Rows, Cols> &other) {
-            return gemm(*this, other);
+        template<typename Type>
+        Derived operator*(const MatrixBase<Type> &other) {
+            return gemm(*this, static_cast<Derived>(other));
         }
     };
 

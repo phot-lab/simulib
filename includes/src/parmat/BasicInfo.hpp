@@ -27,6 +27,7 @@ namespace ParMat {
     using Eigen::Index;
     using Eigen::Map;
     using Eigen::Matrix;
+    using Eigen::MatrixBase;
     using Eigen::Unaligned;
 
     // Since the cuBLAS doesn't provide int matrix API, so I don't implement these

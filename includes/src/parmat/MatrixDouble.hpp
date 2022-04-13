@@ -18,16 +18,18 @@
 #ifndef MATRIXDOUBLE_HPP
 #define MATRIXDOUBLE_HPP
 
-#ifdef SIMULIB_USE_GPU
+#ifdef PARMAT_USE_GPU
 #include "FunctionsDouble.hpp"
 #endif
 
 namespace ParMat {
 
-#ifdef SIMULIB_USE_GPU
+#ifdef PARMAT_USE_GPU
+
     template<int Rows, int Cols>
-    class Test : public Eigen::Matrix<double, Rows, Cols> {
+    class MatrixDouble : public Eigen::Matrix<double, Rows, Cols> {
         typedef Eigen::Matrix<double, Rows, Cols> Base;
+        typedef ParMat::MatrixDouble<Rows, Cols> Derived;
         using Base::Base;
 
     public:
@@ -35,22 +37,25 @@ namespace ParMat {
         using Base::operator+;
         using Base::operator-;
 
-        Test<Rows, Cols> operator+(const Test<Rows, Cols> &other) {
-            return geam(*this, other, true);
+        template<typename Type>
+        Derived operator+(const MatrixBase<Type> &other) {
+            return geam(*this, static_cast<Derived>(other), true);
         }
 
-        Test<Rows, Cols> operator-(const Test<Rows, Cols> &other) {
-            return geam(*this, other, false);
+        template<typename Type>
+        Derived operator-(const MatrixBase<Type> &other) {
+            return geam(*this, static_cast<Derived>(other), false);
         }
 
-        Test<Rows, Cols> operator*(const Test<Rows, Cols> &other) {
-            return gemm(*this, other);
+        template<typename Type>
+        Derived operator*(const MatrixBase<Type> &other) {
+            return gemm(*this, static_cast<Derived>(other));
         }
     };
 
-    typedef Test<Dynamic, Dynamic> MatrixXd;
-    typedef Test<Dynamic, 1> VectorXd;
-    typedef Test<1, Dynamic> RowVectorXd;
+    typedef MatrixDouble<Dynamic, Dynamic> MatrixXd;
+    typedef MatrixDouble<Dynamic, 1> VectorXd;
+    typedef MatrixDouble<1, Dynamic> RowVectorXd;
 
 #else
     using Eigen::MatrixXd;
