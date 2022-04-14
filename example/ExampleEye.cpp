@@ -25,8 +25,8 @@ int main() {
     Par par{};
 
     // Global parameters
-    int nSymb = 1024;  // number of symbols
-    int nt    = 32;    // number of discrete points per symbol
+    int nSymb = 32;  // number of symbols
+    int nt    = 8;    // number of discrete points per symbol
 
     // Tx parameters
     int symbrate     = 10;      // symbol rate [Gbaud].
@@ -75,14 +75,21 @@ int main() {
     tie(ex, ey) = pbs(e);
 
     string array[2] = {"alpha", modFormat};
-    VectorXi patX(64);
-    MatrixXi patBinaryX(64,1);
-    VectorXi patY(64);
-    MatrixXi patBinaryY(64,1);
+    VectorXi patX;
+    MatrixXi patBinaryX;
+    VectorXi patY;
+    MatrixXi patBinaryY;
 
     // 随机二进制生成器
     tie(patX, patBinaryX) = pattern(nSymb, "rand", array);
     tie(patY, patBinaryY) = pattern(nSymb, "rand", array);
+//    cout << "patX.size():" << patX.size() << endl;
+    for(int i = 0; i < patX.size(); i++){
+        patX(i) = i % 4;
+        patY(i) = i % 4;
+    }
+//    cout << "patX :" << patX << endl;
+
 
     MatrixXcd signalX;
     double normX = 1;
@@ -92,6 +99,8 @@ int main() {
     // 数字调制器
     tie(signalX, normX) = digitalModulator(patX, symbrate, par, modFormat, "rootrc");
     tie(signalY, normY) = digitalModulator(patY, symbrate, par, modFormat, "rootrc");
+    cout << "signalX:" << signalX << endl;
+    cout << "signalY:" << signalY << endl;
 
     // IQ调制器
     IQOption iqOptionX{};

@@ -137,6 +137,13 @@ double uniformRng() {
     return distr(generator);
 }
 
+// Uniform Distribution: 均匀随机分布
+double uniformRng2() {
+    static default_random_engine engine(time(nullptr));
+    std::uniform_real_distribution<double> distr(0, 1);
+    return distr(engine);
+}
+
 // Normal Distribution: 标准正态分布
 double normalRng() {
     std::random_device rand_dev;

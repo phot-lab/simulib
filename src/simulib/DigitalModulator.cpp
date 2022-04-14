@@ -95,6 +95,8 @@ tuple<MatrixXcd, double> digitalModulator(MatrixXi pat_bin, double symbrate, Par
     // 1: convert the pattern into stars of the constellations
     MatrixXcd level = Pat2Samp(pat_bin, mod_format).cast<complex<double>>();
 
+//    cout << "level:" << level << endl;
+
     // 2: create a linearly modulated digital signal
     MatrixXcd signal = elecSrc(level, ptype, par, n_symb, nsps, nd, n_fft);
 
@@ -144,6 +146,7 @@ static MatrixXcd elecSrc(MatrixXcd level, string ptype, Par par, unsigned long n
     VectorXcd temp = matrixToVec(levelu);
     levelu         = truncateVec(temp, genVector(1, n_symb * nsps));  // truncate if necessary
     MatrixXcd levelu_fft = fftCol(levelu);
+    cout << "levelu_fft:" << levelu_fft << endl;
 
     VectorXcd hfir;
     if (flag) {
@@ -151,6 +154,7 @@ static MatrixXcd elecSrc(MatrixXcd level, string ptype, Par par, unsigned long n
     } else {
         VectorXd elpulse = pulseDesign(ptype, nsps, n_symb, par);  // single pulse
         hfir              = fft(fftShift(elpulse));
+
         if (ptype == "rootrc") {  // square-root raised cosine
             hfir = (hfir *
                     nsps)
@@ -161,7 +165,13 @@ static MatrixXcd elecSrc(MatrixXcd level, string ptype, Par par, unsigned long n
     for (Index i = 0; i < levelu_fft.cols(); ++i) {
         levelu_fft.col(i) = levelu_fft.col(i).cwiseProduct(hfir);
     }
+
+    cout << "levelu_fft:" << levelu_fft << endl;
+
     MatrixXcd elec = ifftCol(levelu_fft);  // create PAM signal
+
+    cout << "elec:" << elec << endl;
+
     Index length = max(elec.rows(), elec.cols());
     if (length < (long) n_fft) {
         ERROR("It is impossible to get the desired number of samples with the given pattern and sampling rate");
@@ -195,6 +205,7 @@ static MatrixXcd elecSrc(MatrixXcd level, string ptype, Par par, unsigned long n
     } else {
         ERROR("Unknwon normalization method");
     }
+
     return elec / sqrt(avge);
 }
 
@@ -229,27 +240,35 @@ static VectorXd pulseDesign(string ptype, int nsps, unsigned long n_symb, Par pa
                 VectorXd replace = (((ncos.array() - nl + 0.5) * M_PI / hperiod).cos() + 1) * 0.5;
                 replaceVector(elpulse, indices, replace);
             }
-            VectorXd replace = truncateVec(elpulse, genVector(nsps * n_symb / 2 + 1, nsps * n_symb)).reverse();
-            VectorXd indices = genVector(1, nsps * n_symb / 2);
+            VectorXd replace = truncateVec(elpulse, genVector(nsps * n_symb / (double)2 + 1, nsps * n_symb)).reverse();
+            VectorXd indices = genVector(1, nsps * n_symb / (double)2);
             replaceVector(elpulse, indices, replace);  // first half of the pulse
             break;
         }
         case rc:
         case rootrc:{
             VectorXd tfir =  VectorXd(nsps * n_symb);
-            tfir = ArrayXd(nsps * n_symb).setLinSpaced( -((long)n_symb)/2, (long)n_symb/2 - 1/nsps);
+            tfir = ArrayXd(nsps * n_symb).setLinSpaced( -((double)n_symb)/(double)2, (double)n_symb/(double)2 - 1/(double)nsps);
             tfir = (1/par.duty) * tfir;
             VectorXd sinc_tfit = tfir;
             sinc_tfit = sinc_tfit.unaryExpr([](double x){
                 if(x == 0)
-                    return x;
+                    return (double)1.0;
                 else
-                    return sin(M_PI*x)/ (M_PI*x);
+                    return sin(PI*x) / (PI*x);
             });
-            VectorXd cos_tfir = M_PI * par.rolloff * tfir;
+
+            cout << "sinc_tfit:" << sinc_tfit << endl;
+
+            VectorXd cos_tfir = PI * par.rolloff * tfir;
             cos_tfir = cos_tfir.array().cos();
+
+            cout << "cos_tfir:" << cos_tfir << endl;
+
             VectorXd unit = VectorXd(tfir.size()).setOnes();
+
             VectorXd devide_tfir = 2 * par.rolloff * tfir;
+
             devide_tfir = devide_tfir.array().pow(2);
             devide_tfir = unit - devide_tfir;
             elpulse  = sinc_tfit.cwiseProduct(cos_tfir);

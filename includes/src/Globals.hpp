@@ -24,6 +24,7 @@ extern const double LIGHT_SPEED;      // Speed of light in vacuum [m/s]
 extern const double PLANK_CONST;      // Planck's constant [J*s]
 extern const double ELE_CHARGE;       // Electron's charge [C] (CODATA value, year 2006)
 extern const double BOLTZMANN_CONST;  // Boltzmann's constant [J/oK] (CODATA value)
+extern const double PI;
 
 extern Gstate gstate;
 

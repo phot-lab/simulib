@@ -73,7 +73,7 @@ tuple<complex<double>, MatrixXcd> evaluateEye(MatrixXi pattern, const MatrixXcd 
 //        return b;
 //    });
     double eyeOpening = eyeOpeningVec.minCoeff();
-//    cout<< "eyeOpening : \n" << eyeOpening<<endl;
+    cout<< "eyeOpening : \n" << eyeOpening<<endl;
 
     if (eyeOpening < 0)
         eyeOpening = NAN;

@@ -28,7 +28,7 @@ Matrix<T, Dynamic, 1> fftShift(const Matrix<T, Dynamic, 1> &in) {
     Index size = in.rows();
     Matrix<T, Dynamic, 1> out(size, 1);
 
-    unsigned pivot = (size % 2 == 0) ? (size / 2) : ((size + 1) / 2);
+    unsigned pivot = (size % 2 == 0) ? (size / 2) : ((size - 1) / 2);
     unsigned rightHalf = size - pivot;
     unsigned leftHalf = pivot;
 
