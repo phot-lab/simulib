@@ -253,17 +253,34 @@ static VectorXd pulseDesign(string ptype, int nsps, unsigned long n_symb, Par pa
         case rc:
         case rootrc:{
             VectorXd tfir =  VectorXd(nsps * n_symb);
-            tfir = ArrayXd(nsps * n_symb).setLinSpaced( -((double)n_symb)/(double)2, (double)n_symb/(double)2 - 1/(double)nsps);
+            tfir = ArrayXd(nsps * n_symb).setLinSpaced( -((double)n_symb/(double)2), (double)n_symb/(double)2 - 1/(double)nsps);
             tfir = (1/par.duty) * tfir;
             VectorXd sinc_tfit = tfir;
-            sinc_tfit = sinc_tfit.unaryExpr([](double x){
-                if(x == 0)
-                    return (double)1.0;
-                else if(abs(round(x) - x) < 0.000000000000001)
-                    return (double)0;
+//            sinc_tfit = sinc_tfit.unaryExpr([](double x){
+//                if(x == 0)
+//                    return (double)1.0;
+//                else
+//                    return sin(M_PI*x) / (M_PI*x);
+//            });
+            // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+            // problem !!!
+            for(int i = 0; i < sinc_tfit.size(); i++){
+                if(i == 0){
+                    cout << "x:" << sinc_tfit(i) << endl;
+                    double x = sinc_tfit(i);
+                    cout << "(sin(x*M_PI ) / (x*M_PI )):" << (sin(x*M_PI ) / (x*M_PI )) << endl;
+                    cout << "sin(-512*M_PI)/(-512*M_PI):" << sin(-512*M_PI) / (-512*M_PI) << endl;
+                }
+                if(sinc_tfit(i) == 0)
+                    sinc_tfit(i) =  (double)1.0;
                 else
-                    return sin(PI*x) / (PI*x);
-            });
+                    sinc_tfit(i) =  sin(M_PI*sinc_tfit(i)) / (M_PI*sinc_tfit(i));
+                if(i == 0){
+                    cout << "sinc_tfit(i):" << sinc_tfit(i) << endl;
+                }
+            }
+            // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+
             VectorXd cos_tfir = PI * par.rolloff * tfir;
             cos_tfir = cos_tfir.array().cos();
             VectorXd unit = VectorXd(tfir.size()).setOnes();

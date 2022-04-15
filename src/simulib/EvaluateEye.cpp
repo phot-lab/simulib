@@ -49,7 +49,7 @@ tuple<complex<double>, MatrixXcd> evaluateEye(MatrixXi pattern, const MatrixXcd 
         VectorXi select     = pattern.array().cwiseEqual(i).reshaped().cast<int>();
         MatrixXd eyeSignal = selectRows(iricMat, select);
         topVec.row(i) = eyeSignal.colwise().minCoeff(); // Top of eye
-        botVec.row(i)       = eyeSignal.colwise().minCoeff(); // Bottom of eye
+        botVec.row(i)       = eyeSignal.colwise().maxCoeff(); // Bottom of eye
     }
 
     VectorXd topVecRowMax = topVec.rowwise().maxCoeff();
@@ -73,14 +73,14 @@ tuple<complex<double>, MatrixXcd> evaluateEye(MatrixXi pattern, const MatrixXcd 
 //        return b;
 //    });
     double eyeOpening = eyeOpeningVec.minCoeff();
-//    cout<< "eyeOpening : \n" << eyeOpening<<endl;
+    cout<< "eyeOpening : \n" << eyeOpening<<endl;
 
     if (eyeOpening < 0)
         eyeOpening = NAN;
 
 //    complex<double> temp(10, 0);
-//    double temp = 10;
-//    eyeOpening = temp * log10(eyeOpening);  // [dBm]
+    double temp = 10;
+    eyeOpening = temp * log10(eyeOpening);  // [dBm]
     return make_tuple(eyeOpening, iricMat);
 }
 

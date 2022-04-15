@@ -23,6 +23,7 @@ using namespace std;
 
 int main() {
     Par par{};
+    cout << "sin(-512*M_PI)/(-512*M_PI):" << sin((double)-512*M_PI) / ((double)-512*M_PI) << endl;
 
     // Global parameters
     int nSymb = 1024;  // number of symbols
@@ -44,6 +45,8 @@ int main() {
     string sync_type        = "da";         // time-recovery method ?
     fiber.opticalFilterType = "gauss";      // optical filter type
     fiber.obw               = INT_MAX;      // optical filter bandwidth normalized to symbrate
+    fiber.length = 1000;
+    fiber.dispersion = 17;
     string eftype           = "rootrc";     // optical filter type ?
     double ebw              = 0.5;          // electrical filter bandwidth normalized to symbrate ?
     double epar             = par.rolloff;  // electrical filter extra parameters ?
@@ -84,10 +87,10 @@ int main() {
     tie(patX, patBinaryX) = pattern(nSymb, "rand", array);
     tie(patY, patBinaryY) = pattern(nSymb, "rand", array);
 //    cout << "patX.size():" << patX.size() << endl;
-//    for(int i = 0; i < patX.size(); i++){
-//        patX(i) = i % 4;
-//        patY(i) = i % 4;
-//    }
+    for(int i = 0; i < patX.size(); i++){
+        patX(i) = i % 4;
+        patY(i) = i % 4;
+    }
 //    cout << "patX :" << patX << endl;
 
 
@@ -103,6 +106,9 @@ int main() {
     tie(signalY, normY) = digitalModulator(patY, symbrate, par, modFormat, "rootrc");
 //    cout << "signalX:" << signalX << endl;
 //    cout << "signalY:" << signalY << endl;
+//    double gain = 0;
+//    tie(e, gain) = electricAmplifier(e, 10, 1, 10.0e-12);
+//    tie(e, gain) = electricAmplifier(e, 10, 1, 10.0e-12);
 
     // IQ调制器
     IQOption iqOptionX{};
@@ -137,18 +143,18 @@ int main() {
 
     // 眼图分析器（随后使用eyeOpening和iricMat这两个值去绘制眼图）
     MatrixXcd signalAngle = returnSignal.unaryExpr([](const complex<double> &a){
-        if(abs(a.imag()) < 0.00000000001 && abs(a.real()) < 0.00000000001){
-            return (double)INT_MAX;
-        }
+//        if(abs(a.imag()) < 0.00000000001 && abs(a.real()) < 0.00000000001){
+//            return (double)INT_MAX;
+//        }
         return atan2(a.imag(),a.real());
     });
-    for(int col = 0; col < signalAngle.cols(); col++){
-        for(int row = 0; row < signalAngle.rows(); ++row){
-            if( signalAngle(row,col) == (double)INT_MAX){
-                signalAngle(row,col) = (signalAngle(row+1,col) + signalAngle(row-1,col))/(double)2;
-            }
-        }
-    }
+//    for(int col = 0; col < signalAngle.cols(); col++){
+//        for(int row = 0; row < signalAngle.rows(); ++row){
+//            if( signalAngle(row,col) == (double)INT_MAX){
+//                signalAngle(row,col) = (signalAngle(row+1,col) + signalAngle(row-1,col))/(double)2;
+//            }
+//        }
+//    }
 
 
 //    cout << "signalAngle:\n" << signalAngle << endl;
@@ -158,6 +164,6 @@ int main() {
     pat << patX, patY;
     tie(eyeOpening, iricMat) = evaluateEye(pat, signalAngle , symbrate, modFormat, fiber);
     cout << "Eye open:" << eyeOpening << endl;
-//    cout << "iricMat:" << iricMat << endl;
+//    cout << "iricMat:\n" << iricMat << endl;
     return 0;
 }
