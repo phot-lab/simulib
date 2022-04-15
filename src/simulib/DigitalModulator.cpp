@@ -145,15 +145,18 @@ static MatrixXcd elecSrc(MatrixXcd level, string ptype, Par par, unsigned long n
     //    levelu.conservativeResize(1, n_symb * nsps);  // truncate if necessary
     VectorXcd temp = matrixToVec(levelu);
     levelu         = truncateVec(temp, genVector(1, n_symb * nsps));  // truncate if necessary
+//    cout << "levelu:" << levelu << endl;
     MatrixXcd levelu_fft = fftCol(levelu);
-    cout << "levelu_fft:" << levelu_fft << endl;
+//    cout << "levelu_fft:" << levelu_fft << endl;
 
     VectorXcd hfir;
     if (flag) {
         // 未完成
     } else {
         VectorXd elpulse = pulseDesign(ptype, nsps, n_symb, par);  // single pulse
+//        cout << "elpulse:\n" << elpulse << endl;
         hfir              = fft(fftShift(elpulse));
+//        cout << "hfir:\n" << hfir << endl;
 
         if (ptype == "rootrc") {  // square-root raised cosine
             hfir = (hfir *
@@ -166,11 +169,13 @@ static MatrixXcd elecSrc(MatrixXcd level, string ptype, Par par, unsigned long n
         levelu_fft.col(i) = levelu_fft.col(i).cwiseProduct(hfir);
     }
 
-    cout << "levelu_fft:" << levelu_fft << endl;
+//    levelu_fft = levelu_fft * hfir;
+//    cout << "levelu_fft size , hfir size:" << levelu_fft.rows()<<","<<levelu_fft.cols()<<" | "<<hfir.size() << endl;
+//    cout << "levelu_fft:" << levelu_fft << endl;
 
     MatrixXcd elec = ifftCol(levelu_fft);  // create PAM signal
 
-    cout << "elec:" << elec << endl;
+//    cout << "elec:" << elec << endl;
 
     Index length = max(elec.rows(), elec.cols());
     if (length < (long) n_fft) {
@@ -254,25 +259,28 @@ static VectorXd pulseDesign(string ptype, int nsps, unsigned long n_symb, Par pa
             sinc_tfit = sinc_tfit.unaryExpr([](double x){
                 if(x == 0)
                     return (double)1.0;
+                else if(abs(round(x) - x) < 0.000000000000001)
+                    return (double)0;
                 else
                     return sin(PI*x) / (PI*x);
             });
-
-            cout << "sinc_tfit:" << sinc_tfit << endl;
-
             VectorXd cos_tfir = PI * par.rolloff * tfir;
             cos_tfir = cos_tfir.array().cos();
-
-            cout << "cos_tfir:" << cos_tfir << endl;
-
             VectorXd unit = VectorXd(tfir.size()).setOnes();
-
             VectorXd devide_tfir = 2 * par.rolloff * tfir;
-
             devide_tfir = devide_tfir.array().pow(2);
             devide_tfir = unit - devide_tfir;
+            std::vector<int> index;
+            for(int i = 0; i < devide_tfir.size(); i++){
+                if( devide_tfir(i) == 0){
+                    index.insert(index.end(),i);
+                }
+            }
             elpulse  = sinc_tfit.cwiseProduct(cos_tfir);
             elpulse = elpulse.cwiseProduct(devide_tfir.cwiseInverse());
+            for(int i = 0; i < (int)index.size(); i++)
+                elpulse( index[i] ) = par.rolloff/2*sin(M_PI/2/par.rolloff);
+
             break;
         }
         default:

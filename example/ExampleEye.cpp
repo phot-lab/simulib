@@ -25,8 +25,8 @@ int main() {
     Par par{};
 
     // Global parameters
-    int nSymb = 32;  // number of symbols
-    int nt    = 8;    // number of discrete points per symbol
+    int nSymb = 1024;  // number of symbols
+    int nt    = 32;    // number of discrete points per symbol
 
     // Tx parameters
     int symbrate     = 10;      // symbol rate [Gbaud].
@@ -84,10 +84,10 @@ int main() {
     tie(patX, patBinaryX) = pattern(nSymb, "rand", array);
     tie(patY, patBinaryY) = pattern(nSymb, "rand", array);
 //    cout << "patX.size():" << patX.size() << endl;
-    for(int i = 0; i < patX.size(); i++){
-        patX(i) = i % 4;
-        patY(i) = i % 4;
-    }
+//    for(int i = 0; i < patX.size(); i++){
+//        patX(i) = i % 4;
+//        patY(i) = i % 4;
+//    }
 //    cout << "patX :" << patX << endl;
 
 
@@ -98,9 +98,11 @@ int main() {
 
     // 数字调制器
     tie(signalX, normX) = digitalModulator(patX, symbrate, par, modFormat, "rootrc");
+//    signalY = signalX;
+//    normY = normX;
     tie(signalY, normY) = digitalModulator(patY, symbrate, par, modFormat, "rootrc");
-    cout << "signalX:" << signalX << endl;
-    cout << "signalY:" << signalY << endl;
+//    cout << "signalX:" << signalX << endl;
+//    cout << "signalY:" << signalY << endl;
 
     // IQ调制器
     IQOption iqOptionX{};
@@ -128,13 +130,28 @@ int main() {
     // 前端接收器
     MatrixXcd returnSignal = rxFrontend(e, lambda, symbrate, fiber);
 
+//    cout << "returnSignal:" << returnSignal << endl;
+
     complex<double> eyeOpening;
     MatrixXcd iricMat;
 
     // 眼图分析器（随后使用eyeOpening和iricMat这两个值去绘制眼图）
     MatrixXcd signalAngle = returnSignal.unaryExpr([](const complex<double> &a){
+        if(abs(a.imag()) < 0.00000000001 && abs(a.real()) < 0.00000000001){
+            return (double)INT_MAX;
+        }
         return atan2(a.imag(),a.real());
     });
+    for(int col = 0; col < signalAngle.cols(); col++){
+        for(int row = 0; row < signalAngle.rows(); ++row){
+            if( signalAngle(row,col) == (double)INT_MAX){
+                signalAngle(row,col) = (signalAngle(row+1,col) + signalAngle(row-1,col))/(double)2;
+            }
+        }
+    }
+
+
+//    cout << "signalAngle:\n" << signalAngle << endl;
 
     MatrixXi pat(patX.rows() ,patX.cols() + patY.cols());
 
