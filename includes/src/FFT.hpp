@@ -18,7 +18,7 @@
 #ifndef SIMULIB_FFT_H
 #define SIMULIB_FFT_H
 
-#include "unsupported/Eigen/FFT"
+namespace SimuLib {
 
 // The implementation of fftShift referred to this website
 // https://kerpanic.wordpress.com/2016/04/08/more-efficient-ifftshift-fftshift-in-c/
@@ -28,9 +28,9 @@ Matrix<T, Dynamic, 1> fftShift(const Matrix<T, Dynamic, 1> &in) {
     Index size = in.rows();
     Matrix<T, Dynamic, 1> out(size, 1);
 
-    unsigned pivot = (size % 2 == 0) ? (size / 2) : ((size + 1) / 2);
+    unsigned pivot     = (size % 2 == 0) ? (size / 2) : ((size + 1) / 2);
     unsigned rightHalf = size - pivot;
-    unsigned leftHalf = pivot;
+    unsigned leftHalf  = pivot;
 
     memcpy(out.data(), in.data() + pivot, sizeof(double) * rightHalf);
     memcpy(out.data() + rightHalf, in.data(), sizeof(double) * leftHalf);
@@ -42,9 +42,9 @@ Matrix<T, Dynamic, 1> ifftShift(const Matrix<T, Dynamic, 1> &in) {
     Index size = in.rows();
     Matrix<T, Dynamic, 1> out(size, 1);
 
-    unsigned pivot = (size % 2 == 0) ? (size / 2) : ((size - 1) / 2);
+    unsigned pivot     = (size % 2 == 0) ? (size / 2) : ((size - 1) / 2);
     unsigned rightHalf = size - pivot;
-    unsigned leftHalf = pivot;
+    unsigned leftHalf  = pivot;
 
     memcpy(out.data(), in.data() + pivot, sizeof(double) * rightHalf);
     memcpy(out.data() + rightHalf, in.data(), sizeof(double) * leftHalf);
@@ -62,5 +62,7 @@ MatrixXcd ifft2D(const MatrixXcd &in);
 MatrixXcd fftCol(const MatrixXcd &in);
 
 MatrixXcd ifftCol(const MatrixXcd &in);
+
+}  // namespace SimuLib
 
 #endif  // SIMULIB_FFT_H

@@ -16,14 +16,17 @@
  * Supported by: National Key Research and Development Program of China
  */
 
-#include "SimuLib"
+#include "Internal"
 
 using namespace std;
+
+namespace SimuLib {
+
+namespace PARALLEL_TYPE {
 
 static VectorXd pulseDesign(string ptype, int nsps, unsigned long n_symb, Par par);
 
 static MatrixXcd elecSrc(MatrixXcd level, string ptype, Par par, unsigned long n_symb, int nsps, int nd, unsigned long n_fft);
-
 
 /**
  * @brief linearly modulated digital signal
@@ -67,6 +70,7 @@ static MatrixXcd elecSrc(MatrixXcd level, string ptype, Par par, unsigned long n
  * @return E: a struct of wave, details in Fiber.hpp
  * @return norm: Normalization factor
  */
+
 tuple<MatrixXcd, double> digitalModulator(MatrixXi pat_bin, double symbrate, Par par, string mod_format, string ptype) {
     unsigned long n_fft = gstate.NSAMP;
     double n_tini       = gstate.SAMP_FREQ / symbrate;  // Wished samples per symbol
@@ -123,6 +127,7 @@ tuple<MatrixXcd, double> digitalModulator(MatrixXi pat_bin, double symbrate, Par
     return make_tuple(signal, norm);
 }
 
+
 static MatrixXcd elecSrc(MatrixXcd level, string ptype, Par par, unsigned long n_symb, int nsps, int nd, unsigned long n_fft) {
     // The idea is the following: the pattern is first upsampled to par.nsps samples per symbol, and then filtered to create the PAM signal.
 
@@ -141,8 +146,8 @@ static MatrixXcd elecSrc(MatrixXcd level, string ptype, Par par, unsigned long n
     MatrixXcd levelu = UpSample(level, nsps);
 
     //    levelu.conservativeResize(1, n_symb * nsps);  // truncate if necessary
-    VectorXcd temp = matrixToVec(levelu);
-    levelu         = truncateVec(temp, genVector(1, n_symb * nsps));  // truncate if necessary
+    VectorXcd temp       = matrixToVec(levelu);
+    levelu               = truncateVec(temp, genVector(1, n_symb * nsps));  // truncate if necessary
     MatrixXcd levelu_fft = fftCol(levelu);
 
     VectorXcd hfir;
@@ -150,7 +155,7 @@ static MatrixXcd elecSrc(MatrixXcd level, string ptype, Par par, unsigned long n
         // 未完成
     } else {
         VectorXd elpulse = pulseDesign(ptype, nsps, n_symb, par);  // single pulse
-        hfir              = fft(fftShift(elpulse));
+        hfir             = fft(fftShift(elpulse));
         if (ptype == "rootrc") {  // square-root raised cosine
             hfir = (hfir *
                     nsps)
@@ -162,7 +167,7 @@ static MatrixXcd elecSrc(MatrixXcd level, string ptype, Par par, unsigned long n
         levelu_fft.col(i) = levelu_fft.col(i).cwiseProduct(hfir);
     }
     MatrixXcd elec = ifftCol(levelu_fft);  // create PAM signal
-    Index length = max(elec.rows(), elec.cols());
+    Index length   = max(elec.rows(), elec.cols());
     if (length < (long) n_fft) {
         ERROR("It is impossible to get the desired number of samples with the given pattern and sampling rate");
     } else if (length > (long) n_fft) {
@@ -235,25 +240,25 @@ static VectorXd pulseDesign(string ptype, int nsps, unsigned long n_symb, Par pa
             break;
         }
         case rc:
-        case rootrc:{
-            VectorXd tfir =  VectorXd(nsps * n_symb);
-            tfir = ArrayXd(nsps * n_symb).setLinSpaced( -((long)n_symb)/2, (long)n_symb/2 - 1/nsps);
-            tfir = (1/par.duty) * tfir;
-            VectorXd sinc_tfit = tfir;
-            sinc_tfit = sinc_tfit.unaryExpr([](double x){
-                if(x == 0)
+        case rootrc: {
+            VectorXd tfir        = VectorXd(nsps * n_symb);
+            tfir                 = ArrayXd(nsps * n_symb).setLinSpaced(-((long) n_symb) / 2, (long) n_symb / 2 - 1 / nsps);
+            tfir                 = (1 / par.duty) * tfir;
+            VectorXd sinc_tfit   = tfir;
+            sinc_tfit            = sinc_tfit.unaryExpr([](double x) {
+                if (x == 0)
                     return x;
                 else
-                    return sin(M_PI*x)/ (M_PI*x);
+                    return sin(M_PI * x) / (M_PI * x);
             });
-            VectorXd cos_tfir = M_PI * par.rolloff * tfir;
-            cos_tfir = cos_tfir.array().cos();
-            VectorXd unit = VectorXd(tfir.size()).setOnes();
+            VectorXd cos_tfir    = M_PI * par.rolloff * tfir;
+            cos_tfir             = cos_tfir.array().cos();
+            VectorXd unit        = VectorXd(tfir.size()).setOnes();
             VectorXd devide_tfir = 2 * par.rolloff * tfir;
-            devide_tfir = devide_tfir.array().pow(2);
-            devide_tfir = unit - devide_tfir;
-            elpulse  = sinc_tfit.cwiseProduct(cos_tfir);
-            elpulse = elpulse.cwiseProduct(devide_tfir.cwiseInverse());
+            devide_tfir          = devide_tfir.array().pow(2);
+            devide_tfir          = unit - devide_tfir;
+            elpulse              = sinc_tfit.cwiseProduct(cos_tfir);
+            elpulse              = elpulse.cwiseProduct(devide_tfir.cwiseInverse());
             break;
         }
         default:
@@ -262,3 +267,7 @@ static VectorXd pulseDesign(string ptype, int nsps, unsigned long n_symb, Par pa
     }
     return elpulse;
 }
+
+}
+
+}  // namespace SimuLib

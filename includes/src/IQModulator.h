@@ -1,25 +1,25 @@
 /**
-* Copyright (c) 2022 Beijing Jiaotong University
-* OpticaLab is licensed under [Open Source License].
-* You can use this software according to the terms and conditions of the [Open Source License].
-* You may obtain a copy of [Open Source License] at: [https://open.source.license/]
-*
-* THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
-* EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
-* MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
-*
-* See the [Open Source License] for more details.
+ * Copyright (c) 2022 Beijing Jiaotong University
+ * OpticaLab is licensed under [Open Source License].
+ * You can use this software according to the terms and conditions of the [Open Source License].
+ * You may obtain a copy of [Open Source License] at: [https://open.source.license/]
+ *
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+ * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+ * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ *
+ * See the [Open Source License] for more details.
  */
 /**
-* Author: Shihao Xie
-* Created: 2022/4/8
-* Supported by: National Key Research and Development Program of China
+ * Author: Shihao Xie
+ * Created: 2022/4/8
+ * Supported by: National Key Research and Development Program of China
  */
 
 #ifndef SIMULIB_IQMODULATOR_H
 #define SIMULIB_IQMODULATOR_H
 
-#include "SimuLib"
+namespace SimuLib {
 
 /**
  * @brief in-phase/quadrature optical modulator simulation option
@@ -36,17 +36,18 @@
  *             on columns [nch (nch+1)] representing x and y polarizations.
  * @param norm: normalization factor
  */
-struct IQOption{
-    double iqratio = 0;
-    double biasc = 0;
-    double exratio[2] = {INT_MAX,INT_MAX};
-    double biasl[2] = {-1,-1};
-    double biasu[2] = {-1,-1};
-    double vpi = INT_MAX;
-    int nch = 1;
-    double norm = INT_MAX;
+
+struct IQOption {
+    double iqratio    = 0;
+    double biasc      = 0;
+    double exratio[2] = {INT_MAX, INT_MAX};
+    double biasl[2]   = {-1, -1};
+    double biasu[2]   = {-1, -1};
+    double vpi        = INT_MAX;
+    int nch           = 1;
+    double norm       = INT_MAX;
 };
 
-E IQModulator(E e, VectorXcd modSig, IQOption option);
+}  // namespace SimuLib
 
 #endif  // SIMULIB_IQMODULATOR_H

@@ -18,6 +18,8 @@
 
 #include <SimuLib>
 
+using namespace SimuLib;
+
 int main() {
 
     VectorXcd v(3);

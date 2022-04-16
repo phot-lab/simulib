@@ -23,7 +23,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
-#include <SimuLib>
+#include <Internal>
 
 using namespace std;
 

@@ -23,6 +23,8 @@
 #include <memory>
 #include <string>
 
+namespace SimuLib {
+
 class va_map {
 private:
     std::map<std::string, std::shared_ptr<void>> normal_map;
@@ -48,5 +50,7 @@ public:
         return normal_map.count(key) == 1;
     }
 };
+
+}  // namespace SimuLib
 
 #endif  // CUSTOM_DATA_STRUCTURE_H

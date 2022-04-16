@@ -19,13 +19,15 @@
 #ifndef SIMULIB_MZMODULATOR_H
 #define SIMULIB_MZMODULATOR_H
 
-#include <ctime>
-#include <cfloat>
-#include <iostream>
-#include <climits>
-#include <random>
-#include <cstdarg>
 #include "LaserSource.hpp"
+#include <cfloat>
+#include <climits>
+#include <cstdarg>
+#include <ctime>
+#include <iostream>
+#include <random>
+
+namespace SimuLib {
 
 /**
  * @brief Mach-Zehnder modulator simulation option
@@ -43,6 +45,7 @@
  * @param vpi: voltage yielding a phase shift of pi in each MZ branch.
  * @param norm: normalization factor
  */
+
 struct Mzoption {
     double exratio = INT_MAX;
     double bias    = INT_MAX;
@@ -56,7 +59,6 @@ struct Mzoption {
     double norm = INT_MAX;
 };
 
-E mzmodulator(E light, VectorXcd modSig);
-E mzmodulator(E light, VectorXcd modsig, Mzoption options);
+}  // namespace SimuLib
 
 #endif  // SIMULIB_MZMODULATOR_H

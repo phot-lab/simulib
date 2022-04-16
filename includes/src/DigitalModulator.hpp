@@ -20,6 +20,11 @@
 
 #include "CommonTypes.hpp"
 #include "Fiber.hpp"
+#include "Pattern.hpp"
+
+namespace SimuLib {
+
+namespace PARALLEL_TYPE {
 
 struct FormatInfo {
     double digit     = 0;
@@ -31,6 +36,8 @@ struct FormatInfo {
 
 FormatInfo modFormatInfo(const string &modFormat);
 
-tuple<MatrixXcd, double> digitalModulator(MatrixXi pat_bin, double symbrate, Par par, string mod_format, string ptype);
+}
+
+}  // namespace SimuLib
 
 #endif  // DIGITALMODULATOR_HPP

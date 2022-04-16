@@ -18,49 +18,65 @@
 #ifndef MATRIXCOMPLEX_HPP
 #define MATRIXCOMPLEX_HPP
 
-#ifdef PARMAT_USE_GPU
+#ifdef SIMULIB_USE_GPU
 #include "FunctionsComplex.hpp"
 #endif
 
-namespace ParMat {
+namespace SimuLib {
 
-#ifdef PARMAT_USE_GPU
-    template<int Rows, int Cols>
-    class MatrixComplex : public Eigen::Matrix<std::complex<double>, Rows, Cols> {
-        typedef Eigen::Matrix<std::complex<double>, Rows, Cols> Base;
-        typedef ParMat::MatrixComplex<Rows, Cols> Derived;
-        using Base::Base;
+namespace GPU {
 
-    public:
-        using Base::operator*;
-        using Base::operator+;
-        using Base::operator-;
+template<int Rows, int Cols>
+class MatrixComplex : public Eigen::Matrix<std::complex<double>, Rows, Cols> {
+    typedef Eigen::Matrix<std::complex<double>, Rows, Cols> Base;
+    typedef MatrixComplex<Rows, Cols> Derived;
+    using Base::Base;
 
-        template<typename Type>
-        Derived operator+(const MatrixBase<Type> &other) {
-            return geam(*this, static_cast<Derived>(other), true);
-        }
+public:
+    using Base::operator*;
+    using Base::operator+;
+    using Base::operator-;
 
-        template<typename Type>
-        Derived operator-(const MatrixBase<Type> &other) {
-            return geam(*this, static_cast<Derived>(other), false);
-        }
+#ifdef SIMULIB_USE_GPU
 
-        template<typename Type>
-        Derived operator*(const MatrixBase<Type> &other) {
-            return gemm(*this, static_cast<Derived>(other));
-        }
-    };
+    template<typename Type>
+    Derived operator+(const MatrixBase<Type> &other) {
+        return geam(*this, static_cast<Derived>(other), true);
+    }
 
-    typedef MatrixComplex<Dynamic, Dynamic> MatrixXcd;
-    typedef MatrixComplex<Dynamic, 1> VectorXcd;
-    typedef MatrixComplex<1, Dynamic> RowVectorXcd;
+    template<typename Type>
+    Derived operator-(const MatrixBase<Type> &other) {
+        return geam(*this, static_cast<Derived>(other), false);
+    }
 
-#else
-    using Eigen::MatrixXcd;
-    using Eigen::RowVectorXcd;
-    using Eigen::VectorXcd;
+    template<typename Type>
+    Derived operator*(const MatrixBase<Type> &other) {
+        return gemm(*this, static_cast<Derived>(other));
+    }
+
 #endif
+};
+
+typedef MatrixComplex<Dynamic, Dynamic> MatrixXcd;
+typedef MatrixComplex<Dynamic, 1> VectorXcd;
+typedef MatrixComplex<1, Dynamic> RowVectorXcd;
+
+}  // namespace GPU
+
+namespace CPU {
+
+
+template<int Rows, int Cols>
+class MatrixComplex : public Eigen::Matrix<std::complex<double>, Rows, Cols> {
+    typedef Eigen::Matrix<std::complex<double>, Rows, Cols> Base;
+    using Base::Base;
+};
+
+typedef MatrixComplex<Dynamic, Dynamic> MatrixXcd;
+typedef MatrixComplex<Dynamic, 1> VectorXcd;
+typedef MatrixComplex<1, Dynamic> RowVectorXcd;
+
+}  // namespace CPU
 
 }  // namespace ParMat
 

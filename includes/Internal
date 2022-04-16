@@ -1,0 +1,61 @@
+/**
+ * Copyright (c) 2022 Beijing Jiaotong University
+ * OpticaLab is licensed under [Open Source License].
+ * You can use this software according to the terms and conditions of the [Open Source License].
+ * You may obtain a copy of [Open Source License] at: [https://open.source.license/]
+ *
+ * THIS SOFTWARE IS PROVIDED ON AN "AS IS" BASIS, WITHOUT WARRANTIES OF ANY KIND,
+ * EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO NON-INFRINGEMENT,
+ * MERCHANTABILITY OR FIT FOR A PARTICULAR PURPOSE.
+ *
+ * See the [Open Source License] for more details.
+ */
+/**
+ * Author: Chunyu Li
+ * Created: 2022/3/10
+ * Supported by: National Key Research and Development Program of China
+ */
+
+#ifndef SIMULIB_SIMULIB_H
+#define SIMULIB_SIMULIB_H
+
+#include "src/parmat/BasicInfo.hpp"
+#include "src/parmat/MatrixComplex.hpp"
+#include "src/parmat/MatrixDouble.hpp"
+
+#ifdef SIMULIB_USE_GPU
+using namespace SimuLib::GPU;
+#else
+using namespace SimuLib::CPU;
+#endif
+
+#ifdef SIMULIB_USE_GPU
+#define PARALLEL_TYPE GPU
+#else
+#define PARALLEL_TYPE CPU
+#endif
+
+#include "src/CommonTypes.hpp"
+#include "src/CustomDataStructure.hpp"
+#include "src/DSPTools.hpp"
+#include "src/DigitalModulator.hpp"
+#include "src/ExternalFunctions.hpp"
+#include "src/FFT.hpp"
+#include "src/Fiber.hpp"
+#include "src/Globals.hpp"
+#include "src/LaserSource.hpp"
+#include "src/MatrixOperations.hpp"
+#include "src/Mzmodulator.hpp"
+#include "src/OperatorOverloading.hpp"
+#include "src/Pattern.hpp"
+#include "src/Tools.hpp"
+
+#include "src/DecimalToBinary.h"
+#include "src/IQModulator.h"
+
+#ifdef SIMULIB_USE_GPU
+#include "src/gpu/CuFFT.cuh"
+#include "src/gpu/Tools.cuh"
+#endif
+
+#endif  // SIMULIB_SIMULIB_H

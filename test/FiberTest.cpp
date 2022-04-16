@@ -16,7 +16,7 @@
  * Supported by: National Key Research and Development Program of China
  */
 
-#include <SimuLib>
+#include <Internal>
 #include <fstream>
 #include <iostream>
 

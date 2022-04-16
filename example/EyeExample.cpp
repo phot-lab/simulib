@@ -20,6 +20,7 @@
 #include <string>
 
 using namespace std;
+using namespace SimuLib;
 
 int main() {
     Par par{};
@@ -68,11 +69,11 @@ int main() {
 //    option.n0        = INT_MIN;
 
     // 光源模块
-    E e = laserSource(pLin, lambda);  // y-pol does not exist
+    E e = CPU::laserSource(pLin, lambda);  // y-pol does not exist
     E ex;
     E ey;
 
-    tie(ex, ey) = pbs(e);
+    tie(ex, ey) = GPU::pbs(e);
 
     string array[2] = {"alpha", modFormat};
     VectorXi patX(64);
@@ -81,8 +82,8 @@ int main() {
     MatrixXi patBinaryY(64,1);
 
     // 随机二进制生成器
-    tie(patX, patBinaryX) = pattern(nSymb, "rand", array);
-    tie(patY, patBinaryY) = pattern(nSymb, "rand", array);
+    tie(patX, patBinaryX) = CPU::pattern(nSymb, "rand", array);
+    tie(patY, patBinaryY) = CPU::pattern(nSymb, "rand", array);
 
     MatrixXcd signalX;
     double normX = 1;
@@ -90,8 +91,8 @@ int main() {
     double normY = 1;
 
     // 数字调制器
-    tie(signalX, normX) = digitalModulator(patX, symbrate, par, modFormat, "rootrc");
-    tie(signalY, normY) = digitalModulator(patY, symbrate, par, modFormat, "rootrc");
+    tie(signalX, normX) = GPU::digitalModulator(patX, symbrate, par, modFormat, "rootrc");
+    tie(signalY, normY) = GPU::digitalModulator(patY, symbrate, par, modFormat, "rootrc");
 
     // IQ调制器
     IQOption iqOptionX{};
@@ -103,10 +104,10 @@ int main() {
     iqOptionX.vpi = M_PI/2;
     iqOptionY.vpi = M_PI/2;
 
-    ex             = IQModulator(ex, signalX, iqOptionX);
-    ey             = IQModulator(ey, signalY, iqOptionY);
+    ex             = CPU::IQModulator(ex, signalX, iqOptionX);
+    ey             = CPU::IQModulator(ey, signalY, iqOptionY);
 
-    e = pbc(ex, ey);
+    e = GPU::pbc(ex, ey);
 
     Out out{};
 
@@ -117,7 +118,7 @@ int main() {
     fiber.opticalFilterType = "gauss";
 
     // 前端接收器
-    MatrixXcd returnSignal = rxFrontend(e, lambda, symbrate, fiber);
+    MatrixXcd returnSignal = CPU::rxFrontend(e, lambda, symbrate, fiber);
 
     complex<double> eyeOpening;
     MatrixXcd iricMat;
@@ -130,7 +131,7 @@ int main() {
     MatrixXi pat(patX.rows() ,patX.cols() + patY.cols());
 
     pat << patX, patY;
-    tie(eyeOpening, iricMat) = evaluateEye(pat, signalAngle , symbrate, modFormat, fiber);
+    tie(eyeOpening, iricMat) = GPU::evaluateEye(pat, signalAngle , symbrate, modFormat, fiber);
     cout << "Eye open:" << eyeOpening << endl;
 //    cout << "iricMat:" << iricMat << endl;
     return 0;

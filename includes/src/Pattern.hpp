@@ -21,6 +21,8 @@
 #include "CommonTypes.hpp"
 #include "Fiber.hpp"
 
+namespace SimuLib {
+
 struct Par {
     string emph       = "asin";
     int nsps          = 0;
@@ -31,9 +33,12 @@ struct Par {
     double duty       = 1;
 };
 
-tuple<VectorXi, MatrixXi> pattern(unsigned nsymb, const string &ptype);
-tuple<VectorXi, MatrixXi> pattern(unsigned nsymb, const string &ptype, string array[]);
+namespace PARALLEL_TYPE {
 
 MatrixXcd Pat2Samp(const MatrixXi &pat_bin, const string &modFormat);
+
+}
+
+}  // namespace SimuLib
 
 #endif  // PATTERN_HPP

@@ -2,7 +2,7 @@
 
 Optical simulation library, which now includes three main modules of optical transmission simulation software:
 
-* Modulator
+* Emitter
 * Fiber
 * Receiver
 
@@ -51,7 +51,7 @@ $ cmake --build cmake-build-debug --target <TARGET_NAME> # Then you can build an
 
 There are some test cases under `test` folder, which can be used for testing availability of different functions. All the required header files has been placed in the `includes` folder.
 
-## Installation Requirements of different Operating Systems
+## Installation Requirements on different Operating Systems
 
 ### MacOS (Big Sur or higher)
 
@@ -68,7 +68,7 @@ There are some test cases under `test` folder, which can be used for testing ava
 
 1. (Optional) Recommend installation of Qt5 denpendencys by following this [link](https://wiki.qt.io/Building_Qt_5_from_Git)
 
-```
+```shell
 $ sudo apt-get build-dep qt5-default
 $ sudo apt-get install libxcb-xinerama0-dev
 $ sudo apt-get install build-essential perl python git
@@ -81,7 +81,7 @@ $ sudo apt install libclang-6.0-dev llvm-6.0
 
 2. GCC 7.5 should be distributed with Ubuntu 18.04 by default. Check the GCC version.
 
-```
+```shell
 $ gcc --version
 gcc (Ubuntu 7.5.0-3ubuntu1~18.04) 7.5.0
 Copyright (C) 2017 Free Software Foundation, Inc.
@@ -99,53 +99,27 @@ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 > (1) Remove all Intel® oneAPI packages
 
-```
+```shell
 $ sudo apt autoremove intel-basekit intel-hpckit intel-iotkit intel-dlfdkit intel-aikit intel-renderkit
 ```
 
 > (2) Set up the Intel® oneAPI repository:
 
-```
+```shell
 # create 'mkl-set-repo.sh' with following contents and execute
-wget -O- https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB \
+$ wget -O- https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB \
 | gpg --dearmor | sudo tee /usr/share/keyrings/oneapi-archive-keyring.gpg > /dev/null
 
-echo "deb [signed-by=/usr/share/keyrings/oneapi-archive-keyring.gpg] https://apt.repos.intel.com/oneapi all main" | sudo tee /etc/apt/sources.list.d/oneAPI.list
+$ echo "deb [signed-by=/usr/share/keyrings/oneapi-archive-keyring.gpg] https://apt.repos.intel.com/oneapi all main" | sudo tee /etc/apt/sources.list.d/oneAPI.list
 ```
 
-Notice: Change the 'Download from' option in 'Software and Updates > Ubuntu Software', choose a server in China, for
-example, mirrors.tuna.tsinghua.edu.cn
+Notice: Change the 'Download from' option in 'Software and Updates > Ubuntu Software', choose a server in China, for example, mirrors.tuna.tsinghua.edu.cn
 
 > (3) Update the repository and install
 
-```
+```shell
 $ sudo apt update
 $ sudo apt install intel-basekit intel-hpckit intel-iotkit intel-dlfdkit intel-aikit intel-renderkit
-Reading package lists... Done
-Building dependency tree       
-Reading state information... Done
-The following additional packages will be installed:
-  cmake cmake-data intel-aikit-getting-started intel-basekit-getting-started intel-dlfdkit-getting-started
-  intel-hpckit-getting-started intel-iotkit-getting-started intel-oneapi-advisor intel-oneapi-ccl-2021.5.1
-
-... ...
-
-  intel-oneapi-vtune intel-oneapi-vtune-eclipse-plugin-vtune intel-renderkit-getting-started libcurl4 librhash0
-Suggested packages:
-  cmake-doc ninja-build
-The following NEW packages will be installed:
-  cmake cmake-data intel-aikit intel-aikit-getting-started intel-basekit intel-basekit-getting-started intel-dlfdkit
-  intel-dlfdkit-getting-started intel-hpckit intel-hpckit-getting-started intel-iotkit intel-iotkit-getting-started
-
-... ...
-
-  intel-oneapi-tbb-devel intel-oneapi-tbb-devel-2021.5.0 intel-oneapi-tbb-devel-2021.5.1 intel-oneapi-tensorflow
-  intel-oneapi-vtune intel-oneapi-vtune-eclipse-plugin-vtune intel-renderkit intel-renderkit-getting-started libcurl4
-  librhash0
-0 upgraded, 122 newly installed, 0 to remove and 0 not upgraded.
-Need to get 4,628 MB of archives.
-After this operation, 18.2 GB of additional disk space will be used.
-Do you want to continue? [Y/n]
 ```
 
 4. Configure `CLion > Preference > Build, Execution, Deployment > Toolchains`, add profile with C compiler (

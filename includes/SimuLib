@@ -12,48 +12,25 @@
  */
 /**
  * Author: Chunyu Li
- * Created: 2022/3/10
+ * Created: 2022/4/14
  * Supported by: National Key Research and Development Program of China
  */
+#ifndef SIMULIB_HPP
+#define SIMULIB_HPP
 
-#ifndef SIMULIB_SIMULIB_H
-#define SIMULIB_SIMULIB_H
-
-#ifdef SIMULIB_USE_GPU
-#define PARMAT_USE_GPU
-#endif
-
-#include "src/parmat/BasicInfo.hpp"
-#include "src/parmat/MatrixDouble.hpp"
-#include "src/parmat/MatrixComplex.hpp"
-
-using namespace ParMat;
-
-#include "src/OperatorOverloading.hpp"
-#include "src/CommonTypes.hpp"
-#include "src/FFT.hpp"
-#include "src/Fiber.hpp"
-#include "src/Globals.hpp"
-#include "src/Tools.hpp"
-#include "src/DSPTools.hpp"
-#include "src/MatrixOperations.hpp"
-#include "src/LaserSource.hpp"
-#include "src/Mzmodulator.hpp"
-#include "src/Pattern.hpp"
-#include "src/DigitalModulator.hpp"
-#include "src/CustomDataStructure.hpp"
-#include "src/RxFrontend.hpp"
-#include "src/EvaluateEye.hpp"
-#include "src/ElectricAmplifier.hpp"
-
-#include "src/PolarizationBeamSplitter.h"
-#include "src/IQModulator.h"
-#include "src/PolarizationBeamCombiner.h"
-#include "src/DecimalToBinary.h"
+#include "Internal"
 
 #ifdef SIMULIB_USE_GPU
-#include "src/gpu/Tools.cuh"
-#include "src/gpu/CuFFT.cuh"
+#undef PARALLEL_TYPE
+#define PARALLEL_TYPE CPU
+#undef EXTERNALFUNCTIONS_HPP
+#include "src/ExternalFunctions.hpp"
+#else
+#undef PARALLEL_TYPE
+#define PARALLEL_TYPE GPU
+#undef EXTERNALFUNCTIONS_HPP
+#include "src/ExternalFunctions.hpp"
 #endif
 
-#endif  // SIMULIB_SIMULIB_H
+
+#endif  // SIMULIB_HPP

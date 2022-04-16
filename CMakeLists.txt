@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.21)
 project(SimuLib CXX)
 
+option(USE_GPU "Whether use GPU for parallel computing" ON)
+
 message(STATUS "CMake version: ${CMAKE_VERSION}")
 set(CMAKE_CXX_STANDARD 11) # set C++ standard
 
@@ -40,13 +42,17 @@ if (CUDAToolkit_FOUND)
     message(STATUS "CUDA has been found on this machine")
     message(STATUS "CUDA version: ${CUDAToolkit_VERSION}")
     include_directories(${CUDAToolkit_INCLUDE_DIRS})
-    add_definitions(-DSIMULIB_USE_GPU)
     add_subdirectory(src/gpu)
+    target_compile_definitions(GPULibrary PUBLIC SIMULIB_USE_GPU)
 endif ()
 
 add_subdirectory(src/simulib)
 
-set(LIBS "Library")
+if (CUDAToolkit_FOUND)
+    set(LIBS "SimuLibCPU" "SimuLibGPU")
+else ()
+    set(LIBS "SimuLibCPU")
+endif ()
 
 add_subdirectory(test)
 add_subdirectory(example)

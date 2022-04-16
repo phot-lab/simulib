@@ -17,15 +17,19 @@
  */
 
 
-#include "SimuLib"
+#include "Internal"
 #include <chrono>
 #include <cmath>
 #include <iostream>
 
 using namespace std;
 
+namespace SimuLib {
+
+namespace PARALLEL_TYPE {
+
 tuple<Linear *, double> CheckFiber(const E &e, Fiber &fiber);
-tuple<double, double> FirstStep(const MatrixXcd& field, Fiber fiber);
+tuple<double, double> FirstStep(const MatrixXcd &field, Fiber fiber);
 double NextStep(const MatrixXcd &field, const Fiber &fiber, double dz_old);
 tuple<RowVectorXd, RowVectorXd> CheckStep(double zprop, double dz, double len_corr);
 MatrixXcd LinearStep(Linear *linear, VectorXd betat, RowVectorXd dzb, RowVectorXd nindex, MatrixXcd field);
@@ -44,6 +48,7 @@ tuple<double, unsigned long, E> SSFM(E e, Linear *linear, const VectorXd &betat,
  * @return out: fiber option
  * @return e: electric field
  */
+
 tuple<Out, E> fiberTransmit(E &e, Fiber fiber) {
 
     chrono::steady_clock::time_point begin = chrono::steady_clock::now();  // Start time
@@ -118,7 +123,7 @@ tuple<Out, E> fiberTransmit(E &e, Fiber fiber) {
 
     if ((fiber.dispersion == 0 && fiber.slope == 0) || fiber.gam == 0) {  // only GVD or only Kerr
         fiber.accuracyParameter = INFINITY;
-        fiber.maxStepLength = fiber.length;
+        fiber.maxStepLength     = fiber.length;
     }
 
     /********** SSFM Propagation **********/
@@ -142,7 +147,7 @@ tuple<double, unsigned long, E> SSFM(E e, Linear *linear, const VectorXd &betat,
         cout << "Stepupd      step #   z [m]" << endl;
     }
     fiber.chlambda       = e.lambda(0, 0);
-    unsigned long ncycle = 1;                             // number of steps
+    unsigned long ncycle = 1;                                 // number of steps
     double len_corr      = fiber.length / fiber.nWavePlates;  // waveplate length [m]
     double dz, phimax, dzs;
 
@@ -202,7 +207,7 @@ tuple<double, unsigned long, E> SSFM(E e, Linear *linear, const VectorXd &betat,
     return make_tuple(first_dz, ncycle, e);
 }
 
-tuple<double, double> FirstStep(const MatrixXcd& field, Fiber fiber) {
+tuple<double, double> FirstStep(const MatrixXcd &field, Fiber fiber) {
     double step;
     double phimax;
     if (fiber.length == fiber.maxStepLength) {
@@ -215,7 +220,7 @@ tuple<double, double> FirstStep(const MatrixXcd& field, Fiber fiber) {
             step            = (fiber.accuracyParameter / abs(fiber.dispersion) / (2 * M_PI * spac * fiber.bandwidth * 1e-3) * 1e3);
             if (step > fiber.maxStepLength)
                 step = fiber.maxStepLength;
-            if (fiber.stepUpdate == "nlp") {                              // nonlinear phase criterion
+            if (fiber.stepUpdate == "nlp") {                               // nonlinear phase criterion
                 double invLnl = field.cwiseAbs2().maxCoeff() * fiber.gam;  // Max of 1/Lnl [1/m]
                 double leff;
                 if (fiber.alphaLinear == 0)
@@ -252,9 +257,9 @@ double NextStep(const MatrixXcd &field, const Fiber &fiber, double dz_old) {
         } else {
             pmax = field.cwiseAbs2().maxCoeff();
         }
-        double invLnl = pmax * fiber.gam;          // max over channels
-        double leff   = fiber.accuracyParameter / invLnl;    // effective length [m] of the step
-        double dl     = fiber.alphaLinear * leff;  // ratio effective length/attenuation length
+        double invLnl = pmax * fiber.gam;                  // max over channels
+        double leff   = fiber.accuracyParameter / invLnl;  // effective length [m] of the step
+        double dl     = fiber.alphaLinear * leff;          // ratio effective length/attenuation length
         if (dl >= 1) {
             step = fiber.maxStepLength;  // [m]
         } else {
@@ -336,7 +341,6 @@ VectorXcd NonlinearStep(VectorXcd field, Fiber fiber, double dz) {
     return field;
 }
 
-
 tuple<Linear *, double> CheckFiber(const E &e, Fiber &fiber) {
     const string DEF_STEP_UPDATE = "cle";  // Default step-updating rule
     const bool DEF_IS_SYMMETRIC  = false;  // Default step computation
@@ -365,9 +369,9 @@ tuple<Linear *, double> CheckFiber(const E &e, Fiber &fiber) {
         if (fiber.pmdParameter != 0)
             WARNING("PMD does not exist in scalar propagation: set to 0.");
         fiber.pmdParameter = 0;
-        fiber.beatLength = 0;
-        fiber.coupling   = "none";  // Coupling impossible with one pol
-    } else {                        // Dual-polarization
+        fiber.beatLength   = 0;
+        fiber.coupling     = "none";  // Coupling impossible with one pol
+    } else {                          // Dual-polarization
         if (fiber.isManakov) {
             if (fiber.pmdParameter == 0) {
                 fiber.coupling = "none";  // Coupling indeed makes a difference for the Kerr effect of CNLSE
@@ -391,8 +395,8 @@ tuple<Linear *, double> CheckFiber(const E &e, Fiber &fiber) {
     Linear *linear;
     double dgd;
 
-    if (fiber.coupling == "pol") {                                                                   // X-Y coupling
-        double corr_len = fiber.length / fiber.nWavePlates;                                              // waveplate length [m] (aka correlation length)
+    if (fiber.coupling == "pol") {                                                                         // X-Y coupling
+        double corr_len = fiber.length / fiber.nWavePlates;                                                // waveplate length [m] (aka correlation length)
         dgd             = fiber.pmdParameter / sqrt(corr_len) * sqrt(3 * M_PI / 8) / sqrt(1000) * (1e-3);  // Differential
         // Group delay (DGD) per unit length [ns/m] @ x.lambda within a
         // Waveplate. To get [Df00] remember that within a waveplate the delay is dgd * corr_len.
@@ -401,8 +405,8 @@ tuple<Linear *, double> CheckFiber(const E &e, Fiber &fiber) {
         //        x1.coupling = x.coupling;
         //        x1.beatlength = x.beatlength;
         for (int i = 0; i < fiber.nWavePlates; ++i) {  // SVD, hence different with the old FIBER version
-                                                   //            [U,S]=eigendec(x1);
-                                                   //            [lin.matin(:,:,l),lin.db0(l,:)] = deal(U,S);
+                                                       //            [U,S]=eigendec(x1);
+                                                       //            [lin.matin(:,:,l),lin.db0(l,:)] = deal(U,S);
         }
         // lin.db extended later
     } else {
@@ -463,3 +467,7 @@ tuple<Linear *, double> CheckFiber(const E &e, Fiber &fiber) {
     }
     return make_tuple(linear, dgd);
 }
+
+}
+
+}  // namespace SimuLib

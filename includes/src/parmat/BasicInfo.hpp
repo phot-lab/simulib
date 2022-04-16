@@ -21,20 +21,23 @@
 #include "src/Eigen/Core"
 #include "src/unsupported/Eigen/FFT"
 
-namespace ParMat {
-    using Eigen::ArrayXd;
-    using Eigen::Dynamic;
-    using Eigen::FFT;
-    using Eigen::Index;
-    using Eigen::Map;
-    using Eigen::Matrix;
-    using Eigen::MatrixBase;
-    using Eigen::Unaligned;
+namespace SimuLib {
 
-    // Since the cuBLAS doesn't provide int matrix API, so I don't implement these
-    using Eigen::MatrixXi;
-    using Eigen::RowVectorXi;
-    using Eigen::VectorXi;
+using Eigen::ArrayXd;
+using Eigen::Dynamic;
+using Eigen::FFT;
+using Eigen::Index;
+using Eigen::Map;
+using Eigen::Matrix;
+using Eigen::MatrixBase;
+using Eigen::nbThreads;
+using Eigen::Unaligned;
+
+// Since the cuBLAS doesn't provide int matrix API, so I don't implement these
+using Eigen::MatrixXi;
+using Eigen::RowVectorXi;
+using Eigen::VectorXi;
+
 
 }  // namespace ParMat
 

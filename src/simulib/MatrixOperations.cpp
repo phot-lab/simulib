@@ -16,9 +16,13 @@
  * Supported by: National Key Research and Development Program of China
  */
 
-#include "SimuLib"
+#include "Internal"
 
 using namespace std;
+
+namespace SimuLib {
+
+namespace PARALLEL_TYPE {
 
 VectorXd diff(const VectorXd &v) {
     auto block_size = v.size() - 1;
@@ -207,9 +211,13 @@ VectorXcd sortEigen(VectorXcd v, bool ascend) {
 }
 
 MatrixXcd mvProduct(MatrixXcd m, const VectorXcd &v) {
-    MatrixXcd res(m.rows(),m.cols());
+    MatrixXcd res(m.rows(), m.cols());
     for (Index i = 0; i < m.cols(); ++i) {
         res.col(i) = m.col(i).cwiseProduct(v);
     }
     return res;
 }
+
+}
+
+}  // namespace SimuLib

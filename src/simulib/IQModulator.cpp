@@ -15,7 +15,9 @@
  * Created: 2022/4/8
  * Supported by: National Key Research and Development Program of China
  */
-#include "SimuLib"
+#include "Internal"
+
+namespace SimuLib {
 
 /**
  * @brief in-phase/quadrature optical modulator.
@@ -35,6 +37,9 @@
  * @param option: compute option. Details in IQModulator.h
  * @return E:
  */
+
+namespace PARALLEL_TYPE {
+
 E IQModulator(E e, VectorXcd modSig, IQOption option) {
     Mzoption mzoptioni;
     Mzoption mzoptionq;
@@ -95,3 +100,7 @@ E IQModulator(E e, VectorXcd modSig, IQOption option) {
     }
     return e;
 }
+
+}  // namespace PARALLEL_TYPE
+
+}  // namespace SimuLib

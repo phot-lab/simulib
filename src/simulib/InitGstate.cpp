@@ -16,11 +16,14 @@
  * Supported by: National Key Research and Development Program of China
  */
 
-#include "SimuLib"
+#include "Internal"
 
 using namespace std;
 
+namespace SimuLib {
+
 void initGstate(double Nsamp, double Fs) {
+    using namespace PARALLEL_TYPE;
     if (!isInt(Nsamp))
         ERROR("The number of samples must be an integer");
     gstate.NSAMP     = (unsigned long) Nsamp;  // Number of samples
@@ -28,4 +31,7 @@ void initGstate(double Nsamp, double Fs) {
     VectorXd vec     = genStepVector(-Fs / 2, stepf, Fs / 2 - stepf);
     gstate.FN        = fftShift(vec);  // Frequencies [GHz]
     gstate.SAMP_FREQ = Fs;             // Sampling frequency [GHz]
+
 }
+
+}  // namespace SimuLib

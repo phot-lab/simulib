@@ -18,6 +18,8 @@
 #ifndef SIMULIB_DSP_TOOLS_H
 #define SIMULIB_DSP_TOOLS_H
 
+namespace SimuLib{
+
 template<typename T>
 Matrix<T, Dynamic, Dynamic> UpSample(Matrix<T, Dynamic, Dynamic> matrix, int n) {
     Matrix<T, Dynamic, Dynamic> res = Matrix<T, Dynamic, Dynamic>::Zero(matrix.rows() * n, matrix.cols());
@@ -27,6 +29,8 @@ Matrix<T, Dynamic, Dynamic> UpSample(Matrix<T, Dynamic, Dynamic> matrix, int n) 
         }
     }
     return res;
+}
+
 }
 
 #endif //SIMULIB_DSP_TOOLS_H

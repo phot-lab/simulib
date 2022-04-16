@@ -16,8 +16,11 @@
  * Supported by: National Key Research and Development Program of China
  */
 
-#include "SimuLib"
+#include <Internal>
 
+namespace SimuLib {
+
+namespace PARALLEL_TYPE {
 /**
  * @brief A polarization beam splitter.
  * @param E: contains information about the electric field.
@@ -39,3 +42,5 @@ std::tuple<E, E> pbs(E e) {
     }
     return make_tuple(ex, ey);
 }
+}
+}  // namespace SimuLib

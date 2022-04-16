@@ -16,13 +16,14 @@
  * Supported by: National Key Research and Development Program of China
  */
 
-#include <SimuLib>
+#include <Internal>
 
 int main() {
-    MatrixXd m(2, 2);
-    m << 1, 2, 3, 4;
-    std::cout << m << std::endl;
-    std::cout << m + m << std::endl;
-    std::cout << m - m << std::endl;
-    std::cout << m * m << std::endl;
+//    ParMat::MatrixXd m(2, 2);
+//    m << 1, 2, 3, 4;
+//    std::cout << "Hello" << std::endl;
+//    std::cout << m << std::endl;
+//    std::cout << m + m << std::endl;
+//    std::cout << m - m << std::endl;
+//    std::cout << m * m << std::endl;
 }

@@ -11,7 +11,7 @@ set(TEST_TARGETS "")
 list(APPEND TEST_TARGETS Test MatlabTest EigenTest MKLTest FiberTest MzmodTest FFTTest ParMatTest)
 
 foreach (target IN LISTS TEST_TARGETS)
-    target_link_libraries(${target} Library)
+    target_link_libraries(${target} ${LIBS})
 endforeach ()
 
 if (MKL_FOUND)

@@ -16,7 +16,11 @@
  * Supported by: National Key Research and Development Program of China
  */
 
-#include "SimuLib"
+#include "Internal"
+
+namespace SimuLib {
+
+namespace PARALLEL_TYPE {
 
 /**
  * @brief modulates the optical field E with the electric signal MODSIG by a Mach-Zehnder interferometer.
@@ -71,6 +75,7 @@ E mzmodulator(E light, VectorXcd modSig) {
  */
 
 E mzmodulator(E light, VectorXcd modSig, Mzoption options) {
+
     double biasl   = -1;                     // bias of lower arm
     double biasu   = -1;                     // bias of upper arm
     double exratio = INT_MAX;                // extinction ratio
@@ -94,7 +99,7 @@ E mzmodulator(E light, VectorXcd modSig, Mzoption options) {
         if (options.biasu != INT_MAX)
             biasu = options.biasu;
     }
-    if(options.exratio != INT_MAX)
+    if (options.exratio != INT_MAX)
         exratio = options.exratio;
     mode = options.mode;
     if (options.norm != INT_MAX)
@@ -128,7 +133,7 @@ E mzmodulator(E light, VectorXcd modSig, Mzoption options) {
         int np = ncols(i);
         for (int j = 0; j < light.field.rows(); j++) {
             if (light.field(j, np - 1) != complex<double>(0, 0)) {
-                light.field.col(np - 1) = normf * light.field.col(np - 1).cwiseProduct(( fastExp(phi_u) + gamma * fastExp(phi_l) ) / (1 + gamma));
+                light.field.col(np - 1) = normf * light.field.col(np - 1).cwiseProduct((fastExp(phi_u) + gamma * fastExp(phi_l)) / (1 + gamma));
                 break;
             }
         }
@@ -136,3 +141,7 @@ E mzmodulator(E light, VectorXcd modSig, Mzoption options) {
 
     return light;
 }
+
+}
+
+}  // namespace SimuLib

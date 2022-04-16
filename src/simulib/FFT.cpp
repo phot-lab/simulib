@@ -16,9 +16,11 @@
  * Supported by: National Key Research and Development Program of China
  */
 
-#include "SimuLib"
+#include "Internal"
 
 using namespace std;
+
+namespace SimuLib {
 
 #ifdef SIMULIB_USE_GPU
 
@@ -123,3 +125,5 @@ MatrixXcd ifftCol(const MatrixXcd &in) {
 // MatrixXcd ifft2D(const MatrixXcd &in) {
 //    return fft2D(in) / in.size();
 //}
+
+}  // namespace SimuLib

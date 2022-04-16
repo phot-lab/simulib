@@ -22,7 +22,7 @@
 #include <cublas_v2.h>
 #include <cuda_runtime.h>
 
-namespace ParMat {
+namespace SimuLib {
     template<int Rows, int Cols>
     Matrix<std::complex<double>, Rows, Cols> geam(const Matrix<std::complex<double>, Rows, Cols> &thisMatrix, const Matrix<std::complex<double>, Rows, Cols> &other, bool addition) {
         int rows = thisMatrix.rows();

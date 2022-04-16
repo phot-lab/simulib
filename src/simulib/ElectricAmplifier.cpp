@@ -16,7 +16,11 @@
  * Supported by: National Key Research and Development Program of China
  */
 
-#include <SimuLib>
+#include <Internal>
+
+namespace SimuLib {
+
+namespace PARALLEL_TYPE {
 
 static E awgn(E e, double reqSNR);
 
@@ -28,6 +32,7 @@ static E awgn(E e, double reqSNR);
  * @param oneSidedSpectralDensity: 单边功率谱密度 A/Hz^(1/2)
  * @return
  */
+
 tuple<E, double> electricAmplifier(E e, double gainEA, double powerW, double oneSidedSpectralDensity) {
     double powerWAfterEA = powerW * pow(10, gainEA / 10);
     e.field              = e.field * sqrt(powerWAfterEA);
@@ -64,3 +69,7 @@ static E awgn(E e, double reqSNR) {
     e.field = e.field + noise;
     return e;
 }
+
+}
+
+}  // namespace SimuLib

@@ -12,12 +12,12 @@
  */
 /**
  * Author: Chunyu Li
- * Created: 2022/3/19
+ * Created: 2022/4/15
  * Supported by: National Key Research and Development Program of China
  */
 
 /**
- * This example displays the general workflow of the entire fiber transmission simulation.
+ * This example displays how to perform runtime switch between CPU and GPU.
  */
 
 #include <SimuLib>
@@ -64,11 +64,14 @@ int main() {
     option.n0        = 0.5;
 
     // 光源模块
-    E e = CPU::laserSource(pLin, lambda, option);  // y-pol does not exist
+    E e = GPU::laserSource(pLin, lambda, option);  // y-pol does not exist
 
     string array[2] = {"alpha", modFormat};
     VectorXi pat;
     MatrixXi patBinary;
+
+    CPU::MatrixXd m;
+    GPU::MatrixXd m2 = m;
 
     // 随机二进制生成器
     tie(pat, patBinary) = CPU::pattern(nSymb, "rand", array);
@@ -77,7 +80,7 @@ int main() {
     double norm;
 
     // 数字调制器
-    tie(signal, norm) = CPU::digitalModulator(patBinary, symbrate, par, modFormat, "costails");
+    tie(signal, norm) = GPU::digitalModulator(patBinary, symbrate, par, modFormat, "costails");
 
     double gain = 0;
 
@@ -85,12 +88,12 @@ int main() {
     tie(e, gain) = CPU::electricAmplifier(e, 10, 1, 10.0e-12);
 
     // MZ调制器
-    e = CPU::mzmodulator(e, signal);
+    e = GPU::mzmodulator(e, signal);
 
     Out out{};
 
     // 光纤传输模块
-    tie(out, e) = CPU::fiberTransmit(e, fiber);
+    tie(out, e) = GPU::fiberTransmit(e, fiber);
 
     //    cout << "光场：" << e.field << endl;
     //    cout << "光场矩阵的行：" << e.field.rows() << endl;
@@ -106,7 +109,7 @@ int main() {
     fiber.opticalFilterType = "gauss";
 
     // 电信号放大器
-    tie(e, gain) = CPU::electricAmplifier(e, 20, 1, 10.0e-12);
+    tie(e, gain) = GPU::electricAmplifier(e, 20, 1, 10.0e-12);
 
     // 前端接收器
     MatrixXcd returnSignal = CPU::rxFrontend(e, lambda, symbrate, fiber);

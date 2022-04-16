@@ -16,7 +16,11 @@
  * Supported by: National Key Research and Development Program of China
  */
 
-#include "SimuLib"
+#include "Internal"
+
+namespace SimuLib {
+
+namespace PARALLEL_TYPE {
 
 /**
  * @brief polarization beam combiner.
@@ -46,3 +50,7 @@ E pbc(E ex, E ey) {
     }
     return e;
 }
+
+}
+
+}  // namespace SimuLib

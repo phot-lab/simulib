@@ -16,16 +16,20 @@
  * Supported by: National Key Research and Development Program of China
  */
 
-#include "SimuLib"
+#include "Internal"
 #include <string>
 
 using namespace std;
 
+namespace SimuLib {
+
+namespace PARALLEL_TYPE {
+
 tuple<VectorXi, MatrixXi> pattern(unsigned nsymb, const string &ptype) {
     RowVectorXi patttern;
     MatrixXi patternBinary;
-    if(ptype=="rand"){ // RANDOM UNIFORMLY-DISTRIBUTED PATTERN
-        int qq=2;
+    if (ptype == "rand") {  // RANDOM UNIFORMLY-DISTRIBUTED PATTERN
+        int qq = 2;
         patttern.resize(nsymb);
         for (Index i = 0; i < patttern.size(); ++i) {
             patttern[i] = floor(uniformRng() * qq);
@@ -41,7 +45,7 @@ tuple<VectorXi, MatrixXi> pattern(unsigned nsymb, const string &ptype) {
 tuple<VectorXi, MatrixXi> pattern(unsigned nsymb, const string &ptype, string array[]) {
     RowVectorXi patttern;
     MatrixXi patternBinary;
-    if(ptype=="rand"){ // RANDOM UNIFORMLY-DISTRIBUTED PATTERN
+    if (ptype == "rand") {  // RANDOM UNIFORMLY-DISTRIBUTED PATTERN
         int qq;
         if (array[0] == "digit") {
             qq = strToDigit(array[1]);
@@ -66,3 +70,6 @@ tuple<VectorXi, MatrixXi> pattern(unsigned nsymb, const string &ptype, string ar
     return make_tuple(patttern.transpose(), patternBinary);
 }
 
+}
+
+}  // namespace SimuLib

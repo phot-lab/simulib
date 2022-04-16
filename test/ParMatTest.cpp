@@ -18,19 +18,31 @@
 
 #include <SimuLib>
 
+using namespace SimuLib;
+
+void test(GPU::MatrixXd m) {
+    m + m;
+}
+
 int main() {
-    MatrixXd m(2, 2);
+
+    CPU::MatrixXd m(2, 2);
     m << 1, 2, 3, 4;
-    std::cout << m << std::endl;
-    std::cout << m + m << std::endl;
-    std::cout << m - m << std::endl;
-    std::cout << m * m << std::endl;
 
-    MatrixXcd m2(2, 2);
-    m2 << 1, 2, 3, 4;
+    CPU::MatrixXd m2 = m;
+    test(m2);
+
     std::cout << m2 << std::endl;
-    std::cout << m2 + m2 << std::endl;
-    std::cout << m2 - m2 << std::endl;
-    std::cout << m2 * m2 << std::endl;
 
+    //    std::cout << m << std::endl;
+    //    std::cout << m + m << std::endl;
+    //    std::cout << m - m << std::endl;
+    //    std::cout << m * m << std::endl;
+
+    //    MatrixXcd m2(2, 2);
+    //    m2 << 1, 2, 3, 4;
+    //    std::cout << m2 << std::endl;
+    //    std::cout << m2 + m2 << std::endl;
+    //    std::cout << m2 - m2 << std::endl;
+    //    std::cout << m2 * m2 << std::endl;
 }

@@ -18,51 +18,67 @@
 #ifndef MATRIXDOUBLE_HPP
 #define MATRIXDOUBLE_HPP
 
-#ifdef PARMAT_USE_GPU
+#ifdef SIMULIB_USE_GPU
 #include "FunctionsDouble.hpp"
 #endif
 
-namespace ParMat {
+#include <iostream>
 
-#ifdef PARMAT_USE_GPU
+namespace SimuLib {
 
-    template<int Rows, int Cols>
-    class MatrixDouble : public Eigen::Matrix<double, Rows, Cols> {
-        typedef Eigen::Matrix<double, Rows, Cols> Base;
-        typedef ParMat::MatrixDouble<Rows, Cols> Derived;
-        using Base::Base;
+namespace GPU {
 
-    public:
-        using Base::operator*;
-        using Base::operator+;
-        using Base::operator-;
+template<int Rows, int Cols>
+class MatrixDouble : public Eigen::Matrix<double, Rows, Cols> {
+    typedef Eigen::Matrix<double, Rows, Cols> Base;
+    typedef MatrixDouble<Rows, Cols> Derived;
+    using Base::Base;
 
-        template<typename Type>
-        Derived operator+(const MatrixBase<Type> &other) {
-            return geam(*this, static_cast<Derived>(other), true);
-        }
+public:
+    using Base::operator*;
+    using Base::operator+;
+    using Base::operator-;
 
-        template<typename Type>
-        Derived operator-(const MatrixBase<Type> &other) {
-            return geam(*this, static_cast<Derived>(other), false);
-        }
+#ifdef SIMULIB_USE_GPU
 
-        template<typename Type>
-        Derived operator*(const MatrixBase<Type> &other) {
-            return gemm(*this, static_cast<Derived>(other));
-        }
-    };
+    template<typename Type>
+    Derived operator+(const MatrixBase<Type> &other) {
+        return geam(*this, static_cast<Derived>(other), true);
+    }
 
-    typedef MatrixDouble<Dynamic, Dynamic> MatrixXd;
-    typedef MatrixDouble<Dynamic, 1> VectorXd;
-    typedef MatrixDouble<1, Dynamic> RowVectorXd;
+    template<typename Type>
+    Derived operator-(const MatrixBase<Type> &other) {
+        return geam(*this, static_cast<Derived>(other), false);
+    }
 
-#else
-    using Eigen::MatrixXd;
-    using Eigen::RowVectorXd;
-    using Eigen::VectorXd;
+    template<typename Type>
+    Derived operator*(const MatrixBase<Type> &other) {
+        return gemm(*this, static_cast<Derived>(other));
+    }
+
 #endif
+};
 
-}  // namespace ParMat
+typedef MatrixDouble<Dynamic, Dynamic> MatrixXd;
+typedef MatrixDouble<Dynamic, 1> VectorXd;
+typedef MatrixDouble<1, Dynamic> RowVectorXd;
+
+}  // namespace GPU
+
+namespace CPU {
+
+template<int Rows, int Cols>
+class MatrixDouble : public Eigen::Matrix<double, Rows, Cols> {
+    typedef Eigen::Matrix<double, Rows, Cols> Base;
+    using Base::Base;
+};
+
+typedef MatrixDouble<Dynamic, Dynamic> MatrixXd;
+typedef MatrixDouble<Dynamic, 1> VectorXd;
+typedef MatrixDouble<1, Dynamic> RowVectorXd;
+
+}  // namespace CPU
+
+}  // namespace SimuLib
 
 #endif  // MATRIXDOUBLE_HPP

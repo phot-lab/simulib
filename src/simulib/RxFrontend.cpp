@@ -17,9 +17,13 @@
  * Supported by: National Key Research and Development Program of China
  */
 
-#include "SimuLib"
+#include "Internal"
 
 using namespace std;
+
+namespace SimuLib {
+
+namespace PARALLEL_TYPE {
 
 VectorXcd myFilter(string filterType, const VectorXd &freq, double bandwidth, double p);
 E filterEnv(E e, RowVectorXd lambda, const VectorXcd &hf);
@@ -38,6 +42,7 @@ MatrixXcd oToE(E e, double nt, Fiber fiber);
  * @param fiber: the connected fiber.
  * @return electric wave.
  */
+
 MatrixXcd rxFrontend(E e, RowVectorXd lambda, int symbrate, const Fiber &fiber) {
 
     // Create linear optical filters: OBPF (+fiber)
@@ -91,6 +96,8 @@ MatrixXcd oToE(E e, double nt, Fiber fiber) {
  * @param hf
  * @return
  */
+
+
 E filterEnv(E e, RowVectorXd lambda, const VectorXcd &hf) {
     double freqc   = e.lambda(0, 0) * LIGHT_SPEED;      // central frequency [GHz] (corresponding to the zero frequency of the lowpass equivalent signal by convention)
     double frec    = lambda[0] * LIGHT_SPEED;           // carrier frequency [GHz]
@@ -132,3 +139,7 @@ VectorXcd myFilter(string filterType, const VectorXd &freq, double bandwidth, do
     }
     return hf;
 }
+
+}  // namespace PARALLEL_TYPE
+
+}  // namespace SimuLib

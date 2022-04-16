@@ -25,6 +25,10 @@
 
 using namespace std;
 
+namespace SimuLib {
+
+namespace PARALLEL_TYPE {
+
 template<typename T>
 Matrix<T, Dynamic, 1> stlToEigen(vector<T> v) {
     return Map<Matrix<T, Dynamic, 1>, Unaligned>(v.data(), (long) v.size());
@@ -57,14 +61,14 @@ void replaceVector(VectorXd &vec, VectorXd indices, VectorXd replace);
 
 template<typename T>
 Matrix<T, Dynamic, 1> matrixToVec(Matrix<T, Dynamic, Dynamic> m) {
-    return m.reshaped(m.rows(),m.cols());
-//    return Map<Matrix<T, Dynamic, 1>>(m.data(), m.cols() * m.rows());
+    return m.reshaped(m.rows(), m.cols());
+    //    return Map<Matrix<T, Dynamic, 1>>(m.data(), m.cols() * m.rows());
 }
 
-//template<typename Derived>
-//MatrixBase<Derived> matrixToVec(MatrixBase<Derived> m){
-//    return m.reshaped(m.rows(),m.cols());
-//}
+// template<typename Derived>
+// MatrixBase<Derived> matrixToVec(MatrixBase<Derived> m){
+//     return m.reshaped(m.rows(),m.cols());
+// }
 
 template<typename T>
 Matrix<T, Dynamic, 1> truncateVec(Matrix<T, Dynamic, 1> &vec, VectorXd indices) {
@@ -207,5 +211,9 @@ VectorXi indexOfSorted(Matrix<T, Dynamic, 1> vec, Matrix<T, Dynamic, 1> sorted) 
     }
     return res;
 }
+
+}
+
+}  // namespace SimuLib
 
 #endif  // SIMULIB_MATRIX_TOOLS_H

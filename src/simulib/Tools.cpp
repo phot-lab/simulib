@@ -16,17 +16,21 @@
  * Supported by: National Key Research and Development Program of China
  */
 
+#include "Internal"
 #include <cmath>
 #include <iostream>
 #include <random>
 #include <regex>
-#include "SimuLib"
 #include <sstream>
 #include <stdexcept>
 #include <string>
 #include <vector>
 
 using namespace std;
+
+namespace SimuLib {
+
+namespace PARALLEL_TYPE {
 
 void lineInfo(const string &filename, const int &line, const string &func_name) {
     cerr << "File Name: " << filename << endl;  // File name
@@ -79,9 +83,9 @@ tuple<int, int> continuedFractionApproximation(double f) {
         double approx = (double) numerator / (double) denominator;
         if (fabs(approx - f) < tol) {
             if (flag) {
-                return make_tuple(-numerator,denominator);
+                return make_tuple(-numerator, denominator);
             } else {
-                return make_tuple(numerator,denominator);
+                return make_tuple(numerator, denominator);
             }
         }
     }
@@ -191,3 +195,6 @@ complex<double> fastExp(complex<double> data) {
     return exp(data * imag);
 }
 
+}
+
+}  // namespace SimuLib

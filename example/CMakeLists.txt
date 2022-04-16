@@ -1,4 +1,6 @@
 add_executable(Example Example.cpp)
-add_executable(ExampleEye ExampleEye.cpp)
+add_executable(EyeExample EyeExample.cpp)
+add_executable(SwitchExample SwitchExample.cpp)
 target_link_libraries(Example ${LIBS})
-target_link_libraries(ExampleEye ${LIBS})
+target_link_libraries(EyeExample ${LIBS})
+target_link_libraries(SwitchExample ${LIBS})

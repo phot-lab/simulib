@@ -8,6 +8,8 @@
 
 using namespace std;
 
+namespace SimuLib {
+
 struct Linear {
     bool is_scalar;
     bool is_unique;
@@ -82,7 +84,7 @@ struct Fiber {
  * @param fiber: contains fiber parameters. It is a structure of fields
  * @return
  */
-tuple<Out, E> fiberTransmit(E &e, Fiber fiber);
 
+}  // namespace SimuLib
 
 #endif  // OPTICALAB_FIBER_TYPES_H

@@ -18,8 +18,10 @@
 #ifndef OPTICALAB_COMMON_TYPES_H
 #define OPTICALAB_COMMON_TYPES_H
 
-#include <vector>
 #include <limits>
+#include <vector>
+
+namespace SimuLib {
 
 #ifndef INT_MAX
 #define INT_MAX __INT_MAX__
@@ -38,5 +40,7 @@ struct Gstate {
 };
 
 void initGstate(double Nsamp, double Fs);
+
+}  // namespace SimuLib
 
 #endif  // OPTICALAB_COMMON_TYPES_H

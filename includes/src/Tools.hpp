@@ -24,10 +24,14 @@
 #include <string>
 #include <vector>
 
+using namespace std;
+
+namespace SimuLib {
+
 #define ERROR(...) error(__FILE__, __LINE__, __func__, __VA_ARGS__)
 #define WARNING(...) warning(__FILE__, __LINE__, __func__, __VA_ARGS__)
 
-using namespace std;
+namespace PARALLEL_TYPE {
 
 void error(const string &filename, const int &line, const string &func_name, const string &s);
 
@@ -76,5 +80,8 @@ std::string toLower(std::string data);
 
 complex<double> fastExp(complex<double> data);
 
+}
+
+}  // namespace SimuLib
 
 #endif  // OPTICALAB_TOOLS_H

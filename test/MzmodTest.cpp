@@ -18,6 +18,8 @@
 
 #include <SimuLib>
 
+using namespace SimuLib;
+
 int main() {
     RowVectorXd ptx(1);
     RowVectorXd lam(1);
@@ -45,7 +47,7 @@ int main() {
     // and zero in y polarization. It would show like below:
     //(1,0) (0,0)
     //(1,0) (0,0)
-    E light          = laserSource(ptx, lam,option);
+    E light          = CPU::laserSource(ptx, lam,option);
     std::cout << "lambda = " << light.lambda<< endl;
     std::cout << "field = " << light.field << endl;
 
@@ -54,7 +56,7 @@ int main() {
     modsig.setRandom();
 //    std::cout << "modsig size = " << modsig.size() << endl;
 //    std::cout << "modsig = " << modsig << endl;
-    light = mzmodulator(light, modsig);
+    light = CPU::mzmodulator(light, modsig);
     std::cout << "lambda = " << light.lambda << endl;
     std::cout << "field = " << light.field << endl;
 
