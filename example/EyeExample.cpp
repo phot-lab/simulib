@@ -24,6 +24,7 @@ using namespace SimuLib;
 
 int main() {
     Par par{};
+    cout << "sin(-512*M_PI)/(-512*M_PI):" << sin((double)-512*M_PI) / ((double)-512*M_PI) << endl;
 
     // Global parameters
     int nSymb = 1024;  // number of symbols
@@ -45,6 +46,8 @@ int main() {
     string sync_type        = "da";         // time-recovery method ?
     fiber.opticalFilterType = "gauss";      // optical filter type
     fiber.obw               = INT_MAX;      // optical filter bandwidth normalized to symbrate
+    fiber.length = 1000;
+    fiber.dispersion = 17;
     string eftype           = "rootrc";     // optical filter type ?
     double ebw              = 0.5;          // electrical filter bandwidth normalized to symbrate ?
     double epar             = par.rolloff;  // electrical filter extra parameters ?
@@ -76,14 +79,21 @@ int main() {
     tie(ex, ey) = GPU::pbs(e);
 
     string array[2] = {"alpha", modFormat};
-    VectorXi patX(64);
-    MatrixXi patBinaryX(64,1);
-    VectorXi patY(64);
-    MatrixXi patBinaryY(64,1);
+    VectorXi patX;
+    MatrixXi patBinaryX;
+    VectorXi patY;
+    MatrixXi patBinaryY;
 
     // 随机二进制生成器
     tie(patX, patBinaryX) = CPU::pattern(nSymb, "rand", array);
     tie(patY, patBinaryY) = CPU::pattern(nSymb, "rand", array);
+//    cout << "patX.size():" << patX.size() << endl;
+    for(int i = 0; i < patX.size(); i++){
+        patX(i) = i % 4;
+        patY(i) = i % 4;
+    }
+//    cout << "patX :" << patX << endl;
+
 
     MatrixXcd signalX;
     double normX = 1;
@@ -91,8 +101,15 @@ int main() {
     double normY = 1;
 
     // 数字调制器
-    tie(signalX, normX) = GPU::digitalModulator(patX, symbrate, par, modFormat, "rootrc");
-    tie(signalY, normY) = GPU::digitalModulator(patY, symbrate, par, modFormat, "rootrc");
+    tie(signalX, normX) = CPU::digitalModulator(patX, symbrate, par, modFormat, "rootrc");
+//    signalY = signalX;
+//    normY = normX;
+    tie(signalY, normY) = CPU::digitalModulator(patY, symbrate, par, modFormat, "rootrc");
+//    cout << "signalX:" << signalX << endl;
+//    cout << "signalY:" << signalY << endl;
+//    double gain = 0;
+//    tie(e, gain) = electricAmplifier(e, 10, 1, 10.0e-12);
+//    tie(e, gain) = electricAmplifier(e, 10, 1, 10.0e-12);
 
     // IQ调制器
     IQOption iqOptionX{};
@@ -120,19 +137,34 @@ int main() {
     // 前端接收器
     MatrixXcd returnSignal = CPU::rxFrontend(e, lambda, symbrate, fiber);
 
+//    cout << "returnSignal:" << returnSignal << endl;
+
     complex<double> eyeOpening;
     MatrixXcd iricMat;
 
     // 眼图分析器（随后使用eyeOpening和iricMat这两个值去绘制眼图）
     MatrixXcd signalAngle = returnSignal.unaryExpr([](const complex<double> &a){
+//        if(abs(a.imag()) < 0.00000000001 && abs(a.real()) < 0.00000000001){
+//            return (double)INT_MAX;
+//        }
         return atan2(a.imag(),a.real());
     });
+//    for(int col = 0; col < signalAngle.cols(); col++){
+//        for(int row = 0; row < signalAngle.rows(); ++row){
+//            if( signalAngle(row,col) == (double)INT_MAX){
+//                signalAngle(row,col) = (signalAngle(row+1,col) + signalAngle(row-1,col))/(double)2;
+//            }
+//        }
+//    }
+
+
+//    cout << "signalAngle:\n" << signalAngle << endl;
 
     MatrixXi pat(patX.rows() ,patX.cols() + patY.cols());
 
     pat << patX, patY;
     tie(eyeOpening, iricMat) = GPU::evaluateEye(pat, signalAngle , symbrate, modFormat, fiber);
     cout << "Eye open:" << eyeOpening << endl;
-//    cout << "iricMat:" << iricMat << endl;
+//    cout << "iricMat:\n" << iricMat << endl;
     return 0;
 }

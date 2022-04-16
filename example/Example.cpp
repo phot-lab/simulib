@@ -30,8 +30,8 @@ int main() {
     Par par{};
 
     // Global parameters
-    int nSymb = 1024;  // number of symbols
-    int nt    = 32;    // number of discrete points per symbol
+    int nSymb = 32;  // number of symbols
+    int nt    = 8;    // number of discrete points per symbol
 
     // Tx parameters
     int symbrate     = 10;      // symbol rate [Gbaud].
@@ -72,6 +72,28 @@ int main() {
 
     // 随机二进制生成器
     tie(pat, patBinary) = CPU::pattern(nSymb, "rand", array);
+//    pat = VectorXi(nSymb);
+//    patBinary = MatrixXi(nSymb,1);
+//    for(int i = 0; i < nSymb; i++){
+//        pat(i) = i%2;
+//    }
+//    std::random_device rand_dev;
+//    std::mt19937 generator(rand_dev());
+//    std::uniform_real_distribution<double> distr(0, 1);
+//    for(int i = 0; i < nSymb; i++){
+//        cout << "rand1:" << rand_dev() << endl;
+//        cout << "rand2:" << generator() << endl;
+//        cout << "rand3:" << distr(generator) << endl;
+//    }
+
+    patBinary.col(0) = pat;
+    cout << "pat:---------------\n" << pat << endl;
+    cout << "patBinary:---------------\n" << patBinary << endl;
+
+//    cout << "rand:\n";
+//    for(int i = 0; i < nSymb; i++){
+//        cout << uniformRng() << endl;
+//    }
 
     MatrixXcd signal;
     double norm;

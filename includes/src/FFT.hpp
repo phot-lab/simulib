@@ -28,9 +28,9 @@ Matrix<T, Dynamic, 1> fftShift(const Matrix<T, Dynamic, 1> &in) {
     Index size = in.rows();
     Matrix<T, Dynamic, 1> out(size, 1);
 
-    unsigned pivot     = (size % 2 == 0) ? (size / 2) : ((size + 1) / 2);
+    unsigned pivot = (size % 2 == 0) ? (size / 2) : ((size - 1) / 2);
     unsigned rightHalf = size - pivot;
-    unsigned leftHalf  = pivot;
+    unsigned leftHalf = pivot;
 
     memcpy(out.data(), in.data() + pivot, sizeof(double) * rightHalf);
     memcpy(out.data() + rightHalf, in.data(), sizeof(double) * leftHalf);
@@ -42,9 +42,9 @@ Matrix<T, Dynamic, 1> ifftShift(const Matrix<T, Dynamic, 1> &in) {
     Index size = in.rows();
     Matrix<T, Dynamic, 1> out(size, 1);
 
-    unsigned pivot     = (size % 2 == 0) ? (size / 2) : ((size - 1) / 2);
+    unsigned pivot = (size % 2 == 0) ? (size / 2) : ((size - 1) / 2);
     unsigned rightHalf = size - pivot;
-    unsigned leftHalf  = pivot;
+    unsigned leftHalf = pivot;
 
     memcpy(out.data(), in.data() + pivot, sizeof(double) * rightHalf);
     memcpy(out.data() + rightHalf, in.data(), sizeof(double) * leftHalf);

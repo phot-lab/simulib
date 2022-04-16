@@ -68,6 +68,7 @@ double strToDigit(const string &s);
 string digitToStr(double digit);
 
 double uniformRng();
+double uniformRng2();
 double normalRng();
 MatrixXd normalRng(Index rows, Index cols);
 

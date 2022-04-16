@@ -48,6 +48,7 @@ MatrixXcd Pat2Samp(const MatrixXi &pat_bin, const string &modFormat) {
         if (pat.cols() % (int) num_bit != 0)
             ERROR("wrong modulation format");
     }
+//    cout << "pat:\n" << pat << endl;
     // From now on, pat is a binary matrix
     dataid = finalizePat2Samp(pat, formatInfo);
     // Plot Constellation （未完成）

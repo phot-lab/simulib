@@ -60,7 +60,7 @@ tuple<VectorXi, MatrixXi> pattern(unsigned nsymb, const string &ptype, string ar
         }
         patttern.resize(nsymb);
         for (Index i = 0; i < patttern.size(); ++i) {
-            patttern[i] = floor(uniformRng() * qq);
+            patttern[i] = floor(uniformRng2() * qq);
         }
         patternBinary.resize(patttern.size(), log2(qq));
         for (Index i = 0; i < patternBinary.rows(); ++i) {
