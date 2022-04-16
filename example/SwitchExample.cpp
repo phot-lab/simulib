@@ -30,8 +30,8 @@ int main() {
     Par par{};
 
     // Global parameters
-    int nSymb = 1024;  // number of symbols
-    int nt    = 32;    // number of discrete points per symbol
+    int nSymb = 32;  // number of symbols
+    int nt    = 8;   // number of discrete points per symbol
 
     // Tx parameters
     int symbrate     = 10;      // symbol rate [Gbaud].
@@ -70,11 +70,10 @@ int main() {
     VectorXi pat;
     MatrixXi patBinary;
 
-    CPU::MatrixXd m;
-    GPU::MatrixXd m2 = m;
-
     // 随机二进制生成器
     tie(pat, patBinary) = CPU::pattern(nSymb, "rand", array);
+
+    patBinary.col(0) = pat;
 
     MatrixXcd signal;
     double norm;

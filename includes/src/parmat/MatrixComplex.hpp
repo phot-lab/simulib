@@ -65,7 +65,6 @@ typedef MatrixComplex<1, Dynamic> RowVectorXcd;
 
 namespace CPU {
 
-
 template<int Rows, int Cols>
 class MatrixComplex : public Eigen::Matrix<std::complex<double>, Rows, Cols> {
     typedef Eigen::Matrix<std::complex<double>, Rows, Cols> Base;
