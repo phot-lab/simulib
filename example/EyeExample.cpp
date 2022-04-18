@@ -24,7 +24,6 @@ using namespace SimuLib;
 
 int main() {
     Par par{};
-    cout << "sin(-512*M_PI)/(-512*M_PI):" << sin((double) -512 * M_PI) / ((double) -512 * M_PI) << endl;
 
     // Global parameters
     int nSymb = 1024;  // number of symbols
@@ -68,8 +67,8 @@ int main() {
 
     Option option{};
     //    option.pol       = Option::dual;
-    //    option.linewidth = ptx;
-    //    option.n0        = INT_MIN;
+        option.linewidth = ptx;
+        option.n0        = 0.5;
 
     // 光源模块
     E e = CPU::laserSource(pLin, lambda);  // y-pol does not exist
@@ -88,10 +87,10 @@ int main() {
     tie(patX, patBinaryX) = CPU::pattern(nSymb, "rand", array);
     tie(patY, patBinaryY) = CPU::pattern(nSymb, "rand", array);
     //    cout << "patX.size():" << patX.size() << endl;
-    for (int i = 0; i < patX.size(); i++) {
-        patX(i) = i % 4;
-        patY(i) = i % 4;
-    }
+    //    for (int i = 0; i < patX.size(); i++) {
+    //        patX(i) = i % 4;
+    //        patY(i) = i % 4;
+    //    }
     //    cout << "patX :" << patX << endl;
 
 
@@ -102,14 +101,10 @@ int main() {
 
     // 数字调制器
     tie(signalX, normX) = CPU::digitalModulator(patX, symbrate, par, modFormat, "rootrc");
-    //    signalY = signalX;
-    //    normY = normX;
     tie(signalY, normY) = CPU::digitalModulator(patY, symbrate, par, modFormat, "rootrc");
-    //    cout << "signalX:" << signalX << endl;
-    //    cout << "signalY:" << signalY << endl;
-    //    double gain = 0;
-    //    tie(e, gain) = electricAmplifier(e, 10, 1, 10.0e-12);
-    //    tie(e, gain) = electricAmplifier(e, 10, 1, 10.0e-12);
+//        cout << "signalX:" << signalX << endl;
+//        cout << "signalY:" << signalY << endl;
+
 
     // IQ调制器
     IQOption iqOptionX{};
@@ -163,7 +158,7 @@ int main() {
 
     pat << patX, patY;
     tie(eyeOpening, iricMat) = CPU::evaluateEye(pat, signalAngle, symbrate, modFormat, fiber);
-    cout << "Eye open:" << eyeOpening << endl;
+    //    cout << "Eye open:" << eyeOpening << endl;
     //    cout << "iricMat:\n" << iricMat << endl;
     return 0;
 }

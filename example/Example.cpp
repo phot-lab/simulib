@@ -30,8 +30,8 @@ int main() {
     Par par{};
 
     // Global parameters
-    int nSymb = 32;  // number of symbols
-    int nt    = 8;   // number of discrete points per symbol
+    int nSymb = 1024;  // number of symbols
+    int nt    = 32;   // number of discrete points per symbol
 
     // Tx parameters
     int symbrate     = 10;      // symbol rate [Gbaud].
@@ -72,30 +72,6 @@ int main() {
 
     // 随机二进制生成器
     tie(pat, patBinary) = CPU::pattern(nSymb, "rand", array);
-    //    pat = VectorXi(nSymb);
-    //    patBinary = MatrixXi(nSymb,1);
-    //    for(int i = 0; i < nSymb; i++){
-    //        pat(i) = i%2;
-    //    }
-    //    std::random_device rand_dev;
-    //    std::mt19937 generator(rand_dev());
-    //    std::uniform_real_distribution<double> distr(0, 1);
-    //    for(int i = 0; i < nSymb; i++){
-    //        cout << "rand1:" << rand_dev() << endl;
-    //        cout << "rand2:" << generator() << endl;
-    //        cout << "rand3:" << distr(generator) << endl;
-    //    }
-
-    patBinary.col(0) = pat;
-    cout << "pat:---------------\n"
-         << pat << endl;
-    cout << "patBinary:---------------\n"
-         << patBinary << endl;
-
-    //    cout << "rand:\n";
-    //    for(int i = 0; i < nSymb; i++){
-    //        cout << uniformRng() << endl;
-    //    }
 
     MatrixXcd signal;
     double norm;
@@ -116,11 +92,11 @@ int main() {
     // 光纤传输模块
     tie(out, e) = CPU::fiberTransmit(e, fiber);
 
-    //    cout << "光场：" << e.field << endl;
+//        cout << "光场：" << e.field << endl;
     //    cout << "光场矩阵的行：" << e.field.rows() << endl;
     //    cout << "光场矩阵的列：" << e.field.cols() << endl;
     //    cout << "光的波长：" << e.lambda(0, 0) << endl;
-    //    cout << "light field:" << e.field << endl;
+//        cout << "light field:" << e.field << endl;
 
     cout << "light field row:" << e.field.rows() << endl;
     cout << "light field col:" << e.field.cols() << endl;
@@ -139,7 +115,7 @@ int main() {
     MatrixXcd iricMat;
 
     // 眼图分析器（随后使用eyeOpening和iricMat这两个值去绘制眼图）
-    tie(eyeOpening, iricMat) = CPU::evaluateEye(patBinary, returnSignal, symbrate, modFormat, fiber);
+    tie(eyeOpening, iricMat) = CPU::evaluateEye(patBinary, returnSignal.real(), symbrate, modFormat, fiber);
     cout << "Eye open:" << eyeOpening << endl;
     //    cout << "iricMat:" << iricMat << endl;
     return 0;

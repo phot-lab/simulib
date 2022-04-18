@@ -30,8 +30,8 @@ int main() {
     Par par{};
 
     // Global parameters
-    int nSymb = 32;  // number of symbols
-    int nt    = 8;   // number of discrete points per symbol
+    int nSymb = 1024;  // number of symbols
+    int nt    = 32;   // number of discrete points per symbol
 
     // Tx parameters
     int symbrate     = 10;      // symbol rate [Gbaud].

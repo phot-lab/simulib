@@ -54,8 +54,8 @@ tuple<complex<double>, MatrixXcd> evaluateEye(MatrixXi pattern, const MatrixXcd 
     for (int i = 0; i < formatInfo.digit; ++i) {
         VectorXi select    = pattern.array().cwiseEqual(i).reshaped().cast<int>();
         MatrixXd eyeSignal = selectRows(iricMat, select);
-        topVec.row(i)      = eyeSignal.colwise().minCoeff();  // Top of eye
-        botVec.row(i)      = eyeSignal.colwise().maxCoeff();  // Bottom of eye
+        topVec.row(i)      = eyeSignal.colwise().maxCoeff();  // Top of eye
+        botVec.row(i)      = eyeSignal.colwise().minCoeff();  // Bottom of eye
     }
 
     VectorXd topVecRowMax = topVec.rowwise().maxCoeff();
