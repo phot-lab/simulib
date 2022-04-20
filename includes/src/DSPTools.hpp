@@ -21,7 +21,7 @@
 namespace SimuLib{
 
 template<typename T>
-Matrix<T, Dynamic, Dynamic> UpSample(Matrix<T, Dynamic, Dynamic> matrix, int n) {
+Matrix<T, Dynamic, Dynamic> upSample(Matrix<T, Dynamic, Dynamic> matrix, int n) {
     Matrix<T, Dynamic, Dynamic> res = Matrix<T, Dynamic, Dynamic>::Zero(matrix.rows() * n, matrix.cols());
     for (Index i = 0; i < matrix.rows(); ++i) {
         for (Index j = 0; j < matrix.cols(); ++j) {

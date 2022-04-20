@@ -70,6 +70,6 @@ tuple<VectorXi, MatrixXi> pattern(unsigned nsymb, const string &ptype, string ar
     return make_tuple(patttern.transpose(), patternBinary);
 }
 
-}
+}  // namespace PARALLEL_TYPE
 
 }  // namespace SimuLib

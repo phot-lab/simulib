@@ -20,6 +20,7 @@
 
 #include <limits>
 #include <vector>
+#include <cmath>
 
 namespace SimuLib {
 

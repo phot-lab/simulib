@@ -25,7 +25,7 @@ namespace SimuLib {
 
 namespace PARALLEL_TYPE {
 
-tuple<MatrixXcd, double> digitalModulator(MatrixXi pat_bin, double symbrate, Par par, string mod_format, string ptype);
+tuple<MatrixXcd, double> digitalModulator(const MatrixXi &patBinary, double symbrate, Par par, const string &modFormat, string ptype);
 
 tuple<E, double> electricAmplifier(E e, double gainEA, double powerW, double oneSidedSpectralDensity);
 

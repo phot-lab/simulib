@@ -24,13 +24,13 @@
 namespace SimuLib {
 
 struct Par {
-    string emph       = "asin";
-    int nsps          = 0;
-    string norm       = "iid";
-    int par           = 0;
-    string mod_format = "";
-    double rolloff    = 0;
-    double duty       = 1;
+    string emph    = "asin";
+    int nsps       = 0;
+    string norm    = "iid";
+    int par        = 0;
+    double rolloff = 0;
+    double duty    = 1;
+    string modFormat;
 };
 
 namespace PARALLEL_TYPE {

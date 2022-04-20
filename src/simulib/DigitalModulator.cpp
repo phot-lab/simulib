@@ -30,7 +30,7 @@ static MatrixXcd elecSrc(MatrixXcd level, string ptype, Par par, unsigned long n
 
 /**
  * @brief linearly modulated digital signal
- * @param pat_bin: a matrix containing the pattern. PAT can be a matrix of bits, of size number of
+ * @param patBinary: a matrix containing the pattern. PAT can be a matrix of bits, of size number of
  *        bits-by-log2(alphabet size), or a column vector containing the decimal representation.
  * @param symbrate: the signal symbol-rate in [Gbaud].
  * @param par: a struct with the following fields:
@@ -53,7 +53,7 @@ static MatrixXcd elecSrc(MatrixXcd level, string ptype, Par par, unsigned long n
  *        PAR.bw = bandwidth, normalized to the symbol rate SYMBRATE, of the filter used by filter when PTYPE is a
  *           valid string supported by filter (in RxFrontedn.cpp).
  *        PAR.par = optional parameters of MYFILTER when PTYPE is a valid string supported by filter (in RxFrontedn.cpp).
- * @param mod_format: a string with options below:
+ * @param modFormat: a string with options below:
  *        'ook': on-off keying [Mach Zehnder modulator]
  *        'bpsk': binary phase-shift keying (PSK) [Mach Zehnder modulator]
  *        'qpsk': quadrature phase-shift keying (QPSK) [iq modulator]
@@ -71,10 +71,10 @@ static MatrixXcd elecSrc(MatrixXcd level, string ptype, Par par, unsigned long n
  * @return norm: Normalization factor
  */
 
-tuple<MatrixXcd, double> digitalModulator(MatrixXi pat_bin, double symbrate, Par par, string mod_format, string ptype) {
+tuple<MatrixXcd, double> digitalModulator(const MatrixXi &patBinary, double symbrate, Par par, const string &modFormat, string ptype) {
     unsigned long n_fft = gstate.NSAMP;
     double n_tini       = gstate.SAMP_FREQ / symbrate;  // Wished samples per symbol
-    Index n_symb        = max(pat_bin.rows(), pat_bin.cols());
+    Index n_symb        = max(patBinary.rows(), patBinary.cols());
     double n_symbupdw   = ceil((n_fft - 1) / n_tini);
     if (n_symb < n_symbupdw) {
         ERROR("Too few symbols to fill the required number of samples.");
@@ -94,12 +94,10 @@ tuple<MatrixXcd, double> digitalModulator(MatrixXi pat_bin, double symbrate, Par
     if ((nt / n_tini) > 10) {
         WARNING("resampling may take big times/memory. Consider using sampling");
     }
-    par.mod_format = mod_format;
+    par.modFormat = modFormat;
 
     // 1: convert the pattern into stars of the constellations
-    MatrixXcd level = Pat2Samp(pat_bin, mod_format).cast<complex<double>>();
-
-    //    cout << "level:" << level << endl;
+    MatrixXcd level = Pat2Samp(patBinary, modFormat).cast<complex<double>>();
 
     // 2: create a linearly modulated digital signal
     MatrixXcd signal = elecSrc(level, ptype, par, n_symb, nsps, nd, n_fft);
@@ -144,14 +142,13 @@ static MatrixXcd elecSrc(MatrixXcd level, string ptype, Par par, unsigned long n
         // 未完成
     }
 
-    MatrixXcd levelu = UpSample(level, nsps);
+    MatrixXcd levelu = upSample(level, nsps);
 
     //    levelu.conservativeResize(1, n_symb * nsps);  // truncate if necessary
     VectorXcd temp = matrixToVec(levelu);
     levelu         = truncateVec(temp, genVector(1, n_symb * nsps));  // truncate if necessary
                                                                       //    cout << "levelu:" << levelu << endl;
     MatrixXcd levelu_fft = fftCol(levelu);
-    //    cout << "levelu_fft:" << levelu_fft << endl;
 
     VectorXcd hfir;
     if (flag) {
@@ -173,13 +170,7 @@ static MatrixXcd elecSrc(MatrixXcd level, string ptype, Par par, unsigned long n
         levelu_fft.col(i) = levelu_fft.col(i).cwiseProduct(hfir);
     }
 
-    //    levelu_fft = levelu_fft * hfir;
-    //    cout << "levelu_fft size , hfir size:" << levelu_fft.rows()<<","<<levelu_fft.cols()<<" | "<<hfir.size() << endl;
-    //    cout << "levelu_fft:" << levelu_fft << endl;
-
     MatrixXcd elec = ifftCol(levelu_fft);  // create PAM signal
-
-    //    cout << "elec:" << elec << endl;
 
     Index length = max(elec.rows(), elec.cols());
     if (length < (long) n_fft) {
@@ -196,7 +187,7 @@ static MatrixXcd elecSrc(MatrixXcd level, string ptype, Par par, unsigned long n
     // normalize to unit power
     if (par.norm == "iid") {
         // power spectra of linearly modulated signals
-        format_info   = modFormatInfo(par.mod_format);
+        format_info   = modFormatInfo(par.modFormat);
         double varak  = format_info.symb_var;   // expected variance
         double meanak = format_info.symb_mean;  // expected value or mean
         avge          = (varak * hfir.cwiseAbs2().sum() / n_symb + pow(abs(meanak), 2) * truncateVec(hfir,
@@ -218,12 +209,16 @@ static MatrixXcd elecSrc(MatrixXcd level, string ptype, Par par, unsigned long n
     return elec / sqrt(avge);
 }
 
+namespace {
+
 enum PTypeOption {
     Costails,
     Userfir,
     rc,
     rootrc
 };
+
+}
 
 PTypeOption ResolveOption(string ptype) {
     if (ptype == "costails") return Costails;
@@ -260,11 +255,11 @@ static VectorXd pulseDesign(string ptype, int nsps, unsigned long n_symb, Par pa
             tfir               = ArrayXd(nsps * n_symb).setLinSpaced(-((double) n_symb / (double) 2), (double) n_symb / (double) 2 - 1 / (double) nsps);
             tfir               = (1 / par.duty) * tfir;
             VectorXd sinc_tfit = tfir;
-            sinc_tfit = sinc_tfit.unaryExpr([](double x){
-                if( abs(x) < 0.00000000001)
-                    return (double)1.0;
+            sinc_tfit          = sinc_tfit.unaryExpr([](double x) {
+                if (abs(x) < 0.00000000001)
+                    return (double) 1.0;
                 else
-                    return sin(M_PI*x) / (M_PI*x);
+                    return sin(M_PI * x) / (M_PI * x);
             });
 
             VectorXd cos_tfir    = PI * par.rolloff * tfir;
@@ -274,11 +269,13 @@ static VectorXd pulseDesign(string ptype, int nsps, unsigned long n_symb, Par pa
             devide_tfir          = devide_tfir.array().pow(2);
             devide_tfir          = unit - devide_tfir;
             std::vector<int> index;
+
             for (int i = 0; i < devide_tfir.size(); i++) {
                 if (devide_tfir(i) == 0) {
                     index.insert(index.end(), i);
                 }
             }
+
             elpulse = sinc_tfit.cwiseProduct(cos_tfir);
             elpulse = elpulse.cwiseProduct(devide_tfir.cwiseInverse());
             for (int i = 0; i < (int) index.size(); i++)

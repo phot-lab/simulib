@@ -16,11 +16,12 @@
  * Supported by: National Key Research and Development Program of China
  */
 
-#include <Internal>
+#include <SimuLib>
 #include <fstream>
 #include <iostream>
 
 using namespace std;
+using namespace SimuLib;
 
 VectorXcd readField() {
 

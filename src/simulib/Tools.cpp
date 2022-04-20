@@ -202,6 +202,6 @@ complex<double> fastExp(complex<double> data) {
     return exp(data * imag);
 }
 
-}
+}  // namespace PARALLEL_TYPE
 
 }  // namespace SimuLib
