@@ -24,7 +24,7 @@ namespace SimuLib {
 
 namespace PARALLEL_TYPE {
 
-VectorXi sortMapIndex(VectorXd vec, VectorXd sorted);
+static VectorXi sortMapIndex(VectorXd vec, VectorXd sorted);
 
 /**
  * @brief Evaluate the eye-opening
@@ -54,12 +54,12 @@ tuple<complex<double>, MatrixXcd> evaluateEye(MatrixXi pattern, const MatrixXcd 
     for (int i = 0; i < formatInfo.digit; ++i) {
         VectorXi select    = pattern.array().cwiseEqual(i).reshaped().cast<int>();
         MatrixXd eyeSignal = selectRows(iricMat, select);
-        topVec.row(i)      = eyeSignal.colwise().maxCoeff();  // Top of eye
-        botVec.row(i)      = eyeSignal.colwise().minCoeff();  // Bottom of eye
+        topVec.row(i)      = eyeSignal.colwise().minCoeff();  // Top of eye
+        botVec.row(i)      = eyeSignal.colwise().maxCoeff();  // Bottom of eye
     }
 
     VectorXd topVecRowMax = topVec.rowwise().maxCoeff();
-    VectorXd botVecRowMin = topVec.rowwise().minCoeff();
+    VectorXd botVecRowMin = botVec.rowwise().minCoeff();
 
     VectorXd topVecSorted = sortEigen(topVecRowMax);
     VectorXd botVecSorted = sortEigen(botVecRowMin);
@@ -78,27 +78,24 @@ tuple<complex<double>, MatrixXcd> evaluateEye(MatrixXi pattern, const MatrixXcd 
     //            return a;
     //        return b;
     //    });
+
     double eyeOpening = eyeOpeningVec.minCoeff();
-    cout << "eyeOpening : \n"
-         << eyeOpening << endl;
 
     if (eyeOpening < 0)
         eyeOpening = NAN;
 
-    //    complex<double> temp(10, 0);
     double temp = 10;
     eyeOpening  = temp * log10(eyeOpening);  // [dBm]
     return make_tuple(eyeOpening, iricMat);
 }
 
-VectorXi sortMapIndex(VectorXd vec, VectorXd sorted) {
-    map<double, double> indexMap;
+static VectorXi sortMapIndex(VectorXd vec, VectorXd sorted) {
+    map<double, int> indexMap;
     VectorXi index(sorted.size());
     for (int i = 0; i < vec.size(); i++)
         indexMap[vec(i)] = i;
     for (int i = 0; i < sorted.size(); i++)
         index(i) = indexMap[sorted(i)];
-
     return index;
 }
 

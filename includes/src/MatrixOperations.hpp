@@ -121,7 +121,6 @@ Matrix<T, Dynamic, Dynamic> circShift(Matrix<T, Dynamic, Dynamic> data, int A, i
     {
         y.leftCols(col + b) = out.rightCols(col + b);
         y.rightCols(abs(b)) = out.leftCols(abs(b));
-
     } else if (b == 0) {
         y = out;
     }
@@ -171,6 +170,7 @@ Matrix<T, Dynamic, 1> excludeLast(Matrix<T, Dynamic, 1> v) {
  * @param m : Given matrix
  * @return A row vector with the biggest sum
  */
+
 RowVectorXd maxRow(MatrixXd m);
 RowVectorXcd maxRow(MatrixXcd m);
 RowVectorXd minRow(MatrixXd m);
@@ -184,35 +184,7 @@ VectorXcd minCol(MatrixXcd m);
 VectorXd sortEigen(VectorXd v, bool ascend = true);
 VectorXcd sortEigen(VectorXcd v, bool ascend = true);
 
-template<typename T>
-VectorXi indexOfSorted(Matrix<T, Dynamic, 1> vec, Matrix<T, Dynamic, 1> sorted) {
-    struct ComplexCompare {
-        bool operator()(const complex<double> &lhs, const complex<double> &rhs) const {
-            return lhs.real() < rhs.real();
-        }
-    };
-    std::map<T, list<Index>, ComplexCompare> map;
-    for (Index i = 0; i < sorted.size(); ++i) {
-        T value = sorted[i];
-        if (map.count(value) == 1) {
-            map.at(value).emplace_back(i);
-        } else {
-            list<Index> l;
-            l.emplace_back(i);
-            map[value] = l;
-        }
-    }
-    VectorXi res(vec.size());
-    for (Index i = 0; i < vec.size(); ++i) {
-        T value        = vec[i];
-        list<Index> *l = &(map.at(value));
-        res(i)         = (int) (*l).front();
-        (*l).pop_front();
-    }
-    return res;
-}
-
-}
+}  // namespace PARALLEL_TYPE
 
 }  // namespace SimuLib
 

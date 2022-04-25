@@ -64,7 +64,8 @@ VectorXd removeZero(const VectorXd &a, const VectorXd &b) {
 }
 
 MatrixXcd fastExp(const MatrixXcd &m) {
-    return (m * 1i).array().exp();
+    complex<double> imagUnit(0, 1);
+    return (m * imagUnit).array().exp();
 }
 
 void setValueIndices(VectorXd &vec, const VectorXd &indices, double value) {
@@ -218,6 +219,6 @@ MatrixXcd mvProduct(MatrixXcd m, const VectorXcd &v) {
     return res;
 }
 
-}
+}  // namespace PARALLEL_TYPE
 
 }  // namespace SimuLib

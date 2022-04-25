@@ -63,13 +63,14 @@ static E awgn(E e, double reqSNR) {
         noise = sqrt(noisePower) * normalRng(rows, cols);
     } else {
         MatrixXcd real = normalRng(rows, cols);
-        MatrixXcd imag = (MatrixXcd) normalRng(rows, cols) * 1i;
+        complex<double> imagUnit(0, 1);
+        MatrixXcd imag = (MatrixXcd) normalRng(rows, cols) * imagUnit;
         noise          = sqrt(noisePower / 2) * (real + imag);
     }
     e.field = e.field + noise;
     return e;
 }
 
-}
+}  // namespace PARALLEL_TYPE
 
 }  // namespace SimuLib

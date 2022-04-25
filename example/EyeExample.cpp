@@ -143,8 +143,6 @@ int main() {
     // 前端接收器（随后使用returnSignal去绘制眼图和星座图）
     MatrixXcd returnSignal = CPU::rxFrontend(e, lambda, symbrate, fiber);
 
-    std::cout << returnSignal << std::endl;
-
     complex<double> eyeOpening;
     MatrixXcd iricMat;
 
@@ -157,5 +155,8 @@ int main() {
 
     // 眼图分析器（随后使用eyeOpening和iricMat这两个值去计算误码率）
     tie(eyeOpening, iricMat) = CPU::evaluateEye(pat, signalAngle, symbrate, modFormat, fiber);
+
+    std::cout << "Eye opening:" << std::endl;
+    std::cout << eyeOpening << std::endl;
     return 0;
 }
