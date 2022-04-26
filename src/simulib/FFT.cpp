@@ -22,21 +22,9 @@ using namespace std;
 
 namespace SimuLib {
 
-#ifdef SIMULIB_USE_GPU
+namespace CPU {
 
-VectorXcd fft(const VectorXcd &in) {
-    VectorXcd out = in;
-    cuFFT(out.data(), (int) out.rows(), (int) out.cols());
-    return out;
-}
-
-VectorXcd ifft(const VectorXcd &in) {
-    VectorXcd out = in;
-    cuIFFT(out.data(), (int) out.rows(), (int) out.cols());
-    return out;
-}
-
-#elif defined(SIMULIB_USE_MKL)
+#ifdef SIMULIB_USE_MKL
 
 #include <mkl.h>
 
@@ -105,6 +93,8 @@ MatrixXcd ifftCol(const MatrixXcd &in) {
     }
     return out;
 }
+
+}  // namespace CPU
 
 // MatrixXcd fft2D(const MatrixXcd &in) {
 //     MatrixXcd out(in.rows(), in.cols());
