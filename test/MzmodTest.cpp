@@ -34,12 +34,12 @@ int main() {
     initGstate(nSamp, fs);         // initialize global variables: Nsamp and fs.
     double spac = 37.5*pow(1550,2)*LIGHT_SPEED;
 
-    Option option;
+    LaserOption option;
     // If the pol, polarization, is 2, it is mean laser source would consider the polarization in x and y.
     // If the pol is 1, lasersource would only output the polarization in x.
     option.pol       = 1;
     // If you set linewidth, laser source would add phase noise.
-    option.linewidth = VectorXd(1).setConstant(3);
+    option.lineWidth = VectorXd(1).setConstant(3);
     // If you set n0, laser source would add Gaussian complex white noise.
     option.n0        = 0.5;
     // If you do not set n0 and  linewidth, laser source would be an ideal light without noise.

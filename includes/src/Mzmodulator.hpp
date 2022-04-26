@@ -46,13 +46,13 @@ namespace SimuLib {
  * @param norm: normalization factor
  */
 
-struct Mzoption {
+struct MzOption {
     double exratio = INT_MAX;
     double bias    = INT_MAX;
     double biasl   = INT_MAX;
     double biasu   = INT_MAX;
-    enum { push_push = 0,
-           push_pull = 1 };
+    enum { push_push = 1,
+           push_pull = 0 };
     int mode    = push_pull;
     int nch     = 1;
     double vpi  = INT_MAX;

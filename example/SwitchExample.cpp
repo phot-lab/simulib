@@ -58,9 +58,9 @@ int main() {
     RowVectorXd pLin(1);
     pLin << pow(10, powerDBM / 10);  // [mW]
 
-    Option option{};
+    LaserOption option{};
     option.pol       = 1;
-    option.linewidth = ptx;
+    option.lineWidth = ptx;
     option.n0        = 0.5;
 
     // 光源模块
@@ -71,7 +71,7 @@ int main() {
     MatrixXi patBinary;
 
     // 随机二进制生成器
-    tie(pat, patBinary) = CPU::pattern(nSymb, "rand", array);
+    tie(pat, patBinary) = CPU::genPattern(nSymb, "rand", array);
 
     patBinary.col(0) = pat;
 

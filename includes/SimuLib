@@ -21,13 +21,13 @@
 #include "Internal"
 
 #ifdef SIMULIB_USE_GPU
-#undef PARALLEL_TYPE
-#define PARALLEL_TYPE CPU
+#undef HARDWARE_TYPE
+#define HARDWARE_TYPE CPU
 #undef EXTERNALFUNCTIONS_HPP
 #include "src/ExternalFunctions.hpp"
 #else
-#undef PARALLEL_TYPE
-#define PARALLEL_TYPE GPU
+#undef HARDWARE_TYPE
+#define HARDWARE_TYPE GPU
 #undef EXTERNALFUNCTIONS_HPP
 #include "src/ExternalFunctions.hpp"
 #endif

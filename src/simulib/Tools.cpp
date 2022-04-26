@@ -30,7 +30,7 @@ using namespace std;
 
 namespace SimuLib {
 
-namespace PARALLEL_TYPE {
+namespace HARDWARE_TYPE {
 
 void lineInfo(const string &filename, const int &line, const string &func_name) {
     cerr << "File Name: " << filename << endl;  // File name

@@ -22,11 +22,11 @@ using namespace std;
 
 namespace SimuLib {
 
-namespace PARALLEL_TYPE {
+namespace HARDWARE_TYPE {
 
 MatrixXd getLambda(const double &lamc, const double &spac, const int &Nch);
 
-E laserSource(RowVectorXd ptx, const RowVectorXd &lam, Option options) {
+E laserSource(RowVectorXd ptx, const RowVectorXd &lam, LaserOption option) {
     E light;                             // transmit light
     unsigned long Nsamp = gstate.NSAMP;  // Sampling frequency
     int Npow            = ptx.size();    // Number of the power of transmit channel
@@ -35,15 +35,15 @@ E laserSource(RowVectorXd ptx, const RowVectorXd &lam, Option options) {
     if (Npow > 1 && Npow != Nch)
         ERROR("Powers and wavelengths must have the same length");
 
-    double N0             = options.n0;
-    int Npol              = options.pol;  // Number of polarizations
+    double N0             = option.n0;
+    int nPol              = option.pol;  // Number of polarizations
     RowVectorXd linewidth = RowVectorXd(0);
-    if (options.linewidth.size() != 0 && options.linewidth(0) != 0) {
-        if (options.linewidth.size() == 1) {
+    if (option.lineWidth.size() != 0 && option.lineWidth(0) != 0) {
+        if (option.lineWidth.size() == 1) {
             linewidth = RowVectorXd(Nch);
-            linewidth.setConstant(options.linewidth(0));
-        } else if (options.linewidth.size() == Nch)
-            linewidth = options.linewidth;
+            linewidth.setConstant(option.lineWidth(0));
+        } else if (option.lineWidth.size() == Nch)
+            linewidth = option.lineWidth;
         else
             ERROR("The linewidth must have the same length of the number of wavelengths.");
     }
@@ -57,10 +57,10 @@ E laserSource(RowVectorXd ptx, const RowVectorXd &lam, Option options) {
     // uniformly spaced carriers
     light.lambda = lam;
 
-    light.field = MatrixXd::Zero(Nsamp, Nch * Npol);
+    light.field = MatrixXd::Zero(Nsamp, Nch * nPol);
     // by default, fully polarized on x (odd columns):
     for (int i = 0; i < Nch; i++)
-        light.field.col(i * Npol) = VectorXd(Nsamp).setConstant(sqrt(power(i)));
+        light.field.col(i * nPol) = VectorXd(Nsamp).setConstant(sqrt(power(i)));
 
     // Standard normal distribution X(0,1) random number generation engine.
     static default_random_engine engine(time(0));
@@ -90,16 +90,16 @@ E laserSource(RowVectorXd ptx, const RowVectorXd &lam, Option options) {
         phase_noise = phase_noise - (tim / (Nsamp - 1)) * phase_noise.row(phase_noise.rows() - 1);
         phase_noise = fastExp(phase_noise);
         for (int i = 0; i < Nch; i++)
-            light.field.col(i * Npol) = light.field.col(i * Npol).cwiseProduct(phase_noise.col(i * Npol));
+            light.field.col(i * nPol) = light.field.col(i * nPol).cwiseProduct(phase_noise.col(i * nPol));
     }
 
     // Add Gaussian complex white noise
     if (N0 != INT_MIN) {
         double N0_lin        = pow(10, N0 / 10);
         double sigma         = sqrt(N0_lin / 2 * gstate.SAMP_FREQ);
-        MatrixXd randMatrix1 = MatrixXd::Zero(Nsamp, Nch * Npol).unaryExpr([](double dummy) { return n(engine); });
-        MatrixXd randMatrix2 = MatrixXd::Zero(Nsamp, Nch * Npol).unaryExpr([](double dummy) { return n(engine); });
-        MatrixXcd randComplexMatrix(Nsamp, Nch * Npol);
+        MatrixXd randMatrix1 = MatrixXd::Zero(Nsamp, Nch * nPol).unaryExpr([](double dummy) { return n(engine); });
+        MatrixXd randMatrix2 = MatrixXd::Zero(Nsamp, Nch * nPol).unaryExpr([](double dummy) { return n(engine); });
+        MatrixXcd randComplexMatrix(Nsamp, Nch * nPol);
         //        randComplexMatrix.real() << randMatrix1;
         //        randComplexMatrix.imag() << randMatrix2;
         light.field = light.field + sigma * randComplexMatrix;
@@ -119,7 +119,7 @@ E laserSource(RowVectorXd ptx, const RowVectorXd &lam, Option options) {
  * @return E: a struct of wave, details in fiber_types.h
  */
 
-E laserSource(RowVectorXd ptx, RowVectorXd lam, double spac, int NLAMBDA, Option options) {
+E laserSource(RowVectorXd ptx, RowVectorXd lam, double spac, int NLAMBDA, LaserOption options) {
     E light;                             // transmit light
     unsigned long Nsamp = gstate.NSAMP;  // Sampling frequency
     int Npow            = ptx.size();    // Number of the power of transmit channel
@@ -137,12 +137,12 @@ E laserSource(RowVectorXd ptx, RowVectorXd lam, double spac, int NLAMBDA, Option
     double N0             = options.n0;
     int Npol              = options.pol;  // Number of polarizations
     RowVectorXd linewidth = RowVectorXd(0);
-    if (options.linewidth.size() != 0 && options.linewidth(0) != 0) {
-        if (options.linewidth.size() == 1) {
+    if (options.lineWidth.size() != 0 && options.lineWidth(0) != 0) {
+        if (options.lineWidth.size() == 1) {
             linewidth = RowVectorXd(Nch);
-            linewidth.setConstant(options.linewidth(0));
-        } else if (options.linewidth.size() == Nch)
-            linewidth = options.linewidth;
+            linewidth.setConstant(options.lineWidth(0));
+        } else if (options.lineWidth.size() == Nch)
+            linewidth = options.lineWidth;
         else
             ERROR("The linewidth must have the same length of the number of wavelengths.");
     }
@@ -221,6 +221,6 @@ MatrixXd getLambda(const double &lamc, const double &spac, const int &Nch) {
     return lambda;
 }
 
-}
+}  // namespace HARDWARE_TYPE
 
 }  // namespace SimuLib

@@ -20,7 +20,7 @@
 
 namespace SimuLib {
 
-namespace PARALLEL_TYPE {
+namespace HARDWARE_TYPE {
 
 /**
  * @brief polarization beam combiner.

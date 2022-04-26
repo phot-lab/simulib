@@ -23,11 +23,11 @@ using namespace std;
 
 namespace SimuLib {
 
-namespace PARALLEL_TYPE {
+namespace HARDWARE_TYPE {
 
 VectorXcd myFilter(string filterType, const VectorXd &freq, double bandwidth, double p);
 E filterEnv(E e, RowVectorXd lambda, const VectorXcd &hf);
-MatrixXcd oToE(E e, double nt, Fiber fiber);
+MatrixXcd oToE(const E& e, double nt, const RxOption& rxOption);
 
 /**
  * @brief receiver front-end
@@ -39,21 +39,21 @@ MatrixXcd oToE(E e, double nt, Fiber fiber);
  *          existing) alternated on columns
  * @param lambda: the central wavelength of the optical bandpass filter
  * @param symbrate: the symbol rate [Gbaud] of the signal.
- * @param fiber: the connected fiber.
+ * @param rxOption: the connected rxOption.
  * @return electric wave.
  */
 
-MatrixXcd rxFrontend(E e, RowVectorXd lambda, int symbrate, const Fiber &fiber) {
+MatrixXcd rxFrontend(E e, RowVectorXd lambda, int symbrate, const RxOption &rxOption) {
 
-    // Create linear optical filters: OBPF (+fiber)
+    // Create linear optical filters: OBPF (+rxOption)
     VectorXd fNorm = gstate.FN / symbrate;
     VectorXcd hf;
-    if (fiber.dcum != nullptr) {
-        // Hf = postfiber(x.dcum,x.slopecum,x.lambda,lam,E.lambda);
+    if (rxOption.dcum != INT_MIN) {
+        // Hf = postrxOption(x.dcum,x.slopecum,x.lambda,lam,E.lambda);
         // Hf = Hf .* myfilter(x.oftype,Fnorm,0.5*x.obw,x.filterParameter);
         // 未完成
     } else {
-        hf = myFilter(fiber.opticalFilterType, fNorm, 0.5 * fiber.obw, fiber.filterParameter);
+        hf = myFilter(rxOption.ofType, fNorm, 0.5 * rxOption.obw, rxOption.filterParameter);
     }
 
     // 1: apply optical filter
@@ -61,26 +61,27 @@ MatrixXcd rxFrontend(E e, RowVectorXd lambda, int symbrate, const Fiber &fiber) 
 
     // 2: optical to electrical conversion
     double nt      = gstate.SAMP_FREQ / symbrate;  // number of points per symbol
-    MatrixXcd iric = oToE(e, nt, fiber);
+    MatrixXcd iric = oToE(e, nt, rxOption);
     return iric;
 }
 
-MatrixXcd oToE(E e, double nt, Fiber fiber) {
+MatrixXcd oToE(const E& e, double nt, const RxOption& rxOption) {
     Index nFFT = e.field.size();
     MatrixXcd iric;
-    if (fiber.modFormat == "ook") {
+    if (rxOption.modFormat == "ook") {
         iric = sumRow((MatrixXd) e.field.cwiseAbs2());  // PD. sum is over polarizations
-    } else if (fiber.modFormat == "dpsk") {
-        VectorXd nDel  = nModulusEigen(genVector(1, nFFT).array() - round(fiber.mzDelay * nt), nFFT);  // interferometer delay
+    } else if (rxOption.modFormat == "dpsk") {
+        VectorXd nDel  = nModulusEigen(genVector(1, nFFT).array() - round(rxOption.mzDelay * nt), nFFT);  // interferometer delay
         VectorXcd temp = matrixToVec(e.field);
         temp           = truncateVec(temp, nDel).conjugate();
         iric           = sumRow((MatrixXd) e.field.cwiseProduct(temp).real());  // MZI + PD
-    } else if (fiber.modFormat == "dqpsk") {
-        VectorXd nDel     = nModulusEigen(genVector(1, nFFT).array() - round(fiber.mzDelay * nt), nFFT);  // interferometer delay
+    } else if (rxOption.modFormat == "dqpsk") {
+        VectorXd nDel     = nModulusEigen(genVector(1, nFFT).array() - round(rxOption.mzDelay * nt), nFFT);  // interferometer delay
         VectorXcd temp    = matrixToVec(e.field);
         temp              = truncateVec(temp, nDel).conjugate();
         MatrixXcd sumTemp = fastExp(-M_PI / 4) * e.field.cwiseProduct(temp).real();
-        iric              = sumRow(sumTemp) + (MatrixXcd) (1i * sumRow(sumTemp));
+        complex<double> imagUnit(0, 1);
+        iric = sumRow(sumTemp) + (MatrixXcd) (imagUnit * sumRow(sumTemp));
     } else {
         iric = e.field;
     }
@@ -96,7 +97,6 @@ MatrixXcd oToE(E e, double nt, Fiber fiber) {
  * @param hf
  * @return
  */
-
 
 E filterEnv(E e, RowVectorXd lambda, const VectorXcd &hf) {
     double freqc   = e.lambda(0, 0) * LIGHT_SPEED;      // central frequency [GHz] (corresponding to the zero frequency of the lowpass equivalent signal by convention)
@@ -140,6 +140,6 @@ VectorXcd myFilter(string filterType, const VectorXd &freq, double bandwidth, do
     return hf;
 }
 
-}  // namespace PARALLEL_TYPE
+}  // namespace HARDWARE_TYPE
 
 }  // namespace SimuLib

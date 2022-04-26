@@ -22,7 +22,7 @@ using namespace std;
 
 namespace SimuLib {
 
-namespace PARALLEL_TYPE {
+namespace HARDWARE_TYPE {
 
 VectorXd diff(const VectorXd &v) {
     auto block_size = v.size() - 1;
@@ -219,6 +219,6 @@ MatrixXcd mvProduct(MatrixXcd m, const VectorXcd &v) {
     return res;
 }
 
-}  // namespace PARALLEL_TYPE
+}  // namespace HARDWARE_TYPE
 
 }  // namespace SimuLib

@@ -58,15 +58,10 @@ int main() {
     Fiber fiber{};    // Transmission fiber
 
     // Rx parameters ?
-    fiber.modFormat         = "qpsk";   // modulation format
-    string sync_type        = "da";     // time-recovery method ?
-    fiber.opticalFilterType = "gauss";  // optical filter type
-    fiber.obw               = INT_MAX;  // optical filter bandwidth normalized to symbrate
-    fiber.length            = 10E3;
-    fiber.dispersion        = 17;
-    string eftype           = "rootrc";     // optical filter type ?
-    double ebw              = 0.5;          // electrical filter bandwidth normalized to symbrate ?
-    double epar             = par.rolloff;  // electrical filter extra parameters ?
+    //    string sync_type = "da";  // time-recovery method ?
+    //    string eftype = "rootrc";     // optical filter type ?
+    //    double ebw    = 0.5;          // electrical filter bandwidth normalized to symbrate ?
+    //    double epar   = par.rolloff;  // electrical filter extra parameters ?
 
     RowVectorXd lambda(1);
     RowVectorXd ptx(1);
@@ -82,9 +77,9 @@ int main() {
     RowVectorXd pLin(1);
     pLin << pow(10, powerDBM / 10);  // [mW]
 
-    Option option{};
+    LaserOption option{};
     // option.pol       = Option::dual;
-    option.linewidth = ptx;
+    option.lineWidth = ptx;
     option.n0        = 0.5;
 
     // 光源模块
@@ -101,8 +96,8 @@ int main() {
     MatrixXi patBinaryY;
 
     // 随机二进制生成器
-    //        tie(patX, patBinaryX) = CPU::pattern(nSymb, "rand", array);
-    //        tie(patY, patBinaryY) = CPU::pattern(nSymb, "rand", array);
+    //    tie(patX, patBinaryX) = CPU::pattern(nSymb, "rand", array);
+    //    tie(patY, patBinaryY) = CPU::pattern(nSymb, "rand", array);
 
     // 暂时用固定数据代替
     patX = readField("../files/patx.txt");
@@ -137,24 +132,22 @@ int main() {
     // 光纤传输模块
     //    tie(out, e) = fiberTransmit(e, fiber);
 
-    fiber.modFormat         = modFormat;
-    fiber.opticalFilterType = "gauss";
+    RxOption rxOption{};
+    rxOption.modFormat = modFormat;
+    rxOption.ofType    = "gauss";
+    rxOption.obw       = INFINITY;
 
     // 前端接收器（随后使用returnSignal去绘制眼图和星座图）
-    MatrixXcd returnSignal = CPU::rxFrontend(e, lambda, symbrate, fiber);
+    MatrixXcd returnSignal = CPU::rxFrontend(e, lambda, symbrate, rxOption);
 
     complex<double> eyeOpening;
     MatrixXcd iricMat;
-
-    MatrixXcd signalAngle = returnSignal.unaryExpr([](const complex<double> &a) {
-        return atan2(a.imag(), a.real());
-    });
 
     MatrixXi pat(patX.rows(), patX.cols() + patY.cols());
     pat << patX, patY;
 
     // 眼图分析器（随后使用eyeOpening和iricMat这两个值去计算误码率）
-    tie(eyeOpening, iricMat) = CPU::evaluateEye(pat, signalAngle, symbrate, modFormat, fiber);
+    tie(eyeOpening, iricMat) = CPU::evaluateEye(pat, returnSignal, symbrate, modFormat, fiber);
 
     std::cout << "Eye opening:" << std::endl;
     std::cout << eyeOpening << std::endl;

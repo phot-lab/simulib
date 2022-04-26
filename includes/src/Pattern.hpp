@@ -33,7 +33,7 @@ struct Par {
     string modFormat;
 };
 
-namespace PARALLEL_TYPE {
+namespace HARDWARE_TYPE {
 
 MatrixXcd Pat2Samp(const MatrixXi &pat_bin, const string &modFormat);
 

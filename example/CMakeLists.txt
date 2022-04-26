@@ -1,6 +1,8 @@
 add_executable(Example Example.cpp)
 add_executable(EyeExample EyeExample.cpp)
 add_executable(SwitchExample SwitchExample.cpp)
+add_executable(FinalExample FinalExample.cpp)
 target_link_libraries(Example ${LIBS})
 target_link_libraries(EyeExample ${LIBS})
 target_link_libraries(SwitchExample ${LIBS})
+target_link_libraries(FinalExample ${LIBS})

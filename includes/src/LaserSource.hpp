@@ -31,14 +31,14 @@ namespace SimuLib {
  * @brief laser source simulation option
  * @param pol: polarization schema. 'single' only the x-polarization is created,otherwise even
  *             the y-polarization is created and set equal to zero in absence of noise.
- * @param linewidth: It can be a scalar or a vector of the same length of the wavelengths. A Wiener
+ * @param lineWidth: It can be a scalar or a vector of the same length of the wavelengths. A Wiener
  *                   phase noise with such a linewidth is added to the phase of  E.
  * @param n0: the one-sided spectral density [dB/GHz] of a Gaussian complex noise added to the laser field.
  */
 
-struct Option {
+struct LaserOption {
     int pol               = dual;            // single or dual
-    RowVectorXd linewidth = RowVectorXd(0);  // [GHz]
+    RowVectorXd lineWidth = RowVectorXd(0);  // [GHz]
     double n0             = INT_MIN;         // [dB/GHz]
     enum { dual   = 2,
            single = 1 };

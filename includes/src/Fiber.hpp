@@ -44,12 +44,11 @@ struct Fiber {
     double nWavePlates       = 100;     // Number of waveplates when birefringence is on
     double maxStepLength     = length;  // max. step [m]. Default: fiber.length.
     double chlambda          = 0;       // save for later, because E will be canceled
-    double filterParameter   = 0;       // optical filter extra parameters (optional, see MYFILTER)
+
     double accuracyParameter = 20;      // Accuracy parameter (dphimax)
     double alphaLinear       = 0;       // Nonlinear step parameter
     double bandwidth         = 0;       // Bandwidth [GHz] for the step size set-up. Usually the bandwidth of the propagating wavelength-division multiplexing (WDM) signal.
                                         // Default: the simulation bandwidth, GSTATE.FSAMPLING (See INIGSTATE).
-    double mzDelay = 1;                 // default interferometer delay: 1 symbol
     double gam     = 0;                 // Nonlinear parameter
     bool isUnique  = true;              // true: unique-field propagation, false: separate-field propagation
     bool isKerr    = false;             // If Kerr effect is active
@@ -68,10 +67,6 @@ struct Fiber {
                                         // It can be 'nlp' (nonlinear phase criterion, [Sin03]) or 'cle' (constant local error criterion, [Zha05,Zha08]).
                                         // Default: 'cle'.
     string stepType;                    // step type. It can be 'asymm' (asymmetric step) or 'symm' (symmetric step) [Sha14]. Default: 'asymm'.
-    string modFormat;                   // modulation format
-    string opticalFilterType;           // optical filter (OBPF) type (see MYFILTER) (used in receiver module)
-    shared_ptr<int> dcum;               // post compensating fiber accumulated dispersion [ps/nm]. The fiber is inserted before the optical filter.
-    double obw = 1.8;                   // OBPF bandwidth normalized to SYMBRATE.
 };
 
 /**

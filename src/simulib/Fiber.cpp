@@ -26,7 +26,7 @@ using namespace std;
 
 namespace SimuLib {
 
-namespace PARALLEL_TYPE {
+namespace HARDWARE_TYPE {
 
 tuple<Linear *, double> CheckFiber(const E &e, Fiber &fiber);
 tuple<double, double> FirstStep(const MatrixXcd &field, Fiber fiber);

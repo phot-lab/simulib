@@ -46,8 +46,7 @@ int main() {
     ptx << 3;
 
     /**** Channel parameters ****/
-    double dtot = 0;  // residual dispersion per span [ps/nm]
-    Fiber fiber{};    // Transmission fiber
+    Fiber fiber{};  // Transmission fiber
 
     // Init
     double nSamp = nSymb * nt;     // overall number of samples
@@ -58,20 +57,20 @@ int main() {
     RowVectorXd pLin(1);
     pLin << pow(10, powerDBM / 10);  // [mW]
 
-    Option option{};
-    option.pol       = 1;
-    option.linewidth = ptx;
-    option.n0        = 0.5;
+    LaserOption laserOption{};
+    laserOption.pol       = 1;  // Single: only the x-polarization is created
+    laserOption.lineWidth = ptx;
+    laserOption.n0        = 0.5;  // One-sided spectral density
 
     // 光源模块
-    E e = CPU::laserSource(pLin, lambda, option);  // y-pol does not exist
+    E e = CPU::laserSource(pLin, lambda, laserOption);  // y-polarization does not exist
 
     string array[2] = {"alpha", modFormat};
     VectorXi pat;
     MatrixXi patBinary;
 
     // 随机二进制生成器
-    tie(pat, patBinary) = CPU::pattern(nSymb, "rand", array);
+    tie(pat, patBinary) = CPU::genPattern(nSymb, "rand", array);
 
     MatrixXcd signal;
     double norm;
@@ -82,7 +81,7 @@ int main() {
     double gain = 0;
 
     // 电信号放大器
-    tie(e, gain) = CPU::electricAmplifier(e, 10, 1, 10.0e-12);
+    //    tie(e, gain) = CPU::electricAmplifier(e, 10, 1, 10.0e-12);
 
     // MZ调制器
     e = CPU::mzmodulator(e, signal);
@@ -102,20 +101,21 @@ int main() {
     cout << "light field col:" << e.field.cols() << endl;
     cout << "light field wavelength:" << e.lambda(0, 0) << endl;
 
-    fiber.modFormat         = modFormat;
-    fiber.opticalFilterType = "gauss";
+    RxOption rxOption{};
+    rxOption.modFormat = modFormat;
+    rxOption.ofType    = "gauss";
 
     // 电信号放大器
-    tie(e, gain) = CPU::electricAmplifier(e, 20, 1, 10.0e-12);
+    //    tie(e, gain) = CPU::electricAmplifier(e, 20, 1, 10.0e-12);
 
-    // 前端接收器
-    MatrixXcd returnSignal = CPU::rxFrontend(e, lambda, symbrate, fiber);
+    // 前端接收器（随后使用returnSignal去绘制眼图和星座图）
+    MatrixXcd returnSignal = CPU::rxFrontend(e, lambda, symbrate, rxOption);
 
     complex<double> eyeOpening;
     MatrixXcd iricMat;
 
-    // 眼图分析器（随后使用eyeOpening和iricMat这两个值去绘制眼图）
-    tie(eyeOpening, iricMat) = CPU::evaluateEye(patBinary, returnSignal.real(), symbrate, modFormat, fiber);
+    // 眼图分析器（随后使用eyeOpening和iricMat这两个值去计算误码率）
+    tie(eyeOpening, iricMat) = CPU::evaluateEye(patBinary, returnSignal, symbrate, modFormat, fiber);
 
     std::cout << "Eye opening:" << std::endl;
     std::cout << eyeOpening << std::endl;

@@ -31,7 +31,7 @@ namespace SimuLib {
 #define ERROR(...) error(__FILE__, __LINE__, __func__, __VA_ARGS__)
 #define WARNING(...) warning(__FILE__, __LINE__, __func__, __VA_ARGS__)
 
-namespace PARALLEL_TYPE {
+namespace HARDWARE_TYPE {
 
 void error(const string &filename, const int &line, const string &func_name, const string &s);
 

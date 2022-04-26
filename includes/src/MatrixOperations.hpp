@@ -27,7 +27,7 @@ using namespace std;
 
 namespace SimuLib {
 
-namespace PARALLEL_TYPE {
+namespace HARDWARE_TYPE {
 
 template<typename T>
 Matrix<T, Dynamic, 1> stlToEigen(vector<T> v) {

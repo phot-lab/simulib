@@ -19,12 +19,6 @@
 #include <SimuLib>
 
 int main() {
-    MatrixXd m(2, 2);
-    m << 4, 2, 1, 3;
-    std::cout << m << std::endl;
-    std::cout << m.colwise().minCoeff() << std::endl;
-    Eigen::MatrixXcd matrix(2, 2);
-    matrix << 1, 2, 3, 4;
-    complex<double> a(0, 4);
-    std::cout << matrix << std::endl;
+    std::cout << (double )INFINITY/2 << std::endl;
+    std::cout << INT_MAX << std::endl;
 }

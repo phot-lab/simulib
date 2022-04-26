@@ -20,7 +20,7 @@
 
 namespace SimuLib {
 
-namespace PARALLEL_TYPE {
+namespace HARDWARE_TYPE {
 /**
  * @brief A polarization beam splitter.
  * @param E: contains information about the electric field.

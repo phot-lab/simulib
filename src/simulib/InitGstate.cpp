@@ -23,7 +23,7 @@ using namespace std;
 namespace SimuLib {
 
 void initGstate(double Nsamp, double Fs) {
-    using namespace PARALLEL_TYPE;
+    using namespace HARDWARE_TYPE;
     if (!isInt(Nsamp))
         ERROR("The number of samples must be an integer");
     gstate.NSAMP     = (unsigned long) Nsamp;  // Number of samples

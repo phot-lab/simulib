@@ -24,7 +24,7 @@
 
 namespace SimuLib {
 
-namespace PARALLEL_TYPE {
+namespace HARDWARE_TYPE {
 
 struct FormatInfo {
     double digit     = 0;

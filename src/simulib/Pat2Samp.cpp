@@ -24,9 +24,8 @@ using namespace std;
 
 namespace SimuLib {
 
-namespace PARALLEL_TYPE {
+namespace HARDWARE_TYPE {
 
-FormatInfo modFormatInfo(const string &modFormat);
 MatrixXcd finalizePat2Samp(const MatrixXi &pat_bin, const FormatInfo &format_info);
 
 MatrixXcd Pat2Samp(const MatrixXi &pat_bin, const string &modFormat) {

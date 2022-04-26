@@ -30,13 +30,12 @@ using namespace SimuLib::CPU;
 #endif
 
 #ifdef SIMULIB_USE_GPU
-#define PARALLEL_TYPE GPU
+#define HARDWARE_TYPE GPU
 #else
-#define PARALLEL_TYPE CPU
+#define HARDWARE_TYPE CPU
 #endif
 
 #include "src/CommonTypes.hpp"
-#include "src/CustomDataStructure.hpp"
 #include "src/DSPTools.hpp"
 #include "src/DigitalModulator.hpp"
 #include "src/ExternalFunctions.hpp"
@@ -46,9 +45,9 @@ using namespace SimuLib::CPU;
 #include "src/LaserSource.hpp"
 #include "src/MatrixOperations.hpp"
 #include "src/Mzmodulator.hpp"
-#include "src/OperatorOverloading.hpp"
 #include "src/Pattern.hpp"
 #include "src/Tools.hpp"
+#include "src/RxFrontend.h"
 
 #include "src/DecimalToBinary.h"
 #include "src/IQModulator.h"

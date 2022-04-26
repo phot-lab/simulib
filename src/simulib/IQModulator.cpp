@@ -38,11 +38,11 @@ namespace SimuLib {
  * @return E:
  */
 
-namespace PARALLEL_TYPE {
+namespace HARDWARE_TYPE {
 
 E IQModulator(E e, VectorXcd modSig, IQOption option) {
-    Mzoption mzoptioni;
-    Mzoption mzoptionq;
+    MzOption mzoptioni;
+    MzOption mzoptionq;
     double iqratio    = option.iqratio;
     mzoptioni.biasu   = option.biasu[0];
     mzoptionq.biasu   = option.biasu[1];
@@ -54,8 +54,8 @@ E IQModulator(E e, VectorXcd modSig, IQOption option) {
     mzoptionq.exratio = option.exratio[1];
     mzoptioni.norm    = option.norm;
     mzoptionq.norm    = option.norm;
-    mzoptioni.mode    = Mzoption::push_pull;
-    mzoptionq.mode    = Mzoption::push_pull;
+    mzoptioni.mode    = MzOption::push_pull;
+    mzoptionq.mode    = MzOption::push_pull;
     int npol          = 1;
     int nch           = 1;
     double biasc      = option.biasc;

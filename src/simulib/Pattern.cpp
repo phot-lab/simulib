@@ -23,29 +23,29 @@ using namespace std;
 
 namespace SimuLib {
 
-namespace PARALLEL_TYPE {
+namespace HARDWARE_TYPE {
 
-tuple<VectorXi, MatrixXi> pattern(unsigned nsymb, const string &ptype) {
-    RowVectorXi patttern;
+tuple<VectorXi, MatrixXi> genPattern(unsigned nSymbol, const string &patternType) {
+    RowVectorXi pattern;
     MatrixXi patternBinary;
-    if (ptype == "rand") {  // RANDOM UNIFORMLY-DISTRIBUTED PATTERN
+    if (patternType == "rand") {  // RANDOM UNIFORMLY-DISTRIBUTED PATTERN
         int qq = 2;
-        patttern.resize(nsymb);
-        for (Index i = 0; i < patttern.size(); ++i) {
-            patttern[i] = floor(uniformRng() * qq);
+        pattern.resize(nSymbol);
+        for (Index i = 0; i < pattern.size(); ++i) {
+            pattern[i] = floor(uniformRng() * qq);
         }
-        patternBinary.resize(patttern.size(), log2(qq));
+        patternBinary.resize(pattern.size(), log2(qq));
         for (Index i = 0; i < patternBinary.rows(); ++i) {
-            patternBinary.row(i) = DecToBin(patttern[i], log2(qq));
+            patternBinary.row(i) = DecToBin(pattern[i], log2(qq));
         }
     }
-    return make_tuple(patttern.transpose(), patternBinary);
+    return make_tuple(pattern.transpose(), patternBinary);
 }
 
-tuple<VectorXi, MatrixXi> pattern(unsigned nsymb, const string &ptype, string array[]) {
-    RowVectorXi patttern;
+tuple<VectorXi, MatrixXi> genPattern(unsigned nSymbol, const string &patternType, string array[]) {
+    RowVectorXi pattern;
     MatrixXi patternBinary;
-    if (ptype == "rand") {  // RANDOM UNIFORMLY-DISTRIBUTED PATTERN
+    if (patternType == "rand") {  // RANDOM UNIFORMLY-DISTRIBUTED PATTERN
         int qq;
         if (array[0] == "digit") {
             qq = strToDigit(array[1]);
@@ -58,18 +58,18 @@ tuple<VectorXi, MatrixXi> pattern(unsigned nsymb, const string &ptype, string ar
         } else {
             qq = 2;
         }
-        patttern.resize(nsymb);
-        for (Index i = 0; i < patttern.size(); ++i) {
-            patttern[i] = floor(uniformRng2() * qq);
+        pattern.resize(nSymbol);
+        for (Index i = 0; i < pattern.size(); ++i) {
+            pattern[i] = floor(uniformRng2() * qq);
         }
-        patternBinary.resize(patttern.size(), log2(qq));
+        patternBinary.resize(pattern.size(), log2(qq));
         for (Index i = 0; i < patternBinary.rows(); ++i) {
-            patternBinary.row(i) = DecToBin(patttern[i], log2(qq));
+            patternBinary.row(i) = DecToBin(pattern[i], log2(qq));
         }
     }
-    return make_tuple(patttern.transpose(), patternBinary);
+    return make_tuple(pattern.transpose(), patternBinary);
 }
 
-}  // namespace PARALLEL_TYPE
+}  // namespace HARDWARE_TYPE
 
 }  // namespace SimuLib

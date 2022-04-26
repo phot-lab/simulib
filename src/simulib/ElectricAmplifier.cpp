@@ -20,7 +20,7 @@
 
 namespace SimuLib {
 
-namespace PARALLEL_TYPE {
+namespace HARDWARE_TYPE {
 
 static E awgn(E e, double reqSNR);
 

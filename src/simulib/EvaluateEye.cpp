@@ -22,13 +22,13 @@ using namespace std;
 
 namespace SimuLib {
 
-namespace PARALLEL_TYPE {
+namespace HARDWARE_TYPE {
 
 static VectorXi sortMapIndex(VectorXd vec, VectorXd sorted);
 
 /**
  * @brief Evaluate the eye-opening
- * @param patternBinary: pattern sample.
+ * @param patternBinary: genPattern sample.
  * @param signal: signal sample.
  * @param symbrate: the symbol rate [Gbaud] of the signal.
  * @param modFormat: indicating the modulation format.(In DigitalModulator.cpp)
@@ -38,13 +38,18 @@ static VectorXi sortMapIndex(VectorXd vec, VectorXd sorted);
  */
 
 tuple<complex<double>, MatrixXcd> evaluateEye(MatrixXi pattern, const MatrixXcd &signal, double symbrate, const string &modFormat, const Fiber &fiber) {
+    MatrixXd angle = signal.unaryExpr([](const complex<double> &a) {
+        return atan2(a.imag(), a.real());
+    });
+
     double nt = gstate.SAMP_FREQ / symbrate;  // Number of points per symbol
     if (!isInt(nt))
         ERROR("Number of points per symbol is not an integer.");
-    double nSymb     = (double) gstate.NSAMP / nt;
-    Index nPol       = signal.cols();
-    double nShift    = round(nt / 2);  // the first bit is centered at index 1
-    MatrixXd iricMat = circShift(signal, (int) nShift).reshaped(nt, nSymb * (double) nPol).transpose().real();
+    double nSymb  = (double) gstate.NSAMP / nt;
+    Index nPol    = signal.cols();
+    double nShift = round(nt / 2);  // the first bit is centered at index 1
+
+    MatrixXd iricMat = circShift(angle, (int) nShift).reshaped(nt, nSymb * (double) nPol).transpose();
 
     FormatInfo formatInfo = modFormatInfo(modFormat);
 
@@ -99,6 +104,6 @@ static VectorXi sortMapIndex(VectorXd vec, VectorXd sorted) {
     return index;
 }
 
-}  // namespace PARALLEL_TYPE
+}  // namespace HARDWARE_TYPE
 
 }  // namespace SimuLib

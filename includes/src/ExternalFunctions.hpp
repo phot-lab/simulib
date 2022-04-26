@@ -20,12 +20,13 @@
 
 #include "IQModulator.h"
 #include "Mzmodulator.hpp"
+#include "RxFrontend.h"
 
 namespace SimuLib {
 
-namespace PARALLEL_TYPE {
+namespace HARDWARE_TYPE {
 
-tuple<MatrixXcd, double> digitalModulator(const MatrixXi &patBinary, double symbrate, Par par, const string &modFormat, string ptype);
+tuple<MatrixXcd, double> digitalModulator(const MatrixXi &patBinary, double symbolRate, Par par, const string &modFormat, string pulseType);
 
 tuple<E, double> electricAmplifier(E e, double gainEA, double powerW, double oneSidedSpectralDensity);
 
@@ -35,23 +36,23 @@ tuple<Out, E> fiberTransmit(E &e, Fiber fiber);
 
 E IQModulator(E e, VectorXcd modSig, IQOption option);
 
-E laserSource(RowVectorXd ptx, const RowVectorXd &lam, Option options);
+E laserSource(RowVectorXd ptx, const RowVectorXd &lam, LaserOption option);
 
-E laserSource(RowVectorXd ptx, RowVectorXd lam, double spac = 0.0, int NLAMBDA = 0, Option options = Option());
+E laserSource(RowVectorXd ptx, RowVectorXd lam, double spac = 0.0, int NLAMBDA = 0, LaserOption options = LaserOption());
 
 E mzmodulator(E light, VectorXcd modSig);
-E mzmodulator(E light, VectorXcd modsig, Mzoption options);
+E mzmodulator(E light, VectorXcd modsig, MzOption mzOption);
 
-tuple<VectorXi, MatrixXi> pattern(unsigned nsymb, const string &ptype);
-tuple<VectorXi, MatrixXi> pattern(unsigned nsymb, const string &ptype, string array[]);
+tuple<VectorXi, MatrixXi> genPattern(unsigned nSymbol, const string &patternType);
+tuple<VectorXi, MatrixXi> genPattern(unsigned nSymbol, const string &patternType, string array[]);
 
 E pbc(E ex, E ey);
 
 std::tuple<E, E> pbs(E e);
 
-MatrixXcd rxFrontend(E e, RowVectorXd lambda, int symbrate, const Fiber &fiber);
+MatrixXcd rxFrontend(E e, RowVectorXd lambda, int symbrate, const RxOption &rxOption);
 
-}  // namespace PARALLEL_TYPE
+}  // namespace HARDWARE_TYPE
 
 }  // namespace SimuLib
 
