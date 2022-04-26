@@ -61,7 +61,7 @@ void replaceVector(VectorXd &vec, VectorXd indices, VectorXd replace);
 
 template<typename T>
 Matrix<T, Dynamic, 1> matrixToVec(Matrix<T, Dynamic, Dynamic> m) {
-    return m.reshaped(m.rows(), m.cols());
+    return m.reshaped(m.rows() * m.cols(), 1);
     //    return Map<Matrix<T, Dynamic, 1>>(m.data(), m.cols() * m.rows());
 }
 
@@ -184,7 +184,7 @@ VectorXcd minCol(MatrixXcd m);
 VectorXd sortEigen(VectorXd v, bool ascend = true);
 VectorXcd sortEigen(VectorXcd v, bool ascend = true);
 
-}  // namespace PARALLEL_TYPE
+}  // namespace HARDWARE_TYPE
 
 }  // namespace SimuLib
 

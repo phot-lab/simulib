@@ -18,6 +18,7 @@
 
 #include <SimuLib>
 
+using namespace SimuLib;
+
 int main() {
-    std::cout << 1.3382e+02 << std::endl;
 }

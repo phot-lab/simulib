@@ -24,15 +24,25 @@
 
 namespace SimuLib {
 
-namespace HARDWARE_TYPE {
+struct Par {
+    string emph    = "asin";
+    int nsps       = 0;
+    string norm    = "iid";
+    int par        = 0;
+    double rolloff = 0;
+    double duty    = 1;
+    string modFormat;
+};
 
 struct FormatInfo {
     double digit     = 0;
     double symb_mean = 0;
     double symb_var  = 0;
-    string alpha     = "";
-    string family    = "";
+    string alpha;
+    string family;
 };
+
+namespace HARDWARE_TYPE {
 
 FormatInfo modFormatInfo(const string &modFormat);
 

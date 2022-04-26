@@ -23,16 +23,6 @@
 
 namespace SimuLib {
 
-struct Par {
-    string emph    = "asin";
-    int nsps       = 0;
-    string norm    = "iid";
-    int par        = 0;
-    double rolloff = 0;
-    double duty    = 1;
-    string modFormat;
-};
-
 namespace HARDWARE_TYPE {
 
 MatrixXcd Pat2Samp(const MatrixXi &pat_bin, const string &modFormat);

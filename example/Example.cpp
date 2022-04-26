@@ -27,61 +27,59 @@ using namespace std;
 using namespace SimuLib;
 
 int main() {
-    Par par{};
 
     // Global parameters
-    int nSymb = 1024;  // number of symbols
-    int nt    = 32;    // number of discrete points per symbol
+    int nSymbol = 1024;  // number of symbols
+    int nt      = 32;    // number of discrete points per symbol
 
     // Tx parameters
-    int symbrate     = 10;      // symbol rate [Gbaud].
+    Par par{};
+    int symbolRate   = 10;      // symbol rate [Gbaud].
     par.rolloff      = 0.2;     // pulse roll-off
     par.emph         = "asin";  // digital-premphasis type
-    string modFormat = "ook";   // modulation format
+    string modFormat = "qpsk";  // modulation format
     double powerDBM  = 0;       // power [dBm]
 
+    // 光的波长
     RowVectorXd lambda(1);
-    RowVectorXd ptx(1);
     lambda << 1550;  // carrier wavelength [nm]
-    ptx << 3;
 
-    /**** Channel parameters ****/
-    Fiber fiber{};  // Transmission fiber
+    // 光纤结构体
+    Fiber fiber{};
 
-    // Init
-    double nSamp = nSymb * nt;     // overall number of samples
-    double fs    = symbrate * nt;  // sampling rate [GHz]
-    initGstate(nSamp, fs);         // initialize global variables: Nsamp and fs.
+    // 初始化参数，这些参数可能会在之后的所有器件中用到
+    double nSample = nSymbol * nt;     // overall number of samples
+    double fs      = symbolRate * nt;  // sampling rate [GHz]
+    initGstate(nSample, fs);           // initialize global variables: Nsamp and fs.
 
-    // Tx side
+    // 光源模块的参数
     RowVectorXd pLin(1);
     pLin << pow(10, powerDBM / 10);  // [mW]
-
     LaserOption laserOption{};
-    laserOption.pol       = 1;  // Single: only the x-polarization is created
-    laserOption.lineWidth = ptx;
-    laserOption.n0        = 0.5;  // One-sided spectral density
+    laserOption.pol = LaserOption::single;  // Single: only the x-polarization is created
+    laserOption.n0  = 0.5;                  // One-sided spectral density
 
     // 光源模块
     E e = CPU::laserSource(pLin, lambda, laserOption);  // y-polarization does not exist
 
+    // 随机二进制生成器的参数
     string array[2] = {"alpha", modFormat};
-    VectorXi pat;
-    MatrixXi patBinary;
+    VectorXi pattern;
+    MatrixXi patternBinary;
 
     // 随机二进制生成器
-    tie(pat, patBinary) = CPU::genPattern(nSymb, "rand", array);
+    tie(pattern, patternBinary) = CPU::genPattern(nSymbol, "rand", array);
 
     MatrixXcd signal;
     double norm;
 
     // 数字调制器
-    tie(signal, norm) = CPU::digitalModulator(patBinary, symbrate, par, modFormat, "costails");
+    tie(signal, norm) = CPU::digitalModulator(pattern, symbolRate, par, modFormat, "rootrc");
 
     double gain = 0;
 
-    // 电信号放大器
-    //    tie(e, gain) = CPU::electricAmplifier(e, 10, 1, 10.0e-12);
+    // 电信号放大器（会加入随机白噪音，导致放大后的信号每次都有点不一样）
+    tie(signal, gain) = CPU::electricAmplifier(signal, 10, 1, 10.0e-12);
 
     // MZ调制器
     e = CPU::mzmodulator(e, signal);
@@ -91,33 +89,23 @@ int main() {
     // 光纤传输模块
     tie(out, e) = CPU::fiberTransmit(e, fiber);
 
-    //        cout << "光场：" << e.field << endl;
-    //    cout << "光场矩阵的行：" << e.field.rows() << endl;
-    //    cout << "光场矩阵的列：" << e.field.cols() << endl;
-    //    cout << "光的波长：" << e.lambda(0, 0) << endl;
-    //        cout << "light field:" << e.field << endl;
-
-    cout << "light field row:" << e.field.rows() << endl;
-    cout << "light field col:" << e.field.cols() << endl;
-    cout << "light field wavelength:" << e.lambda(0, 0) << endl;
-
+    // 前端接收器的参数
     RxOption rxOption{};
     rxOption.modFormat = modFormat;
     rxOption.ofType    = "gauss";
+    rxOption.obw       = INFINITY;
 
-    // 电信号放大器
-    //    tie(e, gain) = CPU::electricAmplifier(e, 20, 1, 10.0e-12);
+    // 前端接收器
+    MatrixXcd returnSignal = CPU::rxFrontend(e, lambda, symbolRate, rxOption);
 
-    // 前端接收器（随后使用returnSignal去绘制眼图和星座图）
-    MatrixXcd returnSignal = CPU::rxFrontend(e, lambda, symbrate, rxOption);
+    // 电信号放大器（随后使用returnSignal去绘制眼图和星座图，注意是经过放大器的）
+    tie(returnSignal, gain) = CPU::electricAmplifier(returnSignal, 20, 1, 10.0e-12);
 
     complex<double> eyeOpening;
     MatrixXcd iricMat;
 
     // 眼图分析器（随后使用eyeOpening和iricMat这两个值去计算误码率）
-    tie(eyeOpening, iricMat) = CPU::evaluateEye(patBinary, returnSignal, symbrate, modFormat, fiber);
+    tie(eyeOpening, iricMat) = CPU::evaluateEye(pattern, returnSignal, symbolRate, modFormat, fiber);
 
-    std::cout << "Eye opening:" << std::endl;
-    std::cout << eyeOpening << std::endl;
-    return 0;
+    std::cout << "Successful termination of the program!" << std::endl;
 }

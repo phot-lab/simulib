@@ -90,6 +90,11 @@ int main() {
     // 数字调制器
     tie(signal, norm) = CPU::digitalModulator(pattern, symbolRate, par, modFormat, "rootrc");
 
+    double gain = 0;
+
+    // 电信号放大器
+//    tie(signal, gain) = CPU::electricAmplifier(signal, 10, 1, 10.0e-12);
+
     // MZ调制器
     e = CPU::mzmodulator(e, signal);
 
@@ -104,8 +109,11 @@ int main() {
     rxOption.ofType    = "gauss";
     rxOption.obw       = INFINITY;
 
-    // 前端接收器（随后使用returnSignal去绘制眼图和星座图）
+    // 前端接收器
     MatrixXcd returnSignal = CPU::rxFrontend(e, lambda, symbolRate, rxOption);
+
+    // 电信号放大器（随后使用returnSignal去绘制眼图和星座图，注意是经过放大器的）
+    tie(returnSignal, gain) = CPU::electricAmplifier(returnSignal, 20, 1, 10.0e-12);
 
     complex<double> eyeOpening;
     MatrixXcd iricMat;

@@ -22,44 +22,44 @@ namespace SimuLib {
 
 namespace HARDWARE_TYPE {
 
-static E awgn(E e, double reqSNR);
+static MatrixXcd awgn(MatrixXcd signal, double reqSNR);
 
 /**
  * Electrc Amplifier
- * @param e
+ * @param signal: 电信号
  * @param gainEA: 增益倍数 (dB)
  * @param powerW: 输入信号功率
  * @param oneSidedSpectralDensity: 单边功率谱密度 A/Hz^(1/2)
  * @return
  */
 
-tuple<E, double> electricAmplifier(E e, double gainEA, double powerW, double oneSidedSpectralDensity) {
+tuple<MatrixXcd, double> electricAmplifier(MatrixXcd signal, double gainEA, double powerW, double oneSidedSpectralDensity) {
     double powerWAfterEA = powerW * pow(10, gainEA / 10);
-    e.field              = e.field * sqrt(powerWAfterEA);
+    signal               = signal * sqrt(powerWAfterEA);
     double snrGS         = 10 * log10(powerW / (oneSidedSpectralDensity / 2));
-    e                    = awgn(e, snrGS);
+    signal               = awgn(signal, snrGS);
     double gain          = gainEA;
-    return make_tuple(e, gain);
+    return make_tuple(signal, gain);
 }
 
 /**
  * Additive White Gaussian Noise - "measure" type
- * @param e
+ * @param signal
  * @param reqSNR
  * @return
  */
-static E awgn(E e, double reqSNR) {
-    double signalPower = matrixToVec(e.field).cwiseAbs2().sum() / e.field.size();  // Linear
+static MatrixXcd awgn(MatrixXcd signal, double reqSNR) {
+    double signalPower = matrixToVec(signal).cwiseAbs2().sum() / (double) signal.size();  // Linear
 
     // Convert signal power and SNR to linear scale
     reqSNR = pow(10, reqSNR / 10);
 
     double noisePower = signalPower / reqSNR;
-    Index rows        = e.field.rows();
-    Index cols        = e.field.cols();
+    Index rows        = signal.rows();
+    Index cols        = signal.cols();
     MatrixXcd noise(rows, cols);
 
-    if (e.field.imag().isZero()) {
+    if (signal.imag().isZero()) {
         noise = sqrt(noisePower) * normalRng(rows, cols);
     } else {
         MatrixXcd real = normalRng(rows, cols);
@@ -67,10 +67,10 @@ static E awgn(E e, double reqSNR) {
         MatrixXcd imag = (MatrixXcd) normalRng(rows, cols) * imagUnit;
         noise          = sqrt(noisePower / 2) * (real + imag);
     }
-    e.field = e.field + noise;
-    return e;
+    signal = signal + noise;
+    return signal;
 }
 
-}  // namespace PARALLEL_TYPE
+}  // namespace HARDWARE_TYPE
 
 }  // namespace SimuLib

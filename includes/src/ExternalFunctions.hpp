@@ -28,7 +28,7 @@ namespace HARDWARE_TYPE {
 
 tuple<MatrixXcd, double> digitalModulator(const MatrixXi &patBinary, double symbolRate, Par par, const string &modFormat, string pulseType);
 
-tuple<E, double> electricAmplifier(E e, double gainEA, double powerW, double oneSidedSpectralDensity);
+tuple<MatrixXcd, double> electricAmplifier(MatrixXcd signal, double gainEA, double powerW, double oneSidedSpectralDensity);
 
 tuple<complex<double>, MatrixXcd> evaluateEye(MatrixXi patternBinary, const MatrixXcd &signal, double symbrate, const string &modFormat, const Fiber &fiber);
 
