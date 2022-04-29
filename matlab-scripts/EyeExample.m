@@ -50,7 +50,7 @@ pat = patterns(Nsymb,'rand',struct('format',modfor));
 
 [elec, norm] = digitalmod(pat,modfor,symbrate,'costails',tx);
 
-E   = mzmodulator(E, elec,struct('norm',norm));
+E   = mzModulator(E, elec,struct('norm',norm));
 
 E = fiber(E,ft);
 

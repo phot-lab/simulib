@@ -30,17 +30,17 @@ tuple<MatrixXcd, double> digitalModulator(const MatrixXi &patBinary, double symb
 
 tuple<MatrixXcd, double> electricAmplifier(MatrixXcd signal, double gainEA, double powerW, double oneSidedSpectralDensity);
 
-tuple<complex<double>, MatrixXcd> evaluateEye(MatrixXi patternBinary, const MatrixXcd &signal, double symbrate, const string &modFormat, const Fiber &fiber);
+tuple<double, MatrixXcd> evaluateEye(MatrixXi pattern, const MatrixXcd &signal, double symbolRate, const string &modFormat, const Fiber &fiber);
 
 tuple<Out, E> fiberTransmit(E &e, Fiber fiber);
 
-E IQModulator(E e, VectorXcd modSig, IQOption option);
+E iqModulator(E e, VectorXcd modSig, IqOption option);
 
 E laserSource(RowVectorXd ptx, const RowVectorXd &lam, LaserOption option);
 
 E laserSource(RowVectorXd ptx, RowVectorXd lam, double spac = 0.0, int NLAMBDA = 0, LaserOption options = LaserOption());
 
-E mzmodulator(E light, VectorXcd modSig);
+E mzModulator(E light, VectorXcd modSig);
 E mzmodulator(E light, VectorXcd modsig, MzOption mzOption);
 
 tuple<VectorXi, MatrixXi> genPattern(unsigned nSymbol, const string &patternType);

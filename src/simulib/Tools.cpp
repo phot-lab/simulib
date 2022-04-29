@@ -22,6 +22,7 @@
 #include <random>
 #include <regex>
 #include <sstream>
+#include <fstream>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -200,6 +201,22 @@ std::string toUpper(std::string data) {
 complex<double> fastExp(complex<double> data) {
     complex<double> imag = 1i;
     return exp(data * imag);
+}
+
+VectorXi readPattern(const std::string &filepath) {
+
+    // Open file in read mode
+    ifstream infile;
+    infile.open(filepath);
+
+    VectorXi vec(1024);
+    for (Index i = 0; i < vec.size(); ++i) {
+        infile >> vec[i];
+    }
+
+    // Close file
+    infile.close();
+    return vec;
 }
 
 }  // namespace PARALLEL_TYPE

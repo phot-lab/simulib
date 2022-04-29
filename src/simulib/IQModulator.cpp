@@ -34,13 +34,13 @@ namespace SimuLib {
  * @param MODSIG: a complex vector containing in the real and in the imaginary
  *               parts the in-phase and the quadrature components, respectively. Such
  *               driving signals are created, e.g., by DIGITALMOD.
- * @param option: compute option. Details in IQModulator.h
+ * @param option: compute option. Details in iqModulator.h
  * @return E:
  */
 
 namespace HARDWARE_TYPE {
 
-E IQModulator(E e, VectorXcd modSig, IQOption option) {
+E iqModulator(E e, VectorXcd modSig, IqOption option) {
     MzOption mzoptioni;
     MzOption mzoptionq;
     double iqratio    = option.iqratio;

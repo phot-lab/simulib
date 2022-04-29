@@ -37,7 +37,7 @@ namespace SimuLib {
  * @param norm: normalization factor
  */
 
-struct IQOption {
+struct IqOption {
     double iqratio    = 0;
     double biasc      = 0;
     double exratio[2] = {INT_MAX, INT_MAX};

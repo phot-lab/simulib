@@ -82,7 +82,7 @@ int main() {
     // 随机二进制生成器
     //        tie(pattern, patternBinary) = CPU::genPattern(nSymbol, "rand", array);
 
-    pattern = readField("../files/pat.txt");
+    pattern = readPattern("../files/pat.txt");
 
     MatrixXcd signal;
     double norm;
@@ -96,7 +96,7 @@ int main() {
 //    tie(signal, gain) = CPU::electricAmplifier(signal, 10, 1, 10.0e-12);
 
     // MZ调制器
-    e = CPU::mzmodulator(e, signal);
+    e = CPU::mzModulator(e, signal);
 
     Out out{};
 

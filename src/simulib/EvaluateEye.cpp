@@ -30,26 +30,24 @@ static VectorXi sortMapIndex(VectorXd vec, VectorXd sorted);
  * @brief Evaluate the eye-opening
  * @param patternBinary: genPattern sample.
  * @param signal: signal sample.
- * @param symbrate: the symbol rate [Gbaud] of the signal.
+ * @param symbolRate: the symbol rate [Gbaud] of the signal.
  * @param modFormat: indicating the modulation format.(In DigitalModulator.cpp)
  * @param fiber: the fiber that transfer light.
  * @return eyeOpening:
  * @return iricMat:
  */
 
-tuple<complex<double>, MatrixXcd> evaluateEye(MatrixXi pattern, const MatrixXcd &signal, double symbrate, const string &modFormat, const Fiber &fiber) {
-    MatrixXd angle = signal.unaryExpr([](const complex<double> &a) {
-        return atan2(a.imag(), a.real());
-    });
+tuple<double, MatrixXcd> evaluateEye(MatrixXi pattern, const MatrixXcd &signal, double symbolRate, const string &modFormat, const Fiber &fiber) {
 
-    double nt = gstate.SAMP_FREQ / symbrate;  // Number of points per symbol
+    double nt = gstate.SAMP_FREQ / symbolRate;  // Number of points per symbol
     if (!isInt(nt))
         ERROR("Number of points per symbol is not an integer.");
     double nSymb  = (double) gstate.NSAMP / nt;
     Index nPol    = signal.cols();
     double nShift = round(nt / 2);  // the first bit is centered at index 1
 
-    MatrixXd iricMat = circShift(angle, (int) nShift).reshaped(nt, nSymb * (double) nPol).transpose();
+    // Only calculate the real component of signal
+    MatrixXd iricMat = circShift(signal, (int) nShift).reshaped(nt, nSymb * (double) nPol).transpose().real();
 
     FormatInfo formatInfo = modFormatInfo(modFormat);
 
@@ -84,13 +82,13 @@ tuple<complex<double>, MatrixXcd> evaluateEye(MatrixXi pattern, const MatrixXcd 
     //        return b;
     //    });
 
-    double eyeOpening = eyeOpeningVec.minCoeff();
+    double eyeOpening = eyeOpeningVec.maxCoeff();
 
-    if (eyeOpening < 0)
-        eyeOpening = NAN;
+    // 单位转换为dBm，暂时不用这个
+    //    if (eyeOpening < 0)
+    //        eyeOpening = NAN;
+    //    eyeOpening = 10 * log10(eyeOpening);
 
-    double temp = 10;
-    eyeOpening  = temp * log10(eyeOpening);  // [dBm]
     return make_tuple(eyeOpening, iricMat);
 }
 

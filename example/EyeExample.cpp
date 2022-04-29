@@ -17,26 +17,16 @@
  */
 
 #include <SimuLib>
-#include <fstream>
 #include <string>
 
 using namespace std;
 using namespace SimuLib;
 
-static VectorXi readField(const std::string &filepath) {
-
-    // Open file in read mode
-    ifstream infile;
-    infile.open(filepath);
-
-    VectorXi vec(1024);
-    for (Index i = 0; i < vec.size(); ++i) {
-        infile >> vec[i];
-    }
-
-    // Close file
-    infile.close();
-    return vec;
+static MatrixXcd angle(const MatrixXcd &signal) {
+    MatrixXcd result = signal.unaryExpr([](const complex<double> &a) {
+        return atan2(a.imag(), a.real());
+    });
+    return result;
 }
 
 int main() {
@@ -100,8 +90,8 @@ int main() {
     //    tie(patY, patBinaryY) = CPU::pattern(nSymb, "rand", array);
 
     // 暂时用固定数据代替
-    patX = readField("../files/patx.txt");
-    patY = readField("../files/paty.txt");
+    patX = readPattern("../files/patx.txt");
+    patY = readPattern("../files/paty.txt");
 
     MatrixXcd signalX;
     double normX = 1;
@@ -113,8 +103,8 @@ int main() {
     tie(signalY, normY) = CPU::digitalModulator(patY, symbrate, par, modFormat, "rootrc");
 
     // IQ调制器
-    IQOption iqOptionX{};
-    IQOption iqOptionY{};
+    IqOption iqOptionX{};
+    IqOption iqOptionY{};
     iqOptionX.norm = normX;
     iqOptionY.norm = normY;
     iqOptionX.nch  = 1;
@@ -122,8 +112,8 @@ int main() {
     iqOptionX.vpi  = M_PI / 2;
     iqOptionY.vpi  = M_PI / 2;
 
-    ex = CPU::IQModulator(ex, signalX, iqOptionX);
-    ey = CPU::IQModulator(ey, signalY, iqOptionY);
+    ex = CPU::iqModulator(ex, signalX, iqOptionX);
+    ey = CPU::iqModulator(ey, signalY, iqOptionY);
 
     e = CPU::pbc(ex, ey);
 
@@ -140,16 +130,15 @@ int main() {
     // 前端接收器（随后使用returnSignal去绘制眼图和星座图）
     MatrixXcd returnSignal = CPU::rxFrontend(e, lambda, symbrate, rxOption);
 
-    complex<double> eyeOpening;
+    double eyeOpening;
     MatrixXcd iricMat;
 
     MatrixXi pat(patX.rows(), patX.cols() + patY.cols());
     pat << patX, patY;
 
     // 眼图分析器（随后使用eyeOpening和iricMat这两个值去计算误码率）
-    tie(eyeOpening, iricMat) = CPU::evaluateEye(pat, returnSignal, symbrate, modFormat, fiber);
+    tie(eyeOpening, iricMat) = CPU::evaluateEye(pat, angle(returnSignal), symbrate, modFormat, fiber);
 
-    std::cout << "Eye opening:" << std::endl;
-    std::cout << eyeOpening << std::endl;
+    std::cout << "Eye opening: " << eyeOpening << " [mw]" << std::endl;
     return 0;
 }

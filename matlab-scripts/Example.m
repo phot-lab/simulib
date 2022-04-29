@@ -54,7 +54,7 @@ rng(1);
 
 [sigx, normx] = digitalmod(patx,modfor,symbrate,'rootrc',tx);
 
-E   = mzmodulator(E, sigx);
+E   = mzModulator(E, sigx);
 
 %% Channel
 

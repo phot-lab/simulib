@@ -31,6 +31,7 @@ using Eigen::Map;
 using Eigen::Matrix;
 using Eigen::MatrixBase;
 using Eigen::nbThreads;
+using Eigen::RowMajor;
 using Eigen::Unaligned;
 
 // Since the cuBLAS doesn't provide int matrix API, so I don't implement these
@@ -39,6 +40,6 @@ using Eigen::RowVectorXi;
 using Eigen::VectorXi;
 
 
-}  // namespace ParMat
+}  // namespace SimuLib
 
 #endif  // BASICINFO_HPP

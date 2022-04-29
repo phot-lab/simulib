@@ -56,7 +56,7 @@ int main() {
     modsig.setRandom();
 //    std::cout << "modsig size = " << modsig.size() << endl;
 //    std::cout << "modsig = " << modsig << endl;
-    light = CPU::mzmodulator(light, modsig);
+    light = CPU::mzModulator(light, modsig);
     std::cout << "lambda = " << light.lambda << endl;
     std::cout << "field = " << light.field << endl;
 

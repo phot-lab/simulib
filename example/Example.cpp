@@ -18,6 +18,8 @@
 
 /**
  * This example displays the general workflow of the entire fiber transmission simulation.
+ *
+ * 这个Example展示了一个最基本的单模单偏振光纤传输仿真过程
  */
 
 #include <SimuLib>
@@ -35,14 +37,14 @@ int main() {
     // Tx parameters
     Par par{};
     int symbolRate   = 10;      // symbol rate [Gbaud].
-    par.rolloff      = 0.2;     // pulse roll-off
+    par.rolloff      = 0.3;     // pulse roll-off
     par.emph         = "asin";  // digital-premphasis type
     string modFormat = "qpsk";  // modulation format
     double powerDBM  = 0;       // power [dBm]
 
-    // 光的波长
+    // 光的波长 [nm]
     RowVectorXd lambda(1);
-    lambda << 1550;  // carrier wavelength [nm]
+    lambda << 1550;
 
     // 光纤结构体
     Fiber fiber{};
@@ -70,6 +72,9 @@ int main() {
     // 随机二进制生成器
     tie(pattern, patternBinary) = CPU::genPattern(nSymbol, "rand", array);
 
+    // 固定的随机二进制序列，用于测试
+    //    pattern = readPattern("../files/pat.txt");
+
     MatrixXcd signal;
     double norm;
 
@@ -82,7 +87,7 @@ int main() {
     tie(signal, gain) = CPU::electricAmplifier(signal, 10, 1, 10.0e-12);
 
     // MZ调制器
-    e = CPU::mzmodulator(e, signal);
+    e = CPU::mzModulator(e, signal);
 
     Out out{};
 
@@ -101,11 +106,11 @@ int main() {
     // 电信号放大器（随后使用returnSignal去绘制眼图和星座图，注意是经过放大器的）
     tie(returnSignal, gain) = CPU::electricAmplifier(returnSignal, 20, 1, 10.0e-12);
 
-    complex<double> eyeOpening;
+    double eyeOpening;
     MatrixXcd iricMat;
 
     // 眼图分析器（随后使用eyeOpening和iricMat这两个值去计算误码率）
     tie(eyeOpening, iricMat) = CPU::evaluateEye(pattern, returnSignal, symbolRate, modFormat, fiber);
 
-    std::cout << "Successful termination of the program!" << std::endl;
+    std::cout << "Eye opening: " << eyeOpening << " [mW]" << std::endl;
 }

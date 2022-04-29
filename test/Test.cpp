@@ -21,4 +21,5 @@
 using namespace SimuLib;
 
 int main() {
+    std::cout << atan2(3,4) << std::endl;
 }

@@ -28,7 +28,7 @@ namespace HARDWARE_TYPE {
  * @param MODSIG: the electrical driving signal
  * @return E: a struct of wave, details in laserSource.h
  */
-E mzmodulator(E light, VectorXcd modSig) {
+E mzModulator(E light, VectorXcd modSig) {
     double biasl   = -1;                     // bias of lower arm
     double biasu   = -1;                     // bias of upper arm
     double exratio = INFINITY;               // extinction ratio
@@ -75,7 +75,7 @@ E mzmodulator(E light, VectorXcd modSig) {
  * @brief modulates the optical field E with the electric signal MODSIG by a Mach-Zehnder interferometer.
  * @param light: optical field, is a struct of fields lambda, field.
  * @param MODSIG: the electrical driving signal
- * @param option: compute option. Details in mzmodulator.h
+ * @param option: compute option. Details in mzModulator.h
  * @return E: a struct of wave, details in laserSource.h
  */
 
