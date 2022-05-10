@@ -23,22 +23,6 @@
 using namespace std;
 using namespace SimuLib;
 
-static VectorXi readField(const std::string &filepath) {
-
-    // Open file in read mode
-    ifstream infile;
-    infile.open(filepath);
-
-    VectorXi vec(1024);
-    for (Index i = 0; i < vec.size(); ++i) {
-        infile >> vec[i];
-    }
-
-    // Close file
-    infile.close();
-    return vec;
-}
-
 int main() {
 
     // Global parameters

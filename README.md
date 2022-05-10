@@ -1,130 +1,111 @@
-# SimuLib
+<h1 align="center">SimuLib</h1>
 
-Optical simulation library, which now includes three main modules of optical transmission simulation software:
+<p align="center">
+中文文档 | <a href="./README.en.md">English Doc</a>
+</p>
 
-* Emitter
-* Fiber
-* Receiver
+光纤传输仿真运算库，目前已经实现了主要的三个模块：
 
-The directory structure of the project:
+* 发射器模块
+* 光纤传输模块
+* 接收器模块
+
+## 目录结构概览
 
 ```
-SimuLib              (root directory)
-├── .clang-format    (c++ coding style formatting file)
-├── CMakeLists.txt   (global cmake config file)
-├── includes/        (header files directory)
-├── lib/             (static and dynamic libraries)
-├── bin/             (executable files)
-├── src/             (source code files)
-├── example/         (example code)
-├── docs/            (documents of the project)
-└── test/            (test cases)
+SimuLib               (根目录)
+├── CMakeLists.txt    (总的CMake配置文件)
+├── includes/         (头文件目录)
+├── lib/              (静态和动态库的目录)
+├── bin/              (可执行文件目录)
+├── src/              (C++源代码目录)
+├── example/          (样例代码)
+├── matlab-scripts/   (用做参考的MATLAB代码)
+├── docs/             (文档目录)
+├── files/            (临时数据文件，用做测试)
+└── test/             (测试用例)
 ```
 
-## Build Instructions
+## 运行项目步骤
 
-### Command Line Way
+1. 鼠标右键根目录并点击 `Reload CMake Project`，然后CMake项目的配置文件就会被加载。通常来说，项目会在你用CLion打开时自动加载。
 
-```shell
-$ cmake --version # Make sure cmake has been installed
-$ ninja --version # Make sure ninja has been installed
-$ gcc --version # Make sure gcc has been installed
-$ g++ --version # Make sure g++ has been installed
-$ mkdir cmake-build-debug # Place cmake build files in this directory
-$ cd cmake-build-debug
-$ cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=ninja -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ -G Ninja ../ # Build CMake project
-$ cd .. # Back to root directory
-$ cmake --build cmake-build-debug --target <TARGET_NAME> # Then you can build and run any target with this command, the output executable file will be placed in the bin folder
-```
+   <img src="docs/images/Reload Project.png" alt="Reload Project" style="zoom:50%;" />
 
-### CLion Way
+2. 点击Target右边的运行按钮，然后程序以及相关的依赖代码就会被编译运行。
 
-1. Right click the root directory and click `Reload CMake Project`, then the cmake project will be loaded. In general, the project will be loaded automatically by CLion at first time you open the project.
+   <img src="docs/images/Run Example.png" alt="Run Example" style="zoom:80%;" />
 
-   ![Reload Project](docs/images/Reload Project.png)
+## 仿真流程
 
-2. Click the run button on the right of `Example | Debug`, the program will be built and run.
+<img src="docs/images/Flowchart.png" alt="Flowchart" style="zoom:50%;" />
 
-   ![Run Example](docs/images/Run Example.png)
+## 软件架构
 
-### Notes
+<img src="docs/images/SimuLib Arch.png" alt="SimuLib Arch" style="zoom:50%;" />
 
-There are some test cases under `test` folder, which can be used for testing availability of different functions. All the required header files has been placed in the `includes` folder.
+## 主要文件介绍（需要重点review的）
 
-## Installation Requirements on different Operating Systems
+### src（C++代码目录）
 
-### MacOS (Big Sur or higher)
+* 代码总行数：1752
 
-1. Install the Intel® oneAPI Base Toolkit: [m_BaseKit_p_2022.1.0.92_offline.dmg](https://registrationcenter-download.intel.com/akdlm/irc_nas/18342/m_BaseKit_p_2022.1.0.92_offline.dmg
-   ).
-   
-2. Install GNU GCC 7.* by `brew install gcc@7`, see [Homebrew](https://formulae.brew.sh/formula/gcc@7#default) for detail.
+* 注释总行数：632
 
-3. Configure `CLion > Preference > Build, Execution, Deployment > Toolchains`, add profile with C compiler (
-   path: `/usr/local/Cellar/gcc@7/7.5.0_4/bin/gcc-7`) and C++ compiler (
-   path: `/usr/local/Cellar/gcc@7/7.5.0_4/bin/g++-7`). Then move the new profile to the top as default.
+* 注释率：36%
 
-### Ubuntu 18.04
+* 空白行数：392
 
-1. (Optional) Recommend installation of Qt5 denpendencys by following this [link](https://wiki.qt.io/Building_Qt_5_from_Git)
+* 文件数量：22
 
-```shell
-$ sudo apt-get build-dep qt5-default
-$ sudo apt-get install libxcb-xinerama0-dev
-$ sudo apt-get install build-essential perl python git
-$ sudo apt-get install '^libxcb.*-dev' libx11-xcb-dev libglu1-mesa-dev libxrender-dev libxi-dev libxkbcommon-dev libxkbcommon-x11-dev
-$ sudo apt-get install flex bison gperf libicu-dev libxslt-dev ruby
-$ sudo apt-get install libxcursor-dev libxcomposite-dev libxdamage-dev libxrandr-dev libxtst-dev libxss-dev libdbus-1-dev libevent-dev libfontconfig1-dev libcap-dev libpulse-dev libudev-dev libpci-dev libnss3-dev libasound2-dev libegl1-mesa-dev gperf bison nodejs
-$ sudo apt-get install libasound2-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev libgstreamer-plugins-good1.0-dev libgstreamer-plugins-bad1.0-dev
-$ sudo apt install libclang-6.0-dev llvm-6.0
-```
+该目录下有两个目录，一个是`gpu`，包含了少许CUDA代码，一个是`simulib`，基本主要的C++代码都在这里
 
-2. GCC 7.5 should be distributed with Ubuntu 18.04 by default. Check the GCC version.
+* 工具函数文件：Tools.cpp, MatrixOperations.cpp, FFT.cpp, DecimalToBinary.cpp
+* 全局变量相关文件：Globals.cpp, InitGstate.cpp
+* 光纤业务逻辑相关文件：除以上两种之外其他所有文件
 
-```shell
-$ gcc --version
-gcc (Ubuntu 7.5.0-3ubuntu1~18.04) 7.5.0
-Copyright (C) 2017 Free Software Foundation, Inc.
-This is free software; see the source for copying conditions.  There is NO
-warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+### includes（头文件目录）
 
-$ g++ --version
-g++ (Ubuntu 7.5.0-3ubuntu1~18.04) 7.5.0
-Copyright (C) 2017 Free Software Foundation, Inc.
-This is free software; see the source for copying conditions.  There is NO
-warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-```
+* 代码总行数：743
 
-3. Install Intel® oneAPI Base Toolkit by following these [link1](https://www.intel.com/content/www/us/en/developer/tools/oneapi/base-toolkit-download.html?operatingsystem=linux&distributions=aptpackagemanager), [link2](https://www.intel.com/content/www/us/en/develop/documentation/installation-guide-for-intel-oneapi-toolkits-linux/top/installation/install-using-package-managers/apt.html#apt_apt-packages)
+* 注释总行数：411
 
-> (1) Remove all Intel® oneAPI packages
+* 注释率：55%
 
-```shell
-$ sudo apt autoremove intel-basekit intel-hpckit intel-iotkit intel-dlfdkit intel-aikit intel-renderkit
-```
+* 空白行数：259
 
-> (2) Set up the Intel® oneAPI repository:
+* 文件数量：21
 
-```shell
-# create 'mkl-set-repo.sh' with following contents and execute
-$ wget -O- https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB \
-| gpg --dearmor | sudo tee /usr/share/keyrings/oneapi-archive-keyring.gpg > /dev/null
+`src`目录下的`Eigen`和`unsupported`是依赖库不用看，Internal和SimuLib是用来包含所有的自定义头文件，`gpu`目录下的文件是CUDA相关的头文件，`parmat`目录下是用来实现CPU和GPU两种数据结构的代码，其余的文件都是工具型函数和光纤业务逻辑代码相关的文件。
 
-$ echo "deb [signed-by=/usr/share/keyrings/oneapi-archive-keyring.gpg] https://apt.repos.intel.com/oneapi all main" | sudo tee /etc/apt/sources.list.d/oneAPI.list
-```
+### example（样例代码目录）
 
-Notice: Change the 'Download from' option in 'Software and Updates > Ubuntu Software', choose a server in China, for example, mirrors.tuna.tsinghua.edu.cn
+* 代码总行数：180
 
-> (3) Update the repository and install
+* 注释总行数：117
 
-```shell
-$ sudo apt update
-$ sudo apt install intel-basekit intel-hpckit intel-iotkit intel-dlfdkit intel-aikit intel-renderkit
-```
+* 注释率：65%
 
-4. Configure `CLion > Preference > Build, Execution, Deployment > Toolchains`, add profile with C compiler (
-   path: `/usr/bin/gcc`) and C++ compiler (path: `/usr/bin/g++`). Then move the new profile to the top as default.
+* 空白行数：86
 
-## SimuLib Coding Style
+* 文件数量：3
 
-The custom coding style of the project: [details](docs/SimuLib Coding Style.md)
+Example.cpp是对上层提供的样例，是包含了所有器件的最完整的样例，TestExample.cpp是读取了固定的随机二进制数据用来方便比对和MATLAB的结果是否一致，EyeExample.cpp是仿照了Optilux ex11用来调试眼图分析器正确性的
+
+### CMakeLists.txt（CMake配置文件）
+
+在根目录以及各个小目录中都会有CMakeLists.txt文件，根目录下的CMakeLists.txt配置了全局性的信息，比如输出文件的位置，添加的编译器选项，加载外部依赖（MKL，CUDA），添加CMake子目录
+
+各个小目录下的CMakeLists.txt文件一般用来将代码文件以target的形式加载进CMake项目，除此之外也会负责管理各个target之间的依赖关系
+
+## SimuLib 遵循的代码风格
+
+| Type           | Coding Style |
+| -------------- | ------------ |
+| Class, Struct  | PascalCase   |
+| Function       | camelCase    |
+| Variable       | camelCase    |
+| File (.cpp .h) | PascalCase   |
+| Constant value | SNAKE_CASE   |
+| Enum           | SNAKE_CASE   |
+

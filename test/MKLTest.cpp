@@ -40,7 +40,7 @@ int main() {
     int m, n, k, i, j;
     double alpha, beta;
 
-    const int length = 60;
+    const int length = 1000;
 
     printf("\n This example computes real matrix C=alpha*A*B+beta*C using \n"
            " Intel(R) MKL function dgemm, where A, B, and  C are matrices and \n"
@@ -83,11 +83,12 @@ int main() {
     MatrixXd m1 = MatrixXd ::Random(length, length);
     MatrixXd m2 = MatrixXd ::Random(length, length);
     MatrixXd m3(length, length);
+//    std::cout << m1 << std::endl;
 
     chrono::steady_clock::time_point begin = chrono::steady_clock::now();
 
     //    printf(" Computing matrix product using Intel(R) MKL dgemm function via CBLAS interface \n\n");
-    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
+    cblas_dgemm(CblasColMajor, CblasNoTrans, CblasNoTrans,
                 m, n, k, alpha, m1.data(), k, m2.data(), n, beta, m3.data(), n);
     //    printf("\n Computations completed.\n\n");
     //
@@ -116,11 +117,13 @@ int main() {
     //    }
 
     //    printf("\n Deallocating memory \n\n");
+
+    chrono::steady_clock::time_point end = chrono::steady_clock::now();
+
     mkl_free(A);
     mkl_free(B);
     mkl_free(C);
 
-    chrono::steady_clock::time_point end = chrono::steady_clock::now();
     long long duration_ms                = chrono::duration_cast<chrono::milliseconds>(end - begin).count();
     double time                          = (double) duration_ms / 1000;
     cout << "运行时间: " << time << "s" << endl;

@@ -25,7 +25,7 @@ using namespace std;
 
 int main() {
 
-    const int length = 100;
+    const int length = 1000;
 
     MatrixXd m1 = MatrixXd ::Random(length, length);
     MatrixXd m2 = MatrixXd ::Random(length, length);
@@ -40,7 +40,7 @@ int main() {
     long long duration_ms = chrono::duration_cast<chrono::milliseconds>(end - begin).count();
     double time           = (double) duration_ms / 1000;
     cout << "测试通过，可以运行" << endl;
-    cout << "使用的线程数：" << nbThreads() << endl;
+    cout << "使用的线程数：" << Eigen::nbThreads() << endl;
     cout << "Eigen运行时间: " << time << "s" << endl;
     return 0;
 }

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<results>
+    <error file="/Users/lichunyu/CLionProjects/SimuLib/src/simulib/DigitalModulator.cpp" line="210" id="uninit" subid="uninitvar" severity="Serious" msg="Uninitialized variable: avge" web_identify="{&quot;identify&quot;:&quot;avge&quot;}" func_info="static MatrixXcd HARDWARE_TYPE::elecSrc ( MatrixXcd level , const std :: string &amp; pulseType , Par par , long nSymbol , int nsps , int nd , long n_fft )" content="200:                                                                                          .sum()) /
+201:                pow(nsps, 2);
+202:     } else if (par.norm == &quot;mean&quot;) {
+203:         avge = elec.cwiseAbs2().mean();
+204:     } else if (par.norm == &quot;no&quot;) {
+205:         avge = 1;
+206:     } else {
+207:         ERROR(&quot;Unknwon normalization method&quot;);
+208:     }
+209: 
+210:     return elec / sqrt(avge);
+211: }
+212: 
+213: namespace {
+214: 
+215: enum PTypeOption {
+216:     Costails,
+217:     Userfir,
+218:     rc,
+219:     rootrc
+220: };
+"/>
+    <error file="/Users/lichunyu/CLionProjects/SimuLib/src/simulib/Fiber.cpp" line="260" id="uninit" subid="uninitvar" severity="Serious" msg="Uninitialized variable: pmax" web_identify="{&quot;identify&quot;:&quot;pmax&quot;}" func_info="double HARDWARE_TYPE::NextStep ( const MatrixXcd &amp; field , const Fiber &amp; fiber , double dz_old )" content="250:         step     = dz_old * std::exp(fiber.alphaLinear / q * dz_old);  // [m]
+251: 
+252:     } else {  // nonlinear phase criterion
+253:         double pmax;
+254:         if (fiber.isDual) {  // max over time
+255:             // 存在偏振的情况，还未实现
+256:             // Pmax = max(abs(u(:,1:2:end)).^2 + abs(u(:,2:2:end)).^2);
+257:         } else {
+258:             pmax = field.cwiseAbs2().maxCoeff();
+259:         }
+260:         double invLnl = pmax * fiber.gam;                  // max over channels
+261:         double leff   = fiber.accuracyParameter / invLnl;  // effective length [m] of the step
+262:         double dl     = fiber.alphaLinear * leff;          // ratio effective length/attenuation length
+263:         if (dl &gt;= 1) {
+264:             step = fiber.maxStepLength;  // [m]
+265:         } else {
+266:             if (fiber.alphaLinear == 0) {
+267:                 step = leff;
+268:             } else {
+269:                 step = -1 / fiber.alphaLinear * std::log(1 - dl);
+270:             }
+"/>
+    <error file="/Users/lichunyu/CLionProjects/SimuLib/src/simulib/Fiber.cpp" line="421" id="uninit" subid="uninitPtr" severity="Serious" msg="Uninitialized variable: linear" web_identify="{&quot;identify&quot;:&quot;linear&quot;}" func_info="std::tuple &lt; Linear * , double &gt; HARDWARE_TYPE::CheckFiber ( const E &amp; e , Fiber &amp; fiber )" content="411:         // lin.db extended later
+412:     } else {
+413:         dgd                              = 0;  // Turn off all polarization and birefringence effects
+414:         fiber.nWavePlates                = 1;
+415:         fiber.coupling                   = &quot;none&quot;;
+416:         linear                           = new ScalarLinear();
+417:         linear-&gt;is_scalar                = true;
+418:         ((ScalarLinear *) linear)-&gt;matin = 1;
+419:         ((ScalarLinear *) linear)-&gt;db    = 0;
+420:     }
+421:     linear-&gt;is_unique = fiber.isUnique;
+422: 
+423:     // SSFM checks
+424: 
+425:     // Maximum step
+426:     if (fiber.maxStepLength &gt; fiber.length)
+427:         fiber.maxStepLength = fiber.length;
+428: 
+429:     if (fiber.isKerr) {
+430:         if (fiber.stepUpdate.empty()) {
+431:             fiber.stepUpdate = &quot;cle&quot;;
+"/>
+
+</results>

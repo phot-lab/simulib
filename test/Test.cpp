@@ -20,6 +20,15 @@
 
 using namespace SimuLib;
 
+int foo() {
+    return 3;
+}
+
 int main() {
-    std::cout << atan2(3,4) << std::endl;
+    double a;
+    std::cout << a << std::endl;
+    string name         = "Hello";
+    const string &other = name;
+    name                = "change";
+    std::cout << other << std::endl;
 }
