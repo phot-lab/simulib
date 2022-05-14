@@ -43,6 +43,10 @@ MatrixXcd oToE(const E& e, double nt, const RxOption& rxOption);
  * @return electric wave.
  */
 
+/**
+ * Frontend receiver module
+ */
+
 MatrixXcd rxFrontend(E e, RowVectorXd lambda, int symbrate, const RxOption &rxOption) {
 
     // Create linear optical filters: OBPF (+rxOption)

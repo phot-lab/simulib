@@ -16,6 +16,10 @@
  * Supported by: National Key Research and Development Program of China
  */
 
+/**
+ * Custom functions to emulate the matrix operations in MATLAB
+ */
+
 #include "Internal"
 
 using namespace std;

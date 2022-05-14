@@ -15,8 +15,13 @@
  * Created: 2022/4/14
  * Supported by: National Key Research and Development Program of China
  */
-#ifndef EXTERNALFUNCTIONS_HPP
-#define EXTERNALFUNCTIONS_HPP
+
+/**
+ * Exposed function declarations
+ */
+
+#ifndef EXPOSEDFUNCTIONS_HPP
+#define EXPOSEDFUNCTIONS_HPP
 
 #include "IQModulator.h"
 #include "Mzmodulator.hpp"
@@ -56,4 +61,4 @@ MatrixXcd rxFrontend(E e, RowVectorXd lambda, int symbrate, const RxOption &rxOp
 
 }  // namespace SimuLib
 
-#endif  // EXTERNALFUNCTIONS_HPP
+#endif  // EXPOSEDFUNCTIONS_HPP

@@ -16,6 +16,10 @@
  * Supported by: National Key Research and Development Program of China
  */
 
+/**
+ * Digital modulator implementation
+ */
+
 #include "Internal"
 
 using namespace std;
@@ -97,7 +101,7 @@ tuple<MatrixXcd, double> digitalModulator(const MatrixXi &patBinary, double symb
     par.modFormat = modFormat;
 
     // 1: convert the pattern into stars of the constellations
-    MatrixXcd level = Pat2Samp(patBinary, modFormat).cast<complex<double>>();
+    MatrixXcd level = pat2Samp(patBinary, modFormat).cast<complex<double>>();
 
     // 2: create a linearly modulated digital signal
     MatrixXcd signal = elecSrc(level, pulseType, par, nSymbol, nsps, nd, n_fft);

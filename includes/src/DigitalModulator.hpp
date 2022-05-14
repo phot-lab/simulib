@@ -15,6 +15,11 @@
  * Created: 2022/3/19
  * Supported by: National Key Research and Development Program of China
  */
+
+/**
+ * structs that are used in digital modulator implementation
+ */
+
 #ifndef DIGITALMODULATOR_HPP
 #define DIGITALMODULATOR_HPP
 

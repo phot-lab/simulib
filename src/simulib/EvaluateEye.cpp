@@ -16,6 +16,10 @@
  * Supported by: National Key Research and Development Program of China
  */
 
+/**
+ * Evaluate eye module implementation
+ */
+
 #include "Internal"
 
 using namespace std;

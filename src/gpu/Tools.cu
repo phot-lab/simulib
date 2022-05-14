@@ -25,6 +25,10 @@
 #include <cuda_runtime_api.h>
 #include <iostream>
 
+/**
+ * Custom CUDA general tools
+ */
+
 void handleError(cudaError_t err, const char *file, int line) {
 
     // CUDA error handling from the "CUDA by example" book

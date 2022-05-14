@@ -16,6 +16,10 @@
  * Supported by: National Key Research and Development Program of China
  */
 
+/**
+ * Fiber transmit module
+ */
+
 
 #include "Internal"
 #include <chrono>

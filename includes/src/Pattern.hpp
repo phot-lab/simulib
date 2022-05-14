@@ -15,6 +15,11 @@
  * Created: 2022/3/19
  * Supported by: National Key Research and Development Program of China
  */
+
+/**
+ * pat2Samp function declaration
+ */
+
 #ifndef PATTERN_HPP
 #define PATTERN_HPP
 
@@ -25,7 +30,7 @@ namespace SimuLib {
 
 namespace HARDWARE_TYPE {
 
-MatrixXcd Pat2Samp(const MatrixXi &pat_bin, const string &modFormat);
+MatrixXcd pat2Samp(const MatrixXi &pat_bin, const string &modFormat);
 
 }
 

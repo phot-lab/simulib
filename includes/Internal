@@ -38,7 +38,7 @@ using namespace SimuLib::CPU;
 #include "src/CommonTypes.hpp"
 #include "src/DSPTools.hpp"
 #include "src/DigitalModulator.hpp"
-#include "src/ExternalFunctions.hpp"
+#include "src/ExposedFunctions.hpp"
 #include "src/FFT.hpp"
 #include "src/Fiber.hpp"
 #include "src/Globals.hpp"
@@ -46,8 +46,8 @@ using namespace SimuLib::CPU;
 #include "src/MatrixOperations.hpp"
 #include "src/Mzmodulator.hpp"
 #include "src/Pattern.hpp"
-#include "src/Tools.hpp"
 #include "src/RxFrontend.h"
+#include "src/Tools.hpp"
 
 #include "src/DecimalToBinary.h"
 #include "src/IQModulator.h"

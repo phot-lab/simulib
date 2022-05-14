@@ -15,6 +15,11 @@
  * Created: 2022/3/6
  * Supported by: National Key Research and Development Program of China
  */
+
+/**
+ * common types
+ */
+
 #ifndef OPTICALAB_GLOBALS_H
 #define OPTICALAB_GLOBALS_H
 

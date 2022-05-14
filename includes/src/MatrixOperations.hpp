@@ -15,6 +15,11 @@
  * Created: 2022/3/18
  * Supported by: National Key Research and Development Program of China
  */
+
+/**
+ * function declarations realted to matrix operations
+ */
+
 #ifndef SIMULIB_MATRIX_TOOLS_H
 #define SIMULIB_MATRIX_TOOLS_H
 

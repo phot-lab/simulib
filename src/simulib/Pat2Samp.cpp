@@ -16,6 +16,10 @@
  * Supported by: National Key Research and Development Program of China
  */
 
+/**
+ * A function used for converting pattern to samples
+ */
+
 #include "Internal"
 #include <string>
 #include <vector>
@@ -28,7 +32,7 @@ namespace HARDWARE_TYPE {
 
 MatrixXcd finalizePat2Samp(const MatrixXi &pat_bin, const FormatInfo &format_info);
 
-MatrixXcd Pat2Samp(const MatrixXi &pat_bin, const string &modFormat) {
+MatrixXcd pat2Samp(const MatrixXi &pat_bin, const string &modFormat) {
     FormatInfo formatInfo = modFormatInfo(modFormat);
     double num_bit        = log2(formatInfo.digit);
     MatrixXcd dataid;

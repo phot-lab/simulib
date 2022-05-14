@@ -15,6 +15,11 @@
  * Created: 2022/3/9
  * Supported by: National Key Research and Development Program of China
  */
+
+/**
+ * Function declarations related to FFT
+ */
+
 #ifndef SIMULIB_FFT_H
 #define SIMULIB_FFT_H
 
