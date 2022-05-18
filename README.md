@@ -44,7 +44,12 @@ SimuLib               (根目录)
 
 <img src="docs/images/SimuLib Arch.png" alt="SimuLib Arch" style="zoom:50%;" />
 
-## 主要文件介绍（需要重点review的）
+## 建议Review的顺序
+
+1. 首先看`example`目录下的Example.cpp，根据这个文件再去依次看各个光纤器件
+2. 看光纤器件的实现函数时，碰到了工具型函数再点开看
+
+## Review各目录介绍
 
 ### src（C++代码目录）
 
@@ -58,11 +63,7 @@ SimuLib               (根目录)
 
 * 文件数量：22
 
-该目录下有两个目录，一个是`gpu`，包含了少许CUDA代码，一个是`simulib`，基本主要的C++代码都在这里
-
-* 工具函数文件：Tools.cpp, MatrixOperations.cpp, FFT.cpp, DecimalToBinary.cpp
-* 全局变量相关文件：Globals.cpp, InitGstate.cpp
-* 光纤业务逻辑相关文件：除以上两种之外其他所有文件
+[详细信息](docs/src.md)
 
 ### includes（头文件目录）
 
@@ -76,7 +77,7 @@ SimuLib               (根目录)
 
 * 文件数量：21
 
-`src`目录下的`Eigen`和`unsupported`是依赖库不用看，Internal和SimuLib是用来包含所有的自定义头文件，`gpu`目录下的文件是CUDA相关的头文件，`parmat`目录下是用来实现CPU和GPU两种数据结构的代码，其余的文件都是工具型函数和光纤业务逻辑代码相关的文件。
+[详细信息](docs/includes.md)
 
 ### example（样例代码目录）
 
@@ -90,9 +91,9 @@ SimuLib               (根目录)
 
 * 文件数量：3
 
-Example.cpp是对上层提供的样例，是包含了所有器件的最完整的样例，TestExample.cpp是读取了固定的随机二进制数据用来方便比对和MATLAB的结果是否一致，EyeExample.cpp是仿照了Optilux ex11用来调试眼图分析器正确性的
+Example.cpp是对上层提供的样例，是包含了所有器件的最完整的样例，其它两个example就不review了
 
-### CMakeLists.txt（CMake配置文件）
+### CMake配置文件（非必要review，想看就看吧）
 
 在根目录以及各个小目录中都会有CMakeLists.txt文件，根目录下的CMakeLists.txt配置了全局性的信息，比如输出文件的位置，添加的编译器选项，加载外部依赖（MKL，CUDA），添加CMake子目录
 

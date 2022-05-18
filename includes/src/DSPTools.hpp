@@ -15,6 +15,11 @@
 * Created: 2022/3/16
 * Supported by: National Key Research and Development Program of China
 */
+
+/**
+ * Digital Signal Processing tools
+ */
+
 #ifndef SIMULIB_DSP_TOOLS_H
 #define SIMULIB_DSP_TOOLS_H
 

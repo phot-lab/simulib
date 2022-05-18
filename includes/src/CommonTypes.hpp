@@ -15,6 +15,11 @@
  * Created: 2022/3/1
  * Supported by: National Key Research and Development Program of China
  */
+
+/**
+ * Common types that may be used in any module
+ */
+
 #ifndef OPTICALAB_COMMON_TYPES_H
 #define OPTICALAB_COMMON_TYPES_H
 

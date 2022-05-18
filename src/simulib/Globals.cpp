@@ -18,6 +18,10 @@
 
 #include "Internal"
 
+/**
+ * Global variables used by other modules
+ */
+
 namespace SimuLib {
 
 const double LIGHT_SPEED     = 299792458;        // Speed of light in vacuum [m/s]

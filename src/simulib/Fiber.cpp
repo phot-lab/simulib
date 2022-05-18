@@ -16,6 +16,10 @@
  * Supported by: National Key Research and Development Program of China
  */
 
+/**
+ * Fiber transmit module
+ */
+
 
 #include "Internal"
 #include <chrono>
@@ -53,9 +57,9 @@ tuple<Out, E> fiberTransmit(E &e, Fiber fiber) {
 
     chrono::steady_clock::time_point begin = chrono::steady_clock::now();  // Start time
 
-    double dgd;
+    double diffGroupDelay;
     Linear *linear;
-    tie(linear, dgd) = CheckFiber(e, fiber);
+    tie(linear, diffGroupDelay) = CheckFiber(e, fiber);
 
     /************************ SET-UP PARAMETERS ************************/
 
@@ -79,10 +83,10 @@ tuple<Out, E> fiberTransmit(E &e, Fiber fiber) {
 
     double domega_i  = 2 * M_PI * LIGHT_SPEED * (1. / e.lambda(0, 0) - 1. / fiber.lambda);  // [1/ns]
     unsigned int ipm = 0;
-    if (fiber.isUnique) {                    // Unique field
-        double beta1  = b1 + dgd / 2;        // [ns/m] @ E.lambda
-        double beta2  = b2 + b3 * domega_i;  // beta2 [ns^2/m] @ E.lambda
-        double beta3  = b3;                  // [ns^3/m] @ E.lambda
+    if (fiber.isUnique) {                         // Unique field
+        double beta1  = b1 + diffGroupDelay / 2;  // [ns/m] @ E.lambda
+        double beta2  = b2 + b3 * domega_i;       // beta2 [ns^2/m] @ E.lambda
+        double beta3  = b3;                       // [ns^3/m] @ E.lambda
         VectorXd unit = VectorXd::Ones(omega_size);
         betat.resize(omega_size, 1);
         betat.col(ipm) = omega.cwiseProduct((omega.cwiseProduct(omega * beta3 / 6 + unit * beta2 / 2)) + unit * beta1);
@@ -90,7 +94,7 @@ tuple<Out, E> fiberTransmit(E &e, Fiber fiber) {
         // betat: deterministic beta coefficient [1/m]
         if (fiber.isDual) {  // Add DGD on polarizations
             betat.conservativeResize(omega_size, 2);
-            betat.col(ipm + 1) = betat.col(ipm) - dgd / 2 * omega;
+            betat.col(ipm + 1) = betat.col(ipm) - diffGroupDelay / 2 * omega;
         }
     } else {                                         // Separate field
         double freq = LIGHT_SPEED / e.lambda(0, 0);  // carrier frequencies [GHz]
@@ -108,6 +112,7 @@ tuple<Out, E> fiberTransmit(E &e, Fiber fiber) {
             ERROR("Cannot continue: not finite nonlinear Kerr coefficient.");
     }
 
+    // coefficient
     double coeff;
     if (fiber.isManakov) {  // Manakov
         if (fiber.isDual) {
@@ -250,7 +255,7 @@ double NextStep(const MatrixXcd &field, const Fiber &fiber, double dz_old) {
         step     = dz_old * std::exp(fiber.alphaLinear / q * dz_old);  // [m]
 
     } else {  // nonlinear phase criterion
-        double pmax;
+        double pmax{};
         if (fiber.isDual) {  // max over time
             // 存在偏振的情况，还未实现
             // Pmax = max(abs(u(:,1:2:end)).^2 + abs(u(:,2:2:end)).^2);
@@ -392,12 +397,14 @@ tuple<Linear *, double> CheckFiber(const E &e, Fiber &fiber) {
         }
     }
 
-    Linear *linear;
-    double dgd;
+    Linear *linear= nullptr;
+
+    // Differential Group delay
+    double diffGroupDelay;
 
     if (fiber.coupling == "pol") {                                                                         // X-Y coupling
         double corr_len = fiber.length / fiber.nWavePlates;                                                // waveplate length [m] (aka correlation length)
-        dgd             = fiber.pmdParameter / sqrt(corr_len) * sqrt(3 * M_PI / 8) / sqrt(1000) * (1e-3);  // Differential
+        diffGroupDelay  = fiber.pmdParameter / sqrt(corr_len) * sqrt(3 * M_PI / 8) / sqrt(1000) * (1e-3);  // Differential
         // Group delay (DGD) per unit length [ns/m] @ x.lambda within a
         // Waveplate. To get [Df00] remember that within a waveplate the delay is dgd * corr_len.
 
@@ -410,7 +417,7 @@ tuple<Linear *, double> CheckFiber(const E &e, Fiber &fiber) {
         }
         // lin.db extended later
     } else {
-        dgd                              = 0;  // Turn off all polarization and birefringence effects
+        diffGroupDelay                   = 0;  // Turn off all polarization and birefringence effects
         fiber.nWavePlates                = 1;
         fiber.coupling                   = "none";
         linear                           = new ScalarLinear();
@@ -465,9 +472,9 @@ tuple<Linear *, double> CheckFiber(const E &e, Fiber &fiber) {
     } else {
         fiber.isSym = DEF_IS_SYMMETRIC;
     }
-    return make_tuple(linear, dgd);
+    return make_tuple(linear, diffGroupDelay);
 }
 
-}
+}  // namespace HARDWARE_TYPE
 
 }  // namespace SimuLib

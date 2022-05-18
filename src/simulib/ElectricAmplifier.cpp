@@ -16,6 +16,10 @@
  * Supported by: National Key Research and Development Program of China
  */
 
+/**
+ * Electric amplifier implementation
+ */
+
 #include <Internal>
 
 namespace SimuLib {

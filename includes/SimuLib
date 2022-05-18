@@ -29,8 +29,8 @@
 #else
 #undef HARDWARE_TYPE
 #define HARDWARE_TYPE GPU
-#undef EXTERNALFUNCTIONS_HPP
-#include "src/ExternalFunctions.hpp"
+#undef EXPOSEDFUNCTIONS_HPP
+#include "src/ExposedFunctions.hpp"
 #endif
 
 

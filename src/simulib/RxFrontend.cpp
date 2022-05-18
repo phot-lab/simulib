@@ -25,9 +25,9 @@ namespace SimuLib {
 
 namespace HARDWARE_TYPE {
 
-VectorXcd myFilter(string filterType, const VectorXd &freq, double bandwidth, double p);
+VectorXcd rxFilter(string filterType, const VectorXd &freq, double bandwidth, double p);
 E filterEnv(E e, RowVectorXd lambda, const VectorXcd &hf);
-MatrixXcd oToE(const E& e, double nt, const RxOption& rxOption);
+MatrixXcd opti2Elec(const E& e, double nt, const RxOption& rxOption);
 
 /**
  * @brief receiver front-end
@@ -43,6 +43,10 @@ MatrixXcd oToE(const E& e, double nt, const RxOption& rxOption);
  * @return electric wave.
  */
 
+/**
+ * Frontend receiver module
+ */
+
 MatrixXcd rxFrontend(E e, RowVectorXd lambda, int symbrate, const RxOption &rxOption) {
 
     // Create linear optical filters: OBPF (+rxOption)
@@ -53,7 +57,7 @@ MatrixXcd rxFrontend(E e, RowVectorXd lambda, int symbrate, const RxOption &rxOp
         // Hf = Hf .* myfilter(x.oftype,Fnorm,0.5*x.obw,x.filterParameter);
         // 未完成
     } else {
-        hf = myFilter(rxOption.ofType, fNorm, 0.5 * rxOption.obw, rxOption.filterParameter);
+        hf = rxFilter(rxOption.ofType, fNorm, 0.5 * rxOption.obw, rxOption.filterParameter);
     }
 
     // 1: apply optical filter
@@ -61,11 +65,11 @@ MatrixXcd rxFrontend(E e, RowVectorXd lambda, int symbrate, const RxOption &rxOp
 
     // 2: optical to electrical conversion
     double nt      = gstate.SAMP_FREQ / symbrate;  // number of points per symbol
-    MatrixXcd iric = oToE(e, nt, rxOption);
+    MatrixXcd iric = opti2Elec(e, nt, rxOption);
     return iric;
 }
 
-MatrixXcd oToE(const E& e, double nt, const RxOption& rxOption) {
+MatrixXcd opti2Elec(const E& e, double nt, const RxOption& rxOption) {
     Index nFFT = e.field.size();
     MatrixXcd iric;
     if (rxOption.modFormat == "ook") {
@@ -106,11 +110,11 @@ E filterEnv(E e, RowVectorXd lambda, const VectorXcd &hf) {
     int ndfn       = (int) round((deltaFN / minFreq));  // Spacing in points
     e.field        = fftCol(e.field);
     e.field        = circShift(e.field, ndfn);  // Undo what did in MULTIPLEXER
-    e.field        = ifftCol(mvProduct(e.field, hf));
+    e.field        = ifftCol(matVecProduct(e.field, hf));
     return e;
 }
 
-VectorXcd myFilter(string filterType, const VectorXd &freq, double bandwidth, double p) {
+VectorXcd rxFilter(string filterType, const VectorXd &freq, double bandwidth, double p) {
 
     /*** CONSTANTS ***/
     const double r4p2r2 = 2.61312592975275;  // =sqrt(2*(2+sqrt(2))); used in Butterworth 4th order

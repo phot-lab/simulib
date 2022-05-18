@@ -16,6 +16,10 @@
  * Supported by: National Key Research and Development Program of China
  */
 
+/**
+ * Tools function declarations
+ */
+
 #ifndef OPTICALAB_TOOLS_H
 #define OPTICALAB_TOOLS_H
 

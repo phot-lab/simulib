@@ -22,6 +22,10 @@
 #include <cufft.h>
 #include <iostream>
 
+/**
+ * CUDA FFT implementation
+ */
+
 using namespace std;
 
 #define IDX(i, j, ld) (((j) * (ld)) + (i))

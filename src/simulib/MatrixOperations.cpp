@@ -16,6 +16,10 @@
  * Supported by: National Key Research and Development Program of China
  */
 
+/**
+ * Custom functions to emulate the matrix operations in MATLAB
+ */
+
 #include "Internal"
 
 using namespace std;
@@ -205,13 +209,19 @@ VectorXd sortEigen(VectorXd v, bool ascend) {
 
 VectorXcd sortEigen(VectorXcd v, bool ascend) {
     if (ascend)
-        std::sort(v.begin(), v.end(), [](complex<double> lhs, complex<double> rhs) { return rhs.real() > lhs.real(); });
+        std::sort(v.begin(), v.end(),
+                  [](complex<double> lhs, complex<double> rhs) {
+                      return rhs.real() > lhs.real();
+                  });
     else
-        std::sort(v.begin(), v.end(), [](complex<double> lhs, complex<double> rhs) { return rhs.real() < lhs.real(); });
+        std::sort(v.begin(), v.end(),
+                  [](complex<double> lhs, complex<double> rhs) {
+                      return rhs.real() < lhs.real();
+                  });
     return v;
 }
 
-MatrixXcd mvProduct(MatrixXcd m, const VectorXcd &v) {
+MatrixXcd matVecProduct(MatrixXcd m, const VectorXcd &v) {
     MatrixXcd res(m.rows(), m.cols());
     for (Index i = 0; i < m.cols(); ++i) {
         res.col(i) = m.col(i).cwiseProduct(v);

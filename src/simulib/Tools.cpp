@@ -16,6 +16,10 @@
  * Supported by: National Key Research and Development Program of China
  */
 
+/**
+ * General tools, based on CPU
+ */
+
 #include "Internal"
 #include <cmath>
 #include <iostream>

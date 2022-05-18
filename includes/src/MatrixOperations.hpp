@@ -15,6 +15,11 @@
  * Created: 2022/3/18
  * Supported by: National Key Research and Development Program of China
  */
+
+/**
+ * function declarations realted to matrix operations
+ */
+
 #ifndef SIMULIB_MATRIX_TOOLS_H
 #define SIMULIB_MATRIX_TOOLS_H
 
@@ -90,7 +95,7 @@ Matrix<T, Dynamic, Dynamic> truncateMatrix(Matrix<T, Dynamic, Dynamic> &m, Vecto
     return truncate;
 }
 
-MatrixXcd mvProduct(MatrixXcd m, const VectorXcd &v);
+MatrixXcd matVecProduct(MatrixXcd m, const VectorXcd &v);
 
 // https://blog.csdn.net/xinshuwei/article/details/84643810
 template<typename T>

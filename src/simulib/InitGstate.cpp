@@ -18,6 +18,10 @@
 
 #include "Internal"
 
+/**
+ * Functions for initializing global variables
+ */
+
 using namespace std;
 
 namespace SimuLib {

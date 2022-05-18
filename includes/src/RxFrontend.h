@@ -15,6 +15,11 @@
  * Created: 2022/4/26
  * Supported by: National Key Research and Development Program of China
  */
+
+/**
+ * RxOption struct
+ */
+
 #ifndef RXFRONTEND_H
 #define RXFRONTEND_H
 

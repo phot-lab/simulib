@@ -16,6 +16,10 @@
  * Supported by: National Key Research and Development Program of China
  */
 
+/**
+ * FFT tools running on the CPU
+ */
+
 #include "Internal"
 
 using namespace std;

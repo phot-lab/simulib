@@ -16,6 +16,10 @@
  * Supported by: National Key Research and Development Program of China
  */
 
+/**
+ * A function used for generating random binary sequence
+ */
+
 #include "Internal"
 #include <string>
 
