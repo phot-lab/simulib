@@ -24,8 +24,8 @@
 #ifdef SIMULIB_USE_GPU
 #undef HARDWARE_TYPE
 #define HARDWARE_TYPE CPU
-#undef EXTERNALFUNCTIONS_HPP
-#include "src/ExternalFunctions.hpp"
+#undef EXPOSEDFUNCTIONS_HPP
+#include "src/ExposedFunctions.hpp"
 #else
 #undef HARDWARE_TYPE
 #define HARDWARE_TYPE GPU
