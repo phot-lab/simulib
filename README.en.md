@@ -28,17 +28,30 @@ SimuLib              (root directory)
 
 ### Command Line Way
 
+First of all, you should the following command line tools have been installed on your machine.
+
+* gcc/g++
+* cmake
+* ninja
+
+Then, follow below steps to build your project. (Ensure you are under root dir)
 ```shell
-$ cmake --version # Make sure cmake has been installed
-$ ninja --version # Make sure ninja has been installed
-$ gcc --version # Make sure gcc has been installed
-$ g++ --version # Make sure g++ has been installed
-$ mkdir cmake-build-debug # Place cmake build files in this directory
-$ cd cmake-build-debug
-$ cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=ninja -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ -G Ninja ../ # Build CMake project
-$ cd .. # Back to root directory
-$ cmake --build cmake-build-debug --target <TARGET_NAME> # Then you can build and run any target with this command, the output executable file will be placed in the bin folder
+# Build cmake project, all the intermidiate files will be stored in build dir.
+cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_MAKE_PROGRAM=ninja -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ -G Ninja -S . -B build
+
+# Build CPU library
+cmake --build build --target SimuLibCPU
 ```
+
+Now the libSimuLibCPU.a appears in the `lib` folder. Link this file to use CPU functions.
+
+If you want to compile GPU library, first make sure CUDA has been installed on your machine. Then enter below command line,
+
+```shell
+cmake --build build --target SimuLibGPU
+```
+
+After that you will get SimuLibGPU.a in `lib` folder. Link two libraries simultaneously to use CPU and GPU functions.
 
 ### CLion Way
 

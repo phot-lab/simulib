@@ -16,6 +16,75 @@
  * Supported by: National Key Research and Development Program of China
  */
 
+/**
+ * %LASERSOURCE Multi-channel laser source
+%   E = LASERSOURCE(PTX,LAM) creates a comb of constant waves of powers
+%   PTX [mW] at wavelengths LAM [nm]. Such waves are stored in the struct E
+%   of fields:
+%
+%       E.lambda = LAM
+%       E.field  = time samples of the electric field along rows
+%
+%   PTX can be a scalar or a vector of the same length of LAM. In the first
+%   case, the same power is used for all channels.
+%
+%   In dual-polarization mode (default), E.field has 2*length(LAM) columns,
+%   where the odd columns represent x-polarizations samples, while
+%   the even columns the y-polarizations samples. In single-polarization
+%   mode (see options), the length is halved and only the x-polarizations
+%   exist along columns.
+%
+%   For instance, the call E = LASERSOURCE(5,[1550 1551]) yields:
+%
+%       E.lambda = [1550 1551]
+%       E.field(k,:) = [sqrt(5), 0, sqrt(5), 0]
+%
+%   where E.field(k,1) refers to carrier 1550, x-polarization, E.field(k,2)
+%   to carrier 1550, y-polarization, E.field(k,3) to carrier 1551,
+%   x-polarization, E.field(k,4) to carrier 1551, y-polarization.
+%
+%   E = LASERSOURCE(PTX,LAM,SPAC,NLAMBDA) works with a scalar LAM and the
+%   additional input SPAC representing the channel spacing [nm]. In such a
+%   case, a comb of uniformly spaced constant waves is created up to
+%   NLAMBDA carriers, with central wavelength LAM.
+%
+%   Note: if SPAC is present, the channel spacing is uniform in the
+%       frequency domain, according to the ITU-T recommendations. Hence,
+%       the spacing is slightly non-uniform in the wavelength domain. For
+%       instance, with LAM = 1550, SPAC = 0.4 and NLAMBDA = 5, the
+%       following wavelengths, and the corresponding carrier frequencies,
+%       are created (only four digits are shown):
+%
+%       [1549.2004 1549.6001 1550.0000 1550.4001 1550.8004]     [nm]
+%       [193.3147  193.3646  193.4145  193.4644  193.5143]      [THz]
+%
+%
+%   E = LASERSOURCE(PTX,LAM,SPAC,NLAMBDA,OPTIONS) or
+%   E = LASERSOURCE(PTX,LAM,OPTIONS) has the additional struct variable
+%   OPTIONS:
+%
+%      OPTIONS.pol: if 'single' only the x-polarization is created,
+%           otherwise even the y-polarization is created and set equal to
+%           zero in absence of noise. This option is useful to work in a
+%           purely scalar regime.
+%      OPTIONS.linewidth: the 3 dB two-sided linewidth [GHz] of the laser.
+%           It can be a scalar or a vector of the same length of the
+%           wavelengths. A Wiener phase noise with such a linewidth is
+%           added to the phase of  E. The function uses the Brownian bridge
+%           trick [Wiki].
+%      OPTIONS.n0: the one-sided spectral density [dB/GHz] of a Gaussian
+%           complex noise added to the laser field. The noise variance,
+%           i.e., the sum of the real and the imaginary components
+%           variance, is:
+%
+%               variance = 10^(OPTIONS.n0/10)*GSTATE.FSAMPLING
+%
+%           Under a small-signal assumption, such a noise is related to the
+%           laser relative-intensity noise (RIN), on a dB scale, by:
+%
+%               RIN = 0.5*(3 + OPTIONS.n0 - 10*log10(PTX))
+ */
+
 #include "Internal"
 
 using namespace std;

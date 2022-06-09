@@ -16,6 +16,10 @@
  * Supported by: National Key Research and Development Program of China
  */
 
+/*
+ * 这个文件是用来测试的，固定了随机二进制生成器的值
+ */
+
 #include <SimuLib>
 #include <fstream>
 #include <string>
@@ -32,7 +36,7 @@ int main() {
     // Tx parameters
     Par par{};
     int symbolRate   = 10;      // symbol rate [Gbaud].
-    par.rolloff      = 0.2;     // pulse roll-off
+    par.rolloff      = 0.3;     // pulse roll-off
     par.emph         = "asin";  // digital-premphasis type
     string modFormat = "qpsk";  // modulation format
     double powerDBM  = 0;       // power [dBm]
@@ -77,7 +81,7 @@ int main() {
     double gain = 0;
 
     // 电信号放大器
-//    tie(signal, gain) = CPU::electricAmplifier(signal, 10, 1, 10.0e-12);
+    //    tie(signal, gain) = CPU::electricAmplifier(signal, 10, 1, 10.0e-12);
 
     // MZ调制器
     e = CPU::mzModulator(e, signal);
@@ -97,11 +101,19 @@ int main() {
     MatrixXcd returnSignal = CPU::rxFrontend(e, lambda, symbolRate, rxOption);
 
     // 电信号放大器（随后使用returnSignal去绘制眼图和星座图，注意是经过放大器的）
-    tie(returnSignal, gain) = CPU::electricAmplifier(returnSignal, 20, 1, 10.0e-12);
+    //    tie(returnSignal, gain) = CPU::electricAmplifier(returnSignal, 20, 1, 10.0e-12);
 
-    complex<double> eyeOpening;
+    double eyeOpening;
     MatrixXcd iricMat;
 
     // 眼图分析器（随后使用eyeOpening和iricMat这两个值去计算误码率）
     tie(eyeOpening, iricMat) = CPU::evaluateEye(pattern, returnSignal, symbolRate, modFormat, fiber);
+
+    std::cout << "Eye opening: " << eyeOpening << " [mW]" << std::endl;
+
+//    std::ofstream file("../files/iricmat.txt");
+//    if (file.is_open()) {
+//        file << iricMat;
+//    }
+//    file.close();
 }

@@ -23,9 +23,11 @@
  */
 
 #include <SimuLib>
+
 #include <string>
 
 using namespace std;
+
 using namespace SimuLib;
 
 int main() {
@@ -84,7 +86,7 @@ int main() {
     double gain = 0;
 
     // 电信号放大器（会加入随机白噪音，导致放大后的信号每次都有点不一样）
-    tie(signal, gain) = CPU::electricAmplifier(signal, 10, 1, 10.0e-12);
+//    tie(signal, gain) = CPU::electricAmplifier(signal, 10, 1, 10.0e-12);
 
     // MZ调制器
     e = CPU::mzModulator(e, signal);
@@ -103,14 +105,15 @@ int main() {
     // 前端接收器
     MatrixXcd returnSignal = CPU::rxFrontend(e, lambda, symbolRate, rxOption);
 
-    // 电信号放大器（随后使用returnSignal去绘制眼图和星座图，注意是经过放大器的）
-    tie(returnSignal, gain) = CPU::electricAmplifier(returnSignal, 20, 1, 10.0e-12);
+    // 电信号放大器（随后使用returnSignal去绘制星座图）
+//    tie(returnSignal, gain) = CPU::electricAmplifier(returnSignal, 20, 1, 10.0e-12);
 
     double eyeOpening;
     MatrixXcd iricMat;
 
-    // 眼图分析器（随后使用eyeOpening和iricMat这两个值去计算误码率）
+    // 眼图分析器（随后使用eyeOpening去计算误码率，使用iricMat去绘制眼图）
     tie(eyeOpening, iricMat) = CPU::evaluateEye(pattern, returnSignal, symbolRate, modFormat, fiber);
 
     std::cout << "Eye opening: " << eyeOpening << " [mW]" << std::endl;
+
 }
