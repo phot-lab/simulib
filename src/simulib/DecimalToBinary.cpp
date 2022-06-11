@@ -20,14 +20,17 @@
 
 namespace SimuLib {
 
+// dec2bin
 MatrixXi decToBin(const MatrixXi &dec, int nBit) {
+    // 需要完善的参数检查
     MatrixXd bin = dec.cast<double>();
-    MatrixXd exponent(1, abs(1 - nBit) + 1);
+    MatrixXd exponent(1, abs(1 - nBit) + 1);  //
     exponent.row(0) = ArrayXd::LinSpaced(abs(1 - nBit) + 1, 1 - nBit, 0);
     exponent        = pow(2, exponent.array());
     bin             = bin * exponent;
     bin             = floor(bin.array());
 
+    // 没用
     return bin.unaryExpr([](double x) {
         if (x > 0)
             x = floor(x);

@@ -40,6 +40,10 @@ E mzModulator(E light, VectorXcd modSig) {
     // Set-up extinction ratio
     double invexr_lin = pow(10, -exratio / 10);
     double gamma      = (1 - sqrt(invexr_lin)) / (1 + sqrt(invexr_lin));
+    if( exratio - INFINITY < 0.000001){
+        invexr_lin = 0;
+        gamma = 1;
+    }
 
     VectorXd modSigReal = modSig.real();  // signal must be real
 
@@ -113,6 +117,10 @@ E mzmodulator(E light, VectorXcd modSig, MzOption mzOption) {
     // Set-up extinction ratio
     double invexr_lin = pow(10, -exratio / 10);
     double gamma      = (1 - sqrt(invexr_lin)) / (1 + sqrt(invexr_lin));
+    if( exratio - INT_MAX < 0.000001){
+        invexr_lin = 0;
+        gamma = 1;
+    }
 
     VectorXd modSigReal = modSig.real();  // signal must be real
     VectorXd phi_u;
