@@ -56,7 +56,7 @@ struct Out {
 struct Fiber {
     double length            = 10000;   // fiber length [m]
     double lambda            = 1550;    // lambda: wavelength [nm] of fiber parameters
-    double attenuation       = 0;       // alphadB: fiber attenuation [dB/km]
+    double attenuation       = 1;       // alphadB: fiber attenuation [dB/km]
     double dispersion        = 17;      // fiber chromatic dispersion coefficient [ps/nm/km]
     double slope             = 0;       // fiber slope [ps/nm^2/km], i.e. derivative of X.disp
     double nonlinearIndex    = 0;       // n2: fiber nonlinear index [m^2/W]

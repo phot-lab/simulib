@@ -35,6 +35,7 @@ First of all, you should the following command line tools have been installed on
 * ninja
 
 Then, follow below steps to build your project. (Ensure you are under root dir)
+
 ```shell
 # Build cmake project, all the intermidiate files will be stored in build dir.
 cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_MAKE_PROGRAM=ninja -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ -G Ninja -S . -B build

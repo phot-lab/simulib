@@ -25,6 +25,9 @@ int foo() {
 }
 
 int main() {
+    MatrixXi m(4, 1);
+    m << 1, 2, 3, 4;
+    std::cout << decToBin(m,3) << std::endl;
     double a;
     std::cout << a << std::endl;
     string name         = "Hello";

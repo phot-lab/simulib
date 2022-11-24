@@ -32,7 +32,7 @@ int main() {
     int m, n, k, i, j;
     double alpha, beta;
 
-    m = 1000, k = 1000, n = 1000;
+    m = 5000, k = 5000, n = 5000;
     alpha = 1.0;
     beta  = 0.0;
 

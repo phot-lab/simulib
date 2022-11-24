@@ -18,7 +18,7 @@ if (CMAKE_CXX_COMPILER_ID MATCHES "GNU")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-but-set-variable")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -finline-functions") # Attempt to Inline All Functions, even if they are not annotated with inlining. Note: inlining trades speed for increasing of code size.
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall") # Turns on lots of compiler warning flags
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp") # Enable OpenMP features
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp -Ofast") # Enable OpenMP features
     add_link_options("-fopenmp")
 endif ()
 
