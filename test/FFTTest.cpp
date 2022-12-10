@@ -21,13 +21,27 @@
 using namespace SimuLib;
 
 int main() {
+    VectorXcd v                            = VectorXcd ::Random(4324);
+    chrono::steady_clock::time_point begin = chrono::steady_clock::now();
 
-    VectorXcd v(3);
-    v << 1, 2, 3;
-    cout << v << endl;
-    v = fft(v);
-    cout << v << endl;
-    v = ifft(v);
-    cout << v << endl;
+    for (int i = 0; i < 10000; ++i) {
+        v = fft(v);
+        v = ifft(v);
+    }
+//    int a = 10;
+//    for (int i = 0; i < 1000000000; ++i) {
+//        a = 32 * 32 + 324 * 432;
+//    }
+    chrono::steady_clock::time_point end = chrono::steady_clock::now();
 
+    long long duration_ms = chrono::duration_cast<chrono::milliseconds>(end - begin).count();
+    double time           = (double) duration_ms / 1000;
+    cout << "FFT运行时间: " << time << "s" << endl;
+    //    std::cout << v << std::endl;
+
+    //    cout << v << endl;
+    //    v = fft(v);
+    //    cout << v << endl;
+    //    v = ifft(v);
+    //    cout << v << endl;
 }
