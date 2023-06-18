@@ -1,4 +1,5 @@
 # Project generates dirs
+*build*
 *cmake-build*
 /lib/
 /bin/
